@@ -1,0 +1,70 @@
+@import "fonts"
+@import "vars"
+@import "normalize"
+@import "mixins"
+
+*
+  transition: $transition
+  box-sizing: border-box
+
+::-webkit-scrollbar
+  width: 0px
+
+body
+  position: relative
+  opacity: 0
+  z-index: 0
+  font-family: 'sf-semibold'
+  font-size: 1rem
+  background: #F8F6F2
+  color: $black
+  width: 100%
+  height: 100%
+  -webkit-font-smoothing: antialiased
+  text-size-adjust: 100%
+  text-rendering: optimizelegibility
+
+p
+  margin: 0
+  margin-bottom: 1rem
+
+a
+  color: inherit
+  transition: none
+  &:hover
+    color: black
+
+.container
+  width: 100%
+  height: 100%
+  padding: 20px
+
+.motion
+  display: flex
+  justify-content: space-between
+  flex-direction: column
+  > div
+    display: flex
+    justify-content: space-between
+  &__is-motion
+    color: $red
+  &--yes
+    color: $green
+
+.button
+  position: absolute
+  bottom: 0
+  display: flex
+  justify-content: center
+  width: calc(100% - 40px)
+  border: 1px black solid
+  border-radius: 30px
+  padding: 15px
+  margin: 20px
+
+.run
+  &--is-running
+    opacity: .2
+
+.test
+  bottom: 100px

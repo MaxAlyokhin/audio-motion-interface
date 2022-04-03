@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <title>Kiuss</title>
+
+    <!-- prettierignore -->
+    //=include templates/head.html
+
+    <!-- inject:css -->
+    <!-- endinject -->
+
+    <!-- main:js -->
+    <!-- endinject -->
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="motion">
+        <div>
+          <span>Наличие движения</span>
+          <span class="motion__is-motion">false</span>
+        </div>
+        <div>
+          <span>Движение по оси α</span>
+          <span class="motion__alpha">0</span>
+        </div>
+        <div>
+          <span>Движение по оси β</span>
+          <span class="motion__beta">0</span>
+        </div>
+        <div>
+          <span>Движение по оси γ</span>
+          <span class="motion__gamma">0</span>
+        </div>
+        <div>
+          <span>Максимальное значение</span>
+          <span class="motion__maximum">0</span>
+        </div>
+        <div>
+          <span>Частота событий акселерометра</span>
+          <span class="motion__interval">0</span>
+        </div>
+      </div>
+      <div class="settings">
+        <div>
+          <span>Порог срабатывания датчика: </span>
+          <input type="number" name="threshold" class="threshold" />
+        </div>
+      </div>
+    </div>
+    <div id="motionSupported"></div>
+    <div class="button run">Run</div>
+    <div class="button test">test</div>
+  </body>
+</html>
