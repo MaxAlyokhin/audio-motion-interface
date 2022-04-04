@@ -21,35 +21,68 @@
           <span class="motion__is-motion">false</span>
         </div>
         <div>
-          <span>Движение по оси α</span>
+          <span>Движение по оси α (м/с²)</span>
           <span class="motion__alpha">0</span>
         </div>
         <div>
-          <span>Движение по оси β</span>
+          <span>Движение по оси β (м/с²)</span>
           <span class="motion__beta">0</span>
         </div>
         <div>
-          <span>Движение по оси γ</span>
+          <span>Движение по оси γ (м/с²)</span>
           <span class="motion__gamma">0</span>
         </div>
         <div>
-          <span>Максимальное значение</span>
+          <span>Максимальное значение (м/с²)</span>
           <span class="motion__maximum">0</span>
         </div>
         <div>
-          <span>Частота событий акселерометра</span>
+          <span>Частота событий акселерометра (мс)</span>
           <span class="motion__interval">0</span>
         </div>
       </div>
       <div class="settings">
         <div>
-          <span>Порог срабатывания датчика: </span>
-          <input type="number" name="threshold" class="threshold" />
+          <span>Порог срабатывания датчика (м/с²): </span>
+          <input type="number" name="threshold" class="threshold" value="1" />
+        </div>
+        <div>
+          <span>Тип волны:</span>
+          <select name="wave" class="wave">
+            <option value="sine">sine</option>
+            <option value="square">square</option>
+            <option value="sawtooth">sawtooth</option>
+            <option value="triangle">triangle</option>
+          </select>
+        </div>
+        <div>
+          <span>Длительность тона:</span>
+          <input type="number" name="duration" class="duration" value="1.2" />
+        </div>
+        <div>
+          <span>Множитель частоты:</span>
+          <input type="number" name="factor" class="factor" value="20" />
+        </div>
+        <div>
+          <span>Частота фильтра:</span>
+          <input type="number" name="filter" class="filter" value="600" />
+        </div>
+        <div>
+          <span>Затухание:</span>
+          <input
+            type="number"
+            name="attenuation"
+            class="attenuation"
+            value="0.0001"
+          />
+        </div>
+        <div>
+          <span>Громкость:</span>
+          <input type="number" name="gain" class="gain" value="0.08" />
         </div>
       </div>
     </div>
     <div id="motionSupported"></div>
     <div class="button run">Run</div>
-    <div class="button test">test</div>
   </body>
 </html>

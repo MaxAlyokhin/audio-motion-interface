@@ -32,8 +32,7 @@ export function motionInit() {
   // Максимальное значение акселерометра по трём осям
   let absoluteMotion = 0
 
-  // Отсечка случайных движений (минимальный порог срабатывания в метрах в секунду в квадрате)
-  // let threshold = settings.motion.threshold
+  let previousAbsoluteMotion = 0
 
   // Маркер того, сработал ли датчик выше отсечки threshold
   let isMotion = false
@@ -64,11 +63,17 @@ export function motionInit() {
     if (absoluteMotion > settings.motion.threshold) {
       isMotion = true
 
+      // Сравниваем с предыдущим значением и находим наибольшее
+      previousAbsoluteMotion =
+        absoluteMotion > previousAbsoluteMotion
+          ? absoluteMotion
+          : previousAbsoluteMotion
+
       // Заполняем отчёт
       alphaElement.innerText = motionAlpha
       betaElement.innerText = motionBeta
       gammaElement.innerText = motionGamma
-      maximumElement.innerText = absoluteMotion
+      maximumElement.innerText = previousAbsoluteMotion
       intervalElement.innerText = event.interval
       isMotionElement.innerText = isMotion
       isMotionElement.classList.add('motion--yes')

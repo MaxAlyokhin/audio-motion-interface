@@ -6,6 +6,11 @@
 *
   transition: $transition
   box-sizing: border-box
+  &:active,
+  &:hover,
+  &:focus
+    outline: 0
+    outline-offset: 0
 
 ::-webkit-scrollbar
   width: 0px
@@ -15,8 +20,8 @@ body
   opacity: 0
   z-index: 0
   font-family: 'sf-semibold'
-  font-size: 1rem
-  background: #F8F6F2
+  font-size: 14px
+  background: $white
   color: $black
   width: 100%
   height: 100%
@@ -39,7 +44,7 @@ a
   height: 100%
   padding: 20px
 
-.motion
+.motion, .settings
   display: flex
   justify-content: space-between
   flex-direction: column
@@ -48,6 +53,7 @@ a
     justify-content: space-between
   &__is-motion
     color: $red
+    transition: none
   &--yes
     color: $green
 
@@ -68,3 +74,19 @@ a
 
 .test
   bottom: 100px
+
+.settings
+  margin-top: 15px
+  > div
+    margin-top: 15px
+
+input, select
+  background-color: $white
+  border: none
+  border-bottom: 1px solid black
+  width: 83px
+  border-radius: 10%
+  text-align: center
+
+select
+  text-align: left

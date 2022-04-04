@@ -55,8 +55,4 @@ window.addEventListener('DOMContentLoaded', () => {
     // Сработает только один раз
     { once: true }
   )
-
-  document.querySelector('.button.test').addEventListener('click', () => {
-    mutations.motion.setThreshold(3)
-  })
 })
