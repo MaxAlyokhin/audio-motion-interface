@@ -63,6 +63,7 @@ const config = {
   port: 8001,
   logPrefix: 'DevServer',
   open: true, // Браузер автоматом открываем
+  https: true,
 }
 
 // Сборка html
@@ -73,19 +74,13 @@ function html() {
       // Инжектируем в index.html скрипты и стили
       .pipe(
         // Читаем имена файлов с хэшем
-        inject(
-          src(['./dist/libs/*.css', './dist/styles/*.css'], { read: false }),
-          {
-            addRootSlash: false, // Убираем слэш вначале
-            // Убираем 'dist/', чтобы index.html всё нашёл
-            transform: function (filePath) {
-              return `<link rel="stylesheet" href="${filePath.replace(
-                'dist/',
-                ''
-              )}"></link>`
-            },
-          }
-        )
+        inject(src(['./dist/libs/*.css', './dist/styles/*.css'], { read: false }), {
+          addRootSlash: false, // Убираем слэш вначале
+          // Убираем 'dist/', чтобы index.html всё нашёл
+          transform: function (filePath) {
+            return `<link rel="stylesheet" href="${filePath.replace('dist/', '')}"></link>`
+          },
+        })
       )
       .pipe(
         // Читаем имена файлов с хэшем
@@ -236,58 +231,29 @@ export function remoteSync() {
 // Команды:
 
 // Собрать проект
-export const build = series(
-  clean,
-  style,
-  js,
-  image,
-  fonts,
-  libs,
-  html,
-  staticFiles,
-  remoteSync
-)
+export const build = series(clean, style, js, image, fonts, libs, html, staticFiles, remoteSync)
 
-export const deployoff = series(
-  style,
-  js,
-  image,
-  staticFiles,
-  fonts,
-  libs,
-  html,
-  function () {
-    browserSync(config)
-    watch(path.watch.html, series(html))
-    watch(path.watch.sass, series(style, html))
-    watch(path.watch.js, series(js, html))
-    watch(path.watch.img, image)
-    watch(path.watch.static, staticFiles)
-    watch(path.watch.fonts, fonts)
-    watch(path.watch.libs, series(libs, html))
-  }
-)
+export const deployoff = series(style, js, image, staticFiles, fonts, libs, html, function () {
+  browserSync(config)
+  watch(path.watch.html, series(html))
+  watch(path.watch.sass, series(style, html))
+  watch(path.watch.js, series(js, html))
+  watch(path.watch.img, image)
+  watch(path.watch.static, staticFiles)
+  watch(path.watch.fonts, fonts)
+  watch(path.watch.libs, series(libs, html))
+})
 
 // По дефолту всё собираем и запускаем сервер
-const _default = series(
-  style,
-  js,
-  image,
-  staticFiles,
-  fonts,
-  libs,
-  html,
-  remoteSync,
-  function () {
-    browserSync(config)
-    watch(path.watch.html, series(html, remoteSync))
-    watch(path.watch.sass, series(style, html, remoteSync))
-    watch(path.watch.js, series(js, html, remoteSync))
-    watch(path.watch.img, image, remoteSync)
-    watch(path.watch.static, staticFiles, remoteSync)
-    watch(path.watch.fonts, fonts, remoteSync)
-    watch(path.watch.libs, series(libs, html, remoteSync))
-  }
-)
+const _default = series(style, js, image, staticFiles, fonts, libs, html, remoteSync, function () {
+  browserSync(config)
+  watch(path.watch.html, series(html, remoteSync))
+  watch(path.watch.sass, series(style, html, remoteSync))
+  watch(path.watch.js, series(js, html, remoteSync))
+  watch(path.watch.img, image, remoteSync)
+  watch(path.watch.static, staticFiles, remoteSync)
+  watch(path.watch.fonts, fonts, remoteSync)
+  watch(path.watch.libs, series(libs, html, remoteSync))
+})
 
 export { _default as default }
