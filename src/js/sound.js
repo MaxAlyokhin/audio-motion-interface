@@ -9,36 +9,121 @@ try {
   window.alert(`Браузер не поддерживается / Browser is not support`)
 }
 
-export function sound(absoluteMotion) {
-  let currentTime = audioContext.currentTime // Получаем время начала тона
-  let oscillator = audioContext.createOscillator() // Создаём генератор
-  let biquadFilter = audioContext.createBiquadFilter() // Создаём фильтр
-  let gainNode = audioContext.createGain() // Создаём ручку громкости
+// Схема: осциллятор => фильтр => громкость
 
-  // Схема: осциллятор => фильтр => громкость
+// Режим множественных осцилляторов (каждому событию движения соответствует свой осциллятор)
 
-  // Настраиваем генератор
-  oscillator.type = settings.sound.oscillatorType // Тип волны - синусоида
-  oscillator.frequency.value = absoluteMotion * settings.sound.frequencyFactor // Задаём частоту
-  oscillator.connect(biquadFilter) // Подключаем к фильтру
-  // oscillator.connect(gainNode)
+let previousFrequency = 0.01
 
-  biquadFilter.type = 'lowpass' // Режем паразитные высокие частоты
-  biquadFilter.frequency.setValueAtTime(
-    settings.sound.biquadFilterFrequency,
-    currentTime
-  ) // Порог - 600 Гц
-  biquadFilter.gain.setValueAtTime(1, currentTime) // Фильтр на полную
-  biquadFilter.connect(gainNode) // Подключаем к ручке громкости
+// Функция генерирует звук
+// Принимает показание датчика по одной оси
+function runOscillator(motionParameter) {
+  // Создаём связку
+  let currentTime = audioContext.currentTime
+  let oscillator = audioContext.createOscillator()
+  let biquadFilter = audioContext.createBiquadFilter()
+  let gainNode = audioContext.createGain()
 
-  // Настраиваем ручку громкости
-  gainNode.gain.setValueAtTime(settings.sound.gain, currentTime) // Громкость одного тона должна быть кратна количеству одновременно звучащих тонов
-  gainNode.gain.exponentialRampToValueAtTime(
-    settings.sound.attenuation,
-    currentTime + settings.sound.toneDuration
-  ) // Затухание сигнала
-  gainNode.connect(audioContext.destination) // Подключаем к источнику звука
+  // TODO: все осцилляторы должны подключаться к одному внешнему gainNode
+  oscillator.connect(biquadFilter)
+  biquadFilter.connect(gainNode)
+  gainNode.connect(audioContext.destination)
 
-  oscillator.start(currentTime) // Начинаем
-  oscillator.stop(currentTime + settings.sound.toneDuration) // Заканчиваем тон через toneDuration
+  biquadFilter.type = 'lowpass'
+  biquadFilter.gain.value = 1
+
+  // Настраиваем по настройкам и акселерометру
+  oscillator.type = settings.sound.oscillatorType
+  oscillator.frequency.value = motionParameter * settings.sound.frequencyFactor
+  // oscillator.frequency.exponentialRampToValueAtTime(previousFrequency, currentTime + settings.sound.toneDuration)
+  previousFrequency = oscillator.frequency.value
+
+  biquadFilter.frequency.value = settings.sound.biquadFilterFrequency
+  gainNode.gain.value = settings.sound.gain
+  gainNode.gain.exponentialRampToValueAtTime(settings.sound.attenuation, currentTime + settings.sound.toneDuration) // Затухание сигнала
+
+  // Генерим звук отрезком от currentTime до settings.sound.toneDuration
+  oscillator.start(currentTime)
+  oscillator.stop(currentTime + settings.sound.toneDuration)
 }
+
+function plural(motion) {
+  if (motion.isMotion) {
+    if (settings.sound.dataRegime === 'maximum') {
+      runOscillator(motion.maximum)
+    }
+
+    if (settings.sound.dataRegime === 'different') {
+      if (settings.sound.axis.alpha) {
+        runOscillator(motion.alpha)
+      }
+      if (settings.sound.axis.beta) {
+        runOscillator(motion.beta)
+      }
+      if (settings.sound.axis.gamma) {
+        runOscillator(motion.gamma)
+      }
+    }
+  }
+}
+
+// Режим единственного осциллятора
+
+let oscillatorIsInit = false
+
+// Объявляем сущности как var, чтобы они были видны в пределах всей функции
+let currentTime = audioContext.currentTime // по идее это не нужно здесь
+let oscillator = audioContext.createOscillator()
+let biquadFilter = audioContext.createBiquadFilter()
+let gainNode = audioContext.createGain()
+
+oscillator.connect(biquadFilter)
+biquadFilter.connect(gainNode)
+gainNode.connect(audioContext.destination)
+
+biquadFilter.type = 'lowpass'
+biquadFilter.gain.value = 1
+
+function single(motion) {
+  // Включаем осциллятор, когда движение превысило отсечку
+  if (motion.isMotion) {
+    // Собираем связку, делаем это только один раз в начале движения
+    if (!oscillatorIsInit) {
+      oscillator.start()
+      oscillatorIsInit = true
+    }
+
+    // Динамически настраиваем связку
+    // Эти данные обновляются по каждому событию движения
+    oscillator.type = settings.sound.oscillatorType
+    // TODO: выбрать: частота меняется плавно или сразу
+    oscillator.frequency.value = motion.maximum * settings.sound.frequencyFactor
+    oscillator.frequency.exponentialRampToValueAtTime(previousFrequency, currentTime + settings.sound.toneDuration)
+
+    previousFrequency = oscillator.frequency.value
+
+    biquadFilter.frequency.value = settings.sound.biquadFilterFrequency
+    // gainNode.gain.value = settings.sound.gain
+    // gainNode.gain.exponentialRampToValueAtTime(settings.sound.attenuation, +new Date() + settings.sound.toneDuration) // Затухание сигнала
+  }
+  // Гасим осциллятор и удаляем всю связку устройств, когда движение опустилось ниже отсечки
+  else {
+    // Делаем это только если осциллятор есть и работает
+    // if (oscillatorIsInit) {
+    //   oscillator.stop()
+    //   oscillatorIsInit = false
+    // }
+  }
+}
+
+export function sound(motion) {
+  if (settings.sound.oscillatorRegime === 'plural') {
+    plural(motion)
+  }
+
+  if (settings.sound.oscillatorRegime === 'single') {
+    single(motion)
+  }
+}
+
+// TODO: можно гироскоп привязать к бикубическому фильтру

@@ -24,18 +24,16 @@ export function motionInit() {
       'Error: accelerometer is not supported.<br>Ошибка: акселерометр не поддерживается.<br>'
   }
 
-  // Округлённые значения акселерометра
-  let motionAlpha = 0
-  let motionBeta = 0
-  let motionGamma = 0
+  // Инициализируем объект движения
+  let motion = {
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+    maximum: 0, // Максимальное значение акселерометра по трём осям
+    isMotion: false, // Маркер того, сработал ли датчик выше отсечки threshold
+  }
 
-  // Максимальное значение акселерометра по трём осям
-  let absoluteMotion = 0
-
-  let previousAbsoluteMotion = 0
-
-  // Маркер того, сработал ли датчик выше отсечки threshold
-  let isMotion = false
+  let previousMaximumMotion = 0
 
   // HTML-элементы, где будут отображаться эти значения
   let alphaElement = document.querySelector('.motion__alpha')
@@ -47,50 +45,45 @@ export function motionInit() {
 
   // Функция вызывается по каждому событию движения
   function onMotion(event) {
-    motionAlpha = event.acceleration.x.toFixed(1)
-    motionBeta = event.acceleration.y.toFixed(1)
-    motionGamma = event.acceleration.z.toFixed(1)
+    motion.alpha = Math.abs(event.acceleration.x.toFixed(1))
+    motion.beta = Math.abs(event.acceleration.y.toFixed(1))
+    motion.gamma = Math.abs(event.acceleration.z.toFixed(1))
 
     // Здесь у нас сводятся все движения к наибыстрейшему
     // Также отсекаем отрицательные значения, т.к. нас интересует сам факт движения
-    absoluteMotion = Math.max(
-      Math.abs(motionAlpha),
-      Math.abs(motionBeta),
-      Math.abs(motionGamma)
-    )
+    motion.maximum = Math.max(motion.alpha, motion.beta, motion.gamma)
 
     // Здесь отсекаем часть событий ниже порога threshold
-    if (absoluteMotion > settings.motion.threshold) {
-      isMotion = true
+    if (motion.maximum > settings.motion.threshold) {
+      motion.isMotion = true
 
       // Сравниваем с предыдущим значением и находим наибольшее
-      previousAbsoluteMotion =
-        absoluteMotion > previousAbsoluteMotion
-          ? absoluteMotion
-          : previousAbsoluteMotion
+      previousMaximumMotion = motion.maximum > previousMaximumMotion ? motion.maximum : previousMaximumMotion
 
       // Заполняем отчёт
-      alphaElement.innerText = motionAlpha
-      betaElement.innerText = motionBeta
-      gammaElement.innerText = motionGamma
-      maximumElement.innerText = previousAbsoluteMotion
+      alphaElement.innerText = motion.alpha
+      betaElement.innerText = motion.beta
+      gammaElement.innerText = motion.gamma
+      maximumElement.innerText = previousMaximumMotion
       intervalElement.innerText = event.interval
-      isMotionElement.innerText = isMotion
+      isMotionElement.innerText = motion.isMotion
       isMotionElement.classList.add('motion--yes')
 
       // Генерируем звук
 
       // TODO: сделать троттл-лимит, считать сколько сейчас играет дорожек
+      // TODO: тоны должны генериться не чаще 1 в 50мс
 
-      // TODO: передавать объект с параметрами?
-      sound(absoluteMotion)
-
-      // TODO: сделать два режима: как сейчас по absoluteMotion и режим когда
-      // к каждой оси вызывается свой sound(ось), куда передаётся соответствующий параметр
+      sound(motion)
     } else {
-      isMotion = false
-      isMotionElement.innerText = isMotion
+      motion.isMotion = false
+      isMotionElement.innerText = motion.isMotion
       isMotionElement.classList.remove('motion--yes')
+
+      // Здесь тоже вызываем с isMotion = false, чтобы закончить работу осциллятора
+      sound(motion)
     }
   }
 }
+
+// TODO: юзать ли отрицательные числа

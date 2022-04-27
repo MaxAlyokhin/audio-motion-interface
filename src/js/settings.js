@@ -10,6 +10,13 @@ export let settings = {
     biquadFilterFrequency: 600,
     attenuation: 0.0001,
     gain: 0.08,
+    oscillatorRegime: 'plural',
+    dataRegime: 'maximum',
+    axis: {
+      alpha: true,
+      beta: false,
+      gamma: false,
+    },
   },
 }
 
@@ -25,7 +32,6 @@ export const mutations = {
     },
     setDuration: (duration) => {
       settings.sound.toneDuration = duration
-      console.log(settings.sound.toneDuration)
     },
     setFrequencyFactor: (frequencyFactor) => {
       settings.sound.frequencyFactor = frequencyFactor
@@ -39,11 +45,43 @@ export const mutations = {
     setGain: (gain) => {
       settings.sound.gain = gain
     },
+    setOscillatorRegime: (oscillatorRegime) => {
+      settings.sound.oscillatorRegime = oscillatorRegime
+    },
+    setDataRegime: (dataRegime) => {
+      settings.sound.dataRegime = dataRegime
+    },
+    setAxis: (axis) => {
+      if (axis === 'alpha') {
+        settings.sound.axis.alpha = !settings.sound.axis.alpha
+      }
+      if (axis === 'beta') {
+        settings.sound.axis.beta = !settings.sound.axis.beta
+      }
+      if (axis === 'gamma') {
+        settings.sound.axis.gamma = !settings.sound.axis.gamma
+      }
+    },
   },
 }
 
 export function settingsInit() {
   // Вешаем логику на интерфейс управления
+
+  let oscillatorRegimeElement = document.querySelector('.oscillator-regime')
+  oscillatorRegimeElement.addEventListener('change', function (event) {
+    mutations.sound.setOscillatorRegime(event.target.value)
+  })
+
+  let dataRegimeElement = document.querySelector('.data-regime')
+  dataRegimeElement.addEventListener('change', function (event) {
+    mutations.sound.setDataRegime(event.target.value)
+  })
+
+  let axisElement = document.querySelector('.axis')
+  axisElement.addEventListener('change', function (event) {
+    mutations.sound.setAxis(event.target.value)
+  })
 
   let thresholdElement = document.querySelector('.threshold')
   thresholdElement.addEventListener('input', function () {
@@ -57,7 +95,8 @@ export function settingsInit() {
 
   let durationElement = document.querySelector('.duration')
   durationElement.addEventListener('input', function () {
-    mutations.sound.setDuration(this.value)
+    mutations.sound.setDuration(parseFloat(this.value))
+    console.log(settings.sound.toneDuration)
   })
 
   let factorElement = document.querySelector('.factor')

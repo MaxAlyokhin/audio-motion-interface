@@ -42,6 +42,78 @@
         </div>
       </div>
       <div class="settings">
+        <div class="oscillator-regime">
+          <span>Режим работы осцилляторов:</span>
+          <div class="radio-element">
+            <input
+              type="radio"
+              name="oscillator"
+              id="plural"
+              value="plural"
+              checked
+            />
+            <label for="plural">plural</label>
+          </div>
+          <div class="radio-element">
+            <input type="radio" name="oscillator" id="single" value="single" />
+            <label for="single">single</label>
+          </div>
+        </div>
+        <div class="data-regime">
+          <span>Источник данных:</span>
+          <div class="radio-element">
+            <input
+              type="radio"
+              name="data-regime"
+              id="maximum"
+              value="maximum"
+              checked
+            />
+            <label for="maximum">Максимальная скорость</label>
+          </div>
+          <div class="radio-element">
+            <input
+              type="radio"
+              name="data-regime"
+              id="different"
+              value="different"
+            />
+            <label for="different">Отдельные оси</label>
+            <div class="axis-container">
+              <div class="axis">
+                <div class="checkbox-element">
+                  <input
+                    type="checkbox"
+                    name="different-item"
+                    id="alpha"
+                    value="alpha"
+                    checked
+                  />
+                  <label for="different">α</label>
+                </div>
+                <div class="checkbox-element">
+                  <input
+                    type="checkbox"
+                    name="different-item"
+                    id="beta"
+                    value="beta"
+                  />
+                  <label for="different">β</label>
+                </div>
+                <div class="checkbox-element">
+                  <input
+                    type="checkbox"
+                    name="different-item"
+                    id="gamma"
+                    value="gamma"
+                  />
+                  <label for="different">γ</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div>
           <span>Порог срабатывания датчика (м/с²): </span>
           <input type="number" name="threshold" class="threshold" value="1" />
@@ -79,6 +151,11 @@
         <div>
           <span>Громкость:</span>
           <input type="number" name="gain" class="gain" value="0.08" />
+        </div>
+
+        <div>
+          <div>Errors:</div>
+          <div class="errors"></div>
         </div>
       </div>
     </div>
