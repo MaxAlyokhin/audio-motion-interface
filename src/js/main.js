@@ -55,4 +55,13 @@ window.addEventListener('DOMContentLoaded', () => {
     // Сработает только один раз
     { once: true }
   )
+
+  // Вывод ошибок на экран
+  let errorElement = document.querySelector('.errors')
+  window.addEventListener('error', (event) => {
+    errorElement.innerHTML += `
+      <div class="errors__message">${event.error.message}</div>
+      <div>${event.error.stack}</div>
+    `
+  })
 })
