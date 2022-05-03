@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO chat</title>
+    <style>
+      body {
+        margin: 0;
+        padding-bottom: 3rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      #form {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        height: 3rem;
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+      }
+      #input {
+        border: none;
+        padding: 0 1rem;
+        flex-grow: 1;
+        border-radius: 2rem;
+        margin: 0.25rem;
+      }
+      #input:focus {
+        outline: none;
+      }
+      #form > button {
+        background: #333;
+        border: none;
+        padding: 0 1rem;
+        margin: 0.25rem;
+        border-radius: 3px;
+        outline: none;
+        color: #fff;
+      }
+
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      #messages > li {
+        padding: 0.5rem 1rem;
+      }
+      #messages > li:nth-child(odd) {
+        background: #efefef;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="motionSupported"></div>
+    <ul id="messages"></ul>
+    <form id="form" action=""><input id="input" autocomplete="off" /><button>Send</button></form>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io()
+
+      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission()
+          .then((response) => {
+            if (response == 'granted') {
+              // Если разрешили, то вешаем соответствующий обработчик
+              window.addEventListener('devicemotion', onMotion)
+            }
+          })
+          .catch(console.error)
+      }
+      // iOS 12 и Android
+      else if ('ondevicemotion' in window) {
+        window.addEventListener('devicemotion', onMotion)
+      }
+      // Нет акселерометра
+      else {
+        document.querySelector('.motionSupported').innerHTML = 'Режим приёмника данных.'
+      }
+
+      let motion = {
+        alpha: 0,
+        beta: 0,
+        gamma: 0,
+        maximum: 0, // Максимальное значение акселерометра по трём осям
+        isMotion: false, // Маркер того, сработал ли датчик выше отсечки threshold
+      }
+
+      function onMotion(event) {
+        if (event.acceleration.x === null) {
+          document.querySelector('.motionSupported').innerText = 'Режим приёмника данных.'
+          return
+        }
+
+        motion.alpha = Math.abs(event.acceleration.x.toFixed(1))
+        motion.beta = Math.abs(event.acceleration.y.toFixed(1))
+        motion.gamma = Math.abs(event.acceleration.z.toFixed(1))
+        motion.maximum = Math.max(motion.alpha, motion.beta, motion.gamma)
+
+        // if (motion.maximum > 1) {
+        //   document.querySelector('.motionSupported').innerText = motion.maximum
+        // }
+
+        socket.emit('motion message', motion)
+      }
+
+      let messages = document.getElementById('messages')
+      // var form = document.getElementById('form')
+      // var input = document.getElementById('input')
+
+      // form.addEventListener('submit', function (e) {
+      //   e.preventDefault()
+      //   if (input.value) {
+      //     socket.emit('chat message', input.value)
+      //     input.value = ''
+      //   }
+      // })
+
+      let audioContext = undefined
+
+      // Проверяем поддержку контекста браузером
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      } catch (error) {
+        window.alert(`Браузер не поддерживается / Browser is not support`)
+      }
+
+      socket.on('motion message', function (motionData) {
+        if (motionData.maximum > 1) {
+          let item = document.createElement('li')
+          item.textContent = motionData.maximum
+          messages.appendChild(item)
+          window.scrollTo(0, document.body.scrollHeight)
+
+          let currentTime = audioContext.currentTime
+          let oscillator = audioContext.createOscillator()
+          let biquadFilter = audioContext.createBiquadFilter()
+          let gainNode = audioContext.createGain()
+
+          // TODO: все осцилляторы должны подключаться к одному внешнему gainNode
+          oscillator.connect(biquadFilter)
+          biquadFilter.connect(gainNode)
+          gainNode.connect(audioContext.destination)
+
+          biquadFilter.type = 'lowpass'
+          oscillator.type = 'sine'
+          oscillator.frequency.value = motionData.maximum * 200
+          biquadFilter.frequency.value = 600
+          gainNode.gain.value = 0.08
+          oscillator.start(currentTime)
+          oscillator.stop(currentTime + 1)
+        }
+      })
+    </script>
+  </body>
+</html>

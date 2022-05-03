@@ -33,34 +33,34 @@ function runOscillator(motionParameter) {
   biquadFilter.gain.value = 1
 
   // Настраиваем по настройкам и акселерометру
-  oscillator.type = settings.sound.oscillatorType
-  oscillator.frequency.value = motionParameter * settings.sound.frequencyFactor
-  // oscillator.frequency.exponentialRampToValueAtTime(previousFrequency, currentTime + settings.sound.toneDuration)
+  oscillator.type = settings.audio.oscillatorType
+  oscillator.frequency.value = motionParameter * settings.audio.frequencyFactor
+  // oscillator.frequency.exponentialRampToValueAtTime(previousFrequency, currentTime + settings.audio.toneDuration)
   previousFrequency = oscillator.frequency.value
 
-  biquadFilter.frequency.value = settings.sound.biquadFilterFrequency
-  gainNode.gain.value = settings.sound.gain
-  gainNode.gain.exponentialRampToValueAtTime(settings.sound.attenuation, currentTime + settings.sound.toneDuration) // Затухание сигнала
+  biquadFilter.frequency.value = settings.audio.biquadFilterFrequency
+  gainNode.gain.value = settings.audio.gain
+  gainNode.gain.exponentialRampToValueAtTime(settings.audio.attenuation, currentTime + settings.audio.toneDuration) // Затухание сигнала
 
-  // Генерим звук отрезком от currentTime до settings.sound.toneDuration
+  // Генерим звук отрезком от currentTime до settings.audio.toneDuration
   oscillator.start(currentTime)
-  oscillator.stop(currentTime + settings.sound.toneDuration)
+  oscillator.stop(currentTime + settings.audio.toneDuration)
 }
 
 function plural(motion) {
   if (motion.isMotion) {
-    if (settings.sound.dataRegime === 'maximum') {
+    if (settings.audio.dataRegime === 'maximum') {
       runOscillator(motion.maximum)
     }
 
-    if (settings.sound.dataRegime === 'different') {
-      if (settings.sound.axis.alpha) {
+    if (settings.audio.dataRegime === 'different') {
+      if (settings.audio.axis.alpha) {
         runOscillator(motion.alpha)
       }
-      if (settings.sound.axis.beta) {
+      if (settings.audio.axis.beta) {
         runOscillator(motion.beta)
       }
-      if (settings.sound.axis.gamma) {
+      if (settings.audio.axis.gamma) {
         runOscillator(motion.gamma)
       }
     }
@@ -95,16 +95,16 @@ function single(motion) {
 
     // Динамически настраиваем связку
     // Эти данные обновляются по каждому событию движения
-    oscillator.type = settings.sound.oscillatorType
+    oscillator.type = settings.audio.oscillatorType
     // TODO: выбрать: частота меняется плавно или сразу
-    oscillator.frequency.value = motion.maximum * settings.sound.frequencyFactor
-    oscillator.frequency.exponentialRampToValueAtTime(previousFrequency, currentTime + settings.sound.toneDuration)
+    oscillator.frequency.value = motion.maximum * settings.audio.frequencyFactor
+    oscillator.frequency.exponentialRampToValueAtTime(previousFrequency, currentTime + settings.audio.toneDuration)
 
     previousFrequency = oscillator.frequency.value
 
-    biquadFilter.frequency.value = settings.sound.biquadFilterFrequency
-    // gainNode.gain.value = settings.sound.gain
-    // gainNode.gain.exponentialRampToValueAtTime(settings.sound.attenuation, +new Date() + settings.sound.toneDuration) // Затухание сигнала
+    biquadFilter.frequency.value = settings.audio.biquadFilterFrequency
+    // gainNode.gain.value = settings.audio.gain
+    // gainNode.gain.exponentialRampToValueAtTime(settings.audio.attenuation, +new Date() + settings.audio.toneDuration) // Затухание сигнала
   }
   // Гасим осциллятор и удаляем всю связку устройств, когда движение опустилось ниже отсечки
   else {
@@ -116,12 +116,12 @@ function single(motion) {
   }
 }
 
-export function sound(motion) {
-  if (settings.sound.oscillatorRegime === 'plural') {
+export function audio(motion) {
+  if (settings.audio.oscillatorRegime === 'plural') {
     plural(motion)
   }
 
-  if (settings.sound.oscillatorRegime === 'single') {
+  if (settings.audio.oscillatorRegime === 'single') {
     single(motion)
   }
 }

@@ -19,7 +19,7 @@ body
   position: relative
   opacity: 0
   z-index: 0
-  font-family: 'sf-semibold'
+  font-family: 'jetbrains'
   font-size: 12px
   background: $white
   color: $black
@@ -37,7 +37,7 @@ a
   color: inherit
   transition: none
   &:hover
-    color: black
+    color: $black
 
 .container
   width: 100%
@@ -62,11 +62,11 @@ a
   bottom: 0
   display: flex
   justify-content: center
-  // width: calc(100% - 40px)
   border: 1px black solid
   border-radius: 30px
   padding: 15px
   margin: 20px
+  font-weight: 600
 
 .run
   &--is-running
@@ -111,13 +111,13 @@ input[type="radio"]
 input[type="checkbox"]
   appearance: none
   width: 10px
-  border: 1px solid black
+  border: 1px solid $black
   height: 10px
   border-radius: 0px
   min-width: 10px
 
   &:checked
-    background-color: black;
+    background-color: $black
 
 .axis-container
   opacity: .2
@@ -129,6 +129,10 @@ input[value="different"]
 
 select
   text-align: left
+
+.frontendDesktop,
+.frontendMobile
+  display: none
 
 .errors
   max-width: 80%
@@ -154,3 +158,44 @@ select
 .radio-element
   label
     width: 100%
+
+.info
+  .regime
+    font-weight: 600
+    color: $brown
+
+  .connections
+    div
+      display: flex
+      align-items: center
+
+      &::before
+        content: ''
+        width: 7px
+        height: 7px
+        border-radius: 50%
+        top: 0
+        left: 0
+        display: inline-block
+        margin-right: 5px
+
+    &--ready
+      &::before
+        background-color: $green
+
+    &--wait
+      &::before
+        background-color: $orange
+        animation: blink 1s infinite
+
+        @keyframes blink
+          0%
+            opacity: 0
+          50%
+            opacity: 1
+          100%
+            opacity: 0
+
+    &--error
+      &::before
+        background-color: $red
