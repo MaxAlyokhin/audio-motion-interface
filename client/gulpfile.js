@@ -233,19 +233,7 @@ export function remoteSync() {
 // Собрать проект
 export const build = series(clean, style, js, image, fonts, libs, html, staticFiles, remoteSync)
 
-export const deployoff = series(style, js, image, staticFiles, fonts, libs, html, function () {
-  browserSync(config)
-  watch(path.watch.html, series(html))
-  watch(path.watch.sass, series(style, html))
-  watch(path.watch.js, series(js, html))
-  watch(path.watch.img, image)
-  watch(path.watch.static, staticFiles)
-  watch(path.watch.fonts, fonts)
-  watch(path.watch.libs, series(libs, html))
-})
-
-// По дефолту всё собираем и запускаем сервер
-const _default = series(style, js, image, staticFiles, fonts, libs, html, remoteSync, function () {
+export const deploy = series(style, js, image, staticFiles, fonts, libs, html, remoteSync, function () {
   browserSync(config)
   watch(path.watch.html, series(html, remoteSync))
   watch(path.watch.sass, series(style, html, remoteSync))
@@ -254,6 +242,18 @@ const _default = series(style, js, image, staticFiles, fonts, libs, html, remote
   watch(path.watch.static, staticFiles, remoteSync)
   watch(path.watch.fonts, fonts, remoteSync)
   watch(path.watch.libs, series(libs, html, remoteSync))
+})
+
+// По дефолту всё собираем и запускаем сервер
+const _default = series(style, js, image, staticFiles, fonts, libs, html, function () {
+  browserSync(config)
+  watch(path.watch.html, series(html))
+  watch(path.watch.sass, series(style, html))
+  watch(path.watch.js, series(js, html))
+  watch(path.watch.img, image)
+  watch(path.watch.static, staticFiles)
+  watch(path.watch.fonts, fonts)
+  watch(path.watch.libs, series(libs, html))
 })
 
 export { _default as default }

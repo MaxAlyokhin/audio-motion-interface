@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <title>Audio Motion Interface</title>
+
+    <!-- prettierignore -->
+    //=include templates/head.html
+
+    <!-- inject:css -->
+    <!-- endinject -->
+
+    <!-- main:js -->
+    <!-- endinject -->
+
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+  </head>
+
+  <body>
+    <div class="frontendDesktop">
+      <div class="container">
+        <div class="info">
+          <div class="regime">Режим приёмника данных включён</div>
+          <div class="connections">
+            <div class="connections__to-server connections--wait">Подключение к вебсокет-серверу...</div>
+            <div class="connections__status connections--wait">Ожидание подключений...</div>
+            <div class="connections__devices"></div>
+          </div>
+        </div>
+
+        <div class="motion">
+          <div>
+            <span>Наличие движения</span>
+            <span class="motion__is-motion">false</span>
+          </div>
+          <div>
+            <span>Движение по оси α (м/с²)</span>
+            <span class="motion__alpha">0</span>
+          </div>
+          <div>
+            <span>Движение по оси β (м/с²)</span>
+            <span class="motion__beta">0</span>
+          </div>
+          <div>
+            <span>Движение по оси γ (м/с²)</span>
+            <span class="motion__gamma">0</span>
+          </div>
+          <div>
+            <span>Максимальное значение (м/с²)</span>
+            <span class="motion__maximum">0</span>
+          </div>
+          <div>
+            <span>Частота событий акселерометра (мс)</span>
+            <span class="motion__interval">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="frontendMobile">
+      <div class="container">
+        <div class="motion">
+          <div>
+            <span>Наличие движения</span>
+            <span class="motion__is-motion">false</span>
+          </div>
+          <div>
+            <span>Движение по оси α (м/с²)</span>
+            <span class="motion__alpha">0</span>
+          </div>
+          <div>
+            <span>Движение по оси β (м/с²)</span>
+            <span class="motion__beta">0</span>
+          </div>
+          <div>
+            <span>Движение по оси γ (м/с²)</span>
+            <span class="motion__gamma">0</span>
+          </div>
+          <div>
+            <span>Максимальное значение (м/с²)</span>
+            <span class="motion__maximum">0</span>
+          </div>
+          <div>
+            <span>Частота событий акселерометра (мс)</span>
+            <span class="motion__interval">0</span>
+          </div>
+        </div>
+        <div class="settings">
+          <div class="synthesis-regime">
+            <span>Стратегия синтеза:</span>
+            <div class="radio-element">
+              <input type="radio" name="synthesis" id="local" value="local" checked />
+              <label for="local">Локальный</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="synthesis" id="remote" value="remote" />
+              <label for="remote">Удалённый</label>
+            </div>
+          </div>
+          <div class="oscillator-regime">
+            <span>Режим работы осцилляторов:</span>
+            <div class="radio-element">
+              <input type="radio" name="oscillator" id="plural" value="plural" checked />
+              <label for="plural">plural</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="oscillator" id="single" value="single" />
+              <label for="single">single</label>
+            </div>
+          </div>
+          <div class="data-regime">
+            <span>Источник данных:</span>
+            <div class="radio-element">
+              <input type="radio" name="data-regime" id="maximum" value="maximum" checked />
+              <label for="maximum">Максимальная скорость</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="data-regime" id="different" value="different" />
+              <label for="different">Отдельные оси</label>
+              <div class="axis-container">
+                <div class="axis">
+                  <div class="checkbox-element">
+                    <input type="checkbox" name="different-item" id="alpha" value="alpha" checked />
+                    <label for="different">α</label>
+                  </div>
+                  <div class="checkbox-element">
+                    <input type="checkbox" name="different-item" id="beta" value="beta" />
+                    <label for="different">β</label>
+                  </div>
+                  <div class="checkbox-element">
+                    <input type="checkbox" name="different-item" id="gamma" value="gamma" />
+                    <label for="different">γ</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span>Порог срабатывания датчика (м/с²): </span>
+            <input type="number" name="threshold" class="threshold" value="1" />
+          </div>
+          <div>
+            <span>Тип волны:</span>
+            <select name="wave" class="wave">
+              <option value="sine">sine</option>
+              <option value="square">square</option>
+              <option value="sawtooth">sawtooth</option>
+              <option value="triangle">triangle</option>
+            </select>
+          </div>
+          <div>
+            <span>Длительность тона:</span>
+            <input type="number" name="duration" class="duration" value="1.2" />
+          </div>
+          <div>
+            <span>Множитель частоты:</span>
+            <input type="number" name="factor" class="factor" value="20" />
+          </div>
+          <div>
+            <span>Частота фильтра:</span>
+            <input type="number" name="filter" class="filter" value="600" />
+          </div>
+          <div>
+            <span>Затухание:</span>
+            <input type="number" name="attenuation" class="attenuation" value="0.0001" />
+          </div>
+          <div>
+            <span>Громкость:</span>
+            <input type="number" name="gain" class="gain" value="0.08" />
+          </div>
+          <div id="test">
+            <div>Errors:</div>
+            <div class="errors"></div>
+          </div>
+        </div>
+      </div>
+      <div id="motionSupported"></div>
+    </div>
+
+    <div class="button run">Run</div>
+  </body>
+</html>

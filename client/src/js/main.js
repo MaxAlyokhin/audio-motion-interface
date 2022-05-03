@@ -35,15 +35,13 @@
 // - TODO: данные с датчиков (6 параметров)
 // - TODO: данные звука
 // - TODO: интерфейс изменения параметров звука (при изменении пересоздавать audioContext что ли?)
+// - TODO: добавить отображение статуса ws на стороне смартфона ("точек синтеза не обнаружено")
 
 import { motionInit } from './motion'
-import { mutations, settingsInit } from './settings'
 
 window.addEventListener('DOMContentLoaded', () => {
   // Показываем контент
   document.querySelector('body').style.opacity = 1
-
-  settingsInit()
 
   // Кнопка Run запускает алгоритм
   document.querySelector('.button.run').addEventListener(
