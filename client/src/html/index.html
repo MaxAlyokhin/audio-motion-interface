@@ -49,8 +49,12 @@
             <span class="motion__maximum">0</span>
           </div>
           <div>
-            <span>Частота событий акселерометра (мс)</span>
-            <span class="motion__interval">0</span>
+            <span>Положение смартфона по оси γ</span>
+            <span class="motion__orientation">0</span>
+          </div>
+          <div>
+            <span>Генерируемая частота (Гц)</span>
+            <span class="motion__frequency">0</span>
           </div>
         </div>
       </div>
@@ -83,6 +87,10 @@
             <span>Частота событий акселерометра (мс)</span>
             <span class="motion__interval">0</span>
           </div>
+          <div>
+            <span>Положение смартфона по оси γ</span>
+            <span class="motion__orientation">0</span>
+          </div>
         </div>
         <div class="settings">
           <div class="synthesis-regime">
@@ -105,6 +113,10 @@
             <div class="radio-element">
               <input type="radio" name="oscillator" id="single" value="single" />
               <label for="single">single</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="oscillator" id="spatial" value="spatial" />
+              <label for="spatial">spatial</label>
             </div>
           </div>
           <div class="data-regime">
@@ -167,13 +179,14 @@
             <span>Громкость:</span>
             <input type="number" name="gain" class="gain" value="0.08" />
           </div>
-          <div id="test">
+          <div>
             <div>Errors:</div>
             <div class="errors"></div>
           </div>
         </div>
       </div>
       <div id="motionSupported"></div>
+      <div id="orientationSupported"></div>
     </div>
 
     <div class="button run">Run</div>

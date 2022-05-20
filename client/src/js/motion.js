@@ -8,6 +8,8 @@
 // - определяет, отдавать ли объект движения в вебсокет или отдавать его в обработчик аудио
 
 import { audio } from './audio'
+import { toFixedNumber } from './helpers'
+import { orientation, orientationInit } from './orientation'
 import { settings, settingsInit } from './settings'
 import { socket, socketInit } from './websocket'
 
@@ -42,24 +44,19 @@ export function motionInit() {
     maximum: 0, // Максимальное значение акселерометра по трём осям
     maximumOnSession: 0,
     isMotion: false, // Маркер того, сработал ли датчик выше отсечки threshold
+    orientation: 0,
   }
 
   let previousMaximumMotion = 0
 
   // HTML-элементы, где будут отображаться эти значения
-  // let alphaElement = document.querySelector('.motion__alpha')
-  // let betaElement = document.querySelector('.motion__beta')
-  // let gammaElement = document.querySelector('.motion__gamma')
-  // let maximumElement = document.querySelector('.motion__maximum')
-  // let intervalElement = document.querySelector('.motion__interval')
-  // let isMotionElement = document.querySelector('.motion__is-motion')
-
   let alphaElement = null
   let betaElement = null
   let gammaElement = null
   let maximumElement = null
   let intervalElement = null
   let isMotionElement = null
+  let orientationElement = null
 
   let connectionsToServer = document.querySelector('.connections__to-server')
   let connectionsStatus = document.querySelector('.connections__status')
@@ -83,6 +80,7 @@ export function motionInit() {
       maximumElement = document.querySelector('.frontendDesktop .motion__maximum')
       intervalElement = document.querySelector('.frontendDesktop .motion__interval')
       isMotionElement = document.querySelector('.frontendDesktop .motion__is-motion')
+      orientationElement = document.querySelector('.frontendDesktop .motion__orientation')
 
       // Включаем сокет, чтобы слушать внешние события движения
       socketInit()
@@ -128,6 +126,7 @@ export function motionInit() {
           betaElement.innerText = motion.beta
           gammaElement.innerText = motion.gamma
           maximumElement.innerText = motion.maximumOnSession
+          orientationElement.innerText = motion.orientation
 
           isMotionElement.classList.add('motion--yes')
         } else {
@@ -155,18 +154,22 @@ export function motionInit() {
       maximumElement = document.querySelector('.frontendMobile .motion__maximum')
       intervalElement = document.querySelector('.frontendMobile .motion__interval')
       isMotionElement = document.querySelector('.frontendMobile .motion__is-motion')
+      orientationElement = document.querySelector('.frontendMobile .motion__orientation')
 
       // Инициализируем объект настроек и слушатели событий интерфейса
       settingsInit()
+
+      // Включаем гироскоп
+      orientationInit()
 
       isDesktop = false
       receiverRegimeIsInit = true
     }
 
     if (!isDesktop) {
-      motion.alpha = Math.abs(event.acceleration.x.toFixed(1))
-      motion.beta = Math.abs(event.acceleration.y.toFixed(1))
-      motion.gamma = Math.abs(event.acceleration.z.toFixed(1))
+      motion.alpha = Math.abs(toFixedNumber(event.acceleration.x, 1))
+      motion.beta = Math.abs(toFixedNumber(event.acceleration.y, 1))
+      motion.gamma = Math.abs(toFixedNumber(event.acceleration.z, 1))
 
       // Здесь у нас сводятся все движения к наибыстрейшему
       // Также отсекаем отрицательные значения, т.к. нас интересует сам факт движения
@@ -177,10 +180,11 @@ export function motionInit() {
         motion.isMotion = true
 
         // Сравниваем с предыдущим значением и находим наибольшее
-        previousMaximumMotion =
-          motion.maximum > previousMaximumMotion ? motion.maximum : previousMaximumMotion
+        previousMaximumMotion = motion.maximum > previousMaximumMotion ? motion.maximum : previousMaximumMotion
 
         motion.maximumOnSession = previousMaximumMotion
+
+        motion.orientation = orientation
 
         // Заполняем отчёт
         alphaElement.innerText = motion.alpha
@@ -190,9 +194,7 @@ export function motionInit() {
         intervalElement.innerText = event.interval
         isMotionElement.innerText = motion.isMotion
         isMotionElement.classList.add('motion--yes')
-
-        // TODO: сделать троттл-лимит, считать сколько сейчас играет дорожек
-        // TODO: тоны должны генериться не чаще 1 в 50мс
+        orientationElement.innerText = motion.orientation
 
         // Генерируем звук на смартфоне
         if (settings.audio.synthesisRegime === 'local') {
@@ -218,5 +220,3 @@ export function motionInit() {
     }
   }
 }
-
-// TODO: юзать ли отрицательные числа
