@@ -41,7 +41,6 @@ let gainNode = null
 function single(motion) {
   // Собираем связку, делаем это только один раз в начале работы алгоритма
   if (!oscillatorIsInit) {
-    currentTime = audioContext.currentTime
     oscillator = audioContext.createOscillator()
     biquadFilter = audioContext.createBiquadFilter()
     gainNode = audioContext.createGain()
