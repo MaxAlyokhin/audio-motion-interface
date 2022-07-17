@@ -9,7 +9,10 @@ window.addEventListener('DOMContentLoaded', () => {
     'click',
     function () {
       motionInit()
-      this.classList.add('run--is-running')
+      document.querySelector('.cover').style.opacity = 0
+      setTimeout(() => {
+        document.querySelector('.cover').style.display = 'none'
+      }, 200)
     },
     // Сработает только один раз
     { once: true }

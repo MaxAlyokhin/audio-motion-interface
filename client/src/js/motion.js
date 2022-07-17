@@ -10,7 +10,7 @@
 import { audio } from './audio'
 import { toFixedNumber } from './helpers'
 import { orientation, orientationInit } from './orientation'
-import { settings, settingsInit } from './settings'
+import { settings, settingsInit, syncSettingsFrontend } from './settings'
 import { socket, socketInit } from './websocket'
 
 export function motionInit() {
@@ -50,14 +50,12 @@ export function motionInit() {
   let previousMaximumMotion = 0
 
   // HTML-элементы, где будут отображаться эти значения
-  let alphaElement = null
-  let betaElement = null
-  let gammaElement = null
-  let maximumElement = null
-  let intervalElement = null
-  let isMotionElement = null
-  let orientationElement = null
-
+  let alphaElement = document.querySelector('.motion__alpha')
+  let betaElement = document.querySelector('.motion__beta')
+  let gammaElement = document.querySelector('.motion__gamma')
+  let maximumElement = document.querySelector('.motion__maximum')
+  let isMotionElement = document.querySelector('.motion__is-motion')
+  let orientationElement = document.querySelector('.motion__orientation')
   let connectionsToServer = document.querySelector('.connections__to-server')
   let connectionsStatus = document.querySelector('.connections__status')
 
@@ -71,16 +69,10 @@ export function motionInit() {
   function onMotion(event) {
     // Если датчика нет, то режим приёмника (десктоп-режим)
     if (event.acceleration.x === null && receiverRegimeIsInit === false) {
-      // Включаем фронтэнд для десктопа
-      document.querySelector('.frontendDesktop').style.display = 'block'
-
-      alphaElement = document.querySelector('.frontendDesktop .motion__alpha')
-      betaElement = document.querySelector('.frontendDesktop .motion__beta')
-      gammaElement = document.querySelector('.frontendDesktop .motion__gamma')
-      maximumElement = document.querySelector('.frontendDesktop .motion__maximum')
-      intervalElement = document.querySelector('.frontendDesktop .motion__interval')
-      isMotionElement = document.querySelector('.frontendDesktop .motion__is-motion')
-      orientationElement = document.querySelector('.frontendDesktop .motion__orientation')
+      // Фронтэнд для десктопа
+      document.querySelectorAll('.mobile').forEach((element) => {
+        element.style.display = 'none'
+      })
 
       // Включаем сокет, чтобы слушать внешние события движения
       socketInit()
@@ -113,6 +105,9 @@ export function motionInit() {
           connectionsStatus.classList.remove('connections--wait')
           connectionsStatus.classList.add('connections--ready')
 
+          // При подключении смартфона к десктопу настройки десктопа переписывают настройки смартфона
+          settings.audio.synthesisRegime = 'remote'
+          socket.emit('settings message', settings)
           // console.log(socket.request.headers);
         }
       })
@@ -121,12 +116,13 @@ export function motionInit() {
       socket.on('motion message', (motion) => {
         isMotionElement.innerText = motion.isMotion
 
+        orientationElement.innerText = motion.orientation
+
         if (motion.isMotion && motion.maximum > settings.motion.threshold) {
           alphaElement.innerText = motion.alpha
           betaElement.innerText = motion.beta
           gammaElement.innerText = motion.gamma
           maximumElement.innerText = motion.maximumOnSession
-          orientationElement.innerText = motion.orientation
 
           isMotionElement.classList.add('motion--yes')
         } else {
@@ -137,27 +133,18 @@ export function motionInit() {
       })
       // По обновлению объекта настроек
       socket.on('settings message', (settingsData) => {
-        Object.assign(settings, settingsData)
+        Object.assign(settings, settingsData) // Обновляем объект
+        syncSettingsFrontend(settingsData) // Обновляем input-поля
       })
 
       isDesktop = true
       receiverRegimeIsInit = true
     }
+
     // Датчик есть (смартфон-режим)
     else if (receiverRegimeIsInit === false) {
       // Включаем фронтэнд для смартфона
-      document.querySelector('.frontendMobile').style.display = 'block'
-
-      alphaElement = document.querySelector('.frontendMobile .motion__alpha')
-      betaElement = document.querySelector('.frontendMobile .motion__beta')
-      gammaElement = document.querySelector('.frontendMobile .motion__gamma')
-      maximumElement = document.querySelector('.frontendMobile .motion__maximum')
-      intervalElement = document.querySelector('.frontendMobile .motion__interval')
-      isMotionElement = document.querySelector('.frontendMobile .motion__is-motion')
-      orientationElement = document.querySelector('.frontendMobile .motion__orientation')
-
-      // Инициализируем объект настроек и слушатели событий интерфейса
-      settingsInit()
+      document.querySelector('.info').style.display = 'none'
 
       // Включаем гироскоп
       orientationInit()
@@ -175,8 +162,11 @@ export function motionInit() {
       // Также отсекаем отрицательные значения, т.к. нас интересует сам факт движения
       motion.maximum = Math.max(motion.alpha, motion.beta, motion.gamma)
 
+      motion.orientation = orientation
+      orientationElement.innerText = motion.orientation
+
       // Здесь отсекаем часть событий ниже порога threshold
-      if (motion.maximum > settings.motion.threshold) {
+      if (motion.maximum >= settings.motion.threshold) {
         motion.isMotion = true
 
         // Сравниваем с предыдущим значением и находим наибольшее
@@ -184,17 +174,13 @@ export function motionInit() {
 
         motion.maximumOnSession = previousMaximumMotion
 
-        motion.orientation = orientation
-
         // Заполняем отчёт
         alphaElement.innerText = motion.alpha
         betaElement.innerText = motion.beta
         gammaElement.innerText = motion.gamma
         maximumElement.innerText = previousMaximumMotion
-        intervalElement.innerText = event.interval
         isMotionElement.innerText = motion.isMotion
         isMotionElement.classList.add('motion--yes')
-        orientationElement.innerText = motion.orientation
 
         // Генерируем звук на смартфоне
         if (settings.audio.synthesisRegime === 'local') {
@@ -219,4 +205,6 @@ export function motionInit() {
       }
     }
   }
+
+  settingsInit()
 }

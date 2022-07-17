@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('motion message', (motionData) => {
-    console.log(motionData)
+    // console.log(motionData)
     io.emit('motion message', motionData)
   })
   socket.on('settings message', (settingsData) => {

@@ -10,7 +10,18 @@
 
 import { div, getNearbyValues, toFixedNumber } from './helpers'
 
+// Вычисленный звукоряд
 export const notes = []
+
+let tunerMinElement = null
+let tunerActualElement = null
+let tunerMaxElement = null
+
+window.addEventListener('DOMContentLoaded', () => {
+  tunerMinElement = document.querySelector('.tuner__min')
+  tunerActualElement = document.querySelector('.tuner__actual')
+  tunerMaxElement = document.querySelector('.tuner__max')
+})
 
 export function notesInit(root = 8.1757, octaveAmount = 12, tonesInOctaveAmount = 12) {
   let tonesAmount = octaveAmount * tonesInOctaveAmount // Количество тонов
@@ -21,9 +32,7 @@ export function notesInit(root = 8.1757, octaveAmount = 12, tonesInOctaveAmount 
 }
 
 // Функция преобразует индекс массива notes[] в название ноты
-
 const notesNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-
 export function getNoteName(frequency) {
   // Находим индекс в массиве нот
   const notesIndex = notes.indexOf(frequency)
@@ -47,9 +56,17 @@ export function getNoteName(frequency) {
 }
 
 // Функция приводит звучащий звук к ближайшей ноте
-// pitchCorrection
 export function pitchDetection(frequency) {
   const nearbyValues = getNearbyValues(frequency, notes)
-  console.log(nearbyValues[0], nearbyValues[1])
-  console.log(getNoteName(nearbyValues[0]), getNoteName(nearbyValues[1]))
+
+  tunerMinElement.innerText = `${nearbyValues[0]} / ${getNoteName(nearbyValues[0])}`
+  // Если попали в ноту, то выводим её имя
+  if (frequency === notes[notes.indexOf(nearbyValues[0]) + 1]) {
+    tunerActualElement.innerText = getNoteName(notes[notes.indexOf(nearbyValues[0]) + 1])
+  } else {
+    tunerActualElement.innerText = frequency
+  }
+
+  tunerMaxElement.innerText = `${nearbyValues[1]} / ${getNoteName(nearbyValues[1])}`
+  tunerActualElement.style.left = `${((frequency - nearbyValues[0]) / (nearbyValues[1] - nearbyValues[0])) * 100}%`
 }
