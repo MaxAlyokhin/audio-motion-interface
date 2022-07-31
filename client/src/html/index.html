@@ -114,9 +114,11 @@
           <span>Диапазон частот:</span>
           <div class="frequencies-range__container">
             <span>От:</span>
-            <input type="number" name="frequencies-range-from" class="frequencies-range-from" />
+            <input type="number" min="0" max="24000" name="frequencies-range-from" class="frequencies-range-from" />
+          </div>
+          <div class="frequencies-range__container">
             <span>До:</span>
-            <input type="number" name="frequencies-range-to" class="frequencies-range-to" />
+            <input type="number" min="0" max="24000" name="frequencies-range-to" class="frequencies-range-to" />
           </div>
         </div>
 
@@ -124,15 +126,17 @@
           <span>Диапазон нот:</span>
           <div class="notes-range__container">
             <span>От:</span>
-            <input type="number" name="notes-range-from" class="notes-range-from" />
+            <input type="number" min="0" name="notes-range-from" class="notes-range-from" />
+          </div>
+          <div class="notes-range__container">
             <span>До:</span>
-            <input type="number" name="notes-range-to" class="notes-range-to" />
+            <input type="number" min="0" name="notes-range-to" class="notes-range-to" />
           </div>
         </div>
 
         <div>
           <span>Отсечка датчика (м/с²): </span>
-          <input type="number" name="threshold" class="threshold" />
+          <input type="number" min="0" name="threshold" class="threshold" />
         </div>
         <div>
           <span>Тип волны:</span>
@@ -145,18 +149,20 @@
         </div>
         <div class="duration-container">
           <span>Длительность тона:</span>
-          <input type="number" name="duration" class="duration" />
+          <input type="number" min="0" name="duration" class="duration" />
         </div>
         <div class="attenuation-container">
           <span>Затухание:</span>
-          <input type="number" name="attenuation" class="attenuation" />
+          <input type="number" min="0" name="attenuation" class="attenuation" />
         </div>
         <div>
           <span>Частота фильтра:</span>
-          <input type="number" name="filter" class="filter" />
+          <input type="number" min="0" name="filter" class="filter" />
         </div>
         <div>
           <span>Громкость:</span>
+          <input type="number" min="0" name="gain" class="gain" />
+        </div>
         <div class="gain-generation">
           <span>Влияние скорости на громкость:</span>
           <div class="gain-generation__container">

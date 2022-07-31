@@ -48,6 +48,8 @@ export function motionInit() {
   }
 
   let previousMaximumMotion = 0
+  let previousOrientation = null
+  let previousIsMotion = null
 
   // HTML-элементы, где будут отображаться эти значения
   let alphaElement = document.querySelector('.motion__alpha')
@@ -114,9 +116,16 @@ export function motionInit() {
 
       // По обновлению объекта движения
       socket.on('motion message', (motion) => {
-        isMotionElement.innerText = motion.isMotion
+        // Обновляем DOM только при изменении значения
+        if (previousIsMotion !== motion.isMotion) {
+          isMotionElement.innerText = motion.isMotion
+          previousIsMotion = motion.isMotion
+        }
 
-        orientationElement.innerText = motion.orientation
+        if (previousOrientation !== motion.orientation) {
+          orientationElement.innerText = motion.orientation
+          previousOrientation = motion.orientation
+        }
 
         if (motion.isMotion && motion.maximum > settings.motion.threshold) {
           alphaElement.innerText = motion.alpha
@@ -163,7 +172,11 @@ export function motionInit() {
       motion.maximum = Math.max(motion.alpha, motion.beta, motion.gamma)
 
       motion.orientation = orientation
-      orientationElement.innerText = motion.orientation
+      // Обновляем DOM только при изменении значения
+      if (previousOrientation !== motion.orientation) {
+        orientationElement.innerText = motion.orientation
+        previousOrientation = motion.orientation
+      }
 
       // Здесь отсекаем часть событий ниже порога threshold
       if (motion.maximum >= settings.motion.threshold) {
@@ -179,7 +192,10 @@ export function motionInit() {
         betaElement.innerText = motion.beta
         gammaElement.innerText = motion.gamma
         maximumElement.innerText = previousMaximumMotion
-        isMotionElement.innerText = motion.isMotion
+        if (previousIsMotion !== motion.isMotion) {
+          isMotionElement.innerText = motion.isMotion
+          previousIsMotion = motion.isMotion
+        }
         isMotionElement.classList.add('motion--yes')
 
         // Генерируем звук на смартфоне
@@ -192,7 +208,10 @@ export function motionInit() {
         }
       } else {
         motion.isMotion = false
-        isMotionElement.innerText = motion.isMotion
+        if (previousIsMotion !== motion.isMotion) {
+          isMotionElement.innerText = motion.isMotion
+          previousIsMotion = motion.isMotion
+        }
         isMotionElement.classList.remove('motion--yes')
 
         // Здесь тоже вызываем с isMotion = false, чтобы закончить работу осциллятора

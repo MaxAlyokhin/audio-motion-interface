@@ -17,6 +17,8 @@ notesInit()
 // Генерируемая частота звука и html-элемент, куда будем её записывать
 let frequency = null
 let frequencyElement = null
+let previousFrequency = null
+
 let countElement = null // Количество осцилляторов в plural-режиме
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -25,13 +27,6 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 // Связка это осциллятор => фильтр => громкость
-
-// TODO: в плюрале чтобы лишние ноты не создавались (дребезг контакта) когда скорость близка к отсечке
-// TODO: показывать в интерфейсе сколько нот играет параллельно в плюрале
-// TODO: режим левши/правши
-// TODO: сделать контроль перехода на противоположную полусферу
-// TODO: режим отключённого интерфейса (переключение происходит по жесту либо нажатию двух удалённых точек на экране)
-// TODO: баг при переходе между стратегиями синтеза - последний звук остаётся играть
 
 // Режим единственного осциллятора
 
@@ -79,7 +74,12 @@ function single(motion) {
     frequency = notes[minNote + Math.floor(motion.orientation * ((maxNote - minNote) / 180))]
   }
 
-  frequencyElement.innerText = frequency
+  // Обновляем DOM только при изменении значения
+  if (previousFrequency !== frequency) {
+    frequencyElement.innerText = frequency
+    previousFrequency = frequency
+  }
+
   pitchDetection(frequency)
 
   oscillator.type = settings.audio.oscillatorType
@@ -132,7 +132,13 @@ function plural(motion) {
     // Начиная с minNote в звукоряде наверх (maxNote - minNote) нот по 180 градусам распределяем
     frequency = notes[minNote + Math.floor(motion.orientation * ((maxNote - minNote) / 180))]
   }
-  frequencyElement.innerText = frequency
+
+  // Обновляем DOM только при изменении значения
+  if (previousFrequency !== frequency) {
+    frequencyElement.innerText = frequency
+    previousFrequency = frequency
+  }
+
   pitchDetection(frequency)
 
   // При превышении отсечки создаём связку
@@ -191,8 +197,6 @@ function plural(motion) {
     }, settings.audio.toneDuration * 1000)
 
     motionIsOff = true
-
-    console.log(oscillatorArray.length)
   }
 }
 
