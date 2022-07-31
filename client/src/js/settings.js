@@ -18,6 +18,7 @@ let waveElement = null
 let filterElement = null
 let gainElement = null
 let countContainerElement = null
+let gainGenerationElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -32,6 +33,7 @@ window.addEventListener('DOMContentLoaded', () => {
   frequenciesRangeElement = document.querySelector('.frequencies-range')
   notesRangeElement = document.querySelector('.notes-range')
   countContainerElement = document.querySelector('.motion__count-container')
+  gainGenerationElement = document.querySelector('.gain-generation__container')
 
   // Так как при инициализации у нас single-режим и непрерывный режим, то можно сразу убрать элементы
   durationElement.style.display = 'none'
@@ -69,6 +71,12 @@ export function syncSettingsFrontend(settings) {
     frequenciesRangeElement.style.display = 'none'
     notesRangeElement.style.display = 'flex'
   }
+  if (settings.motion.gainGeneration === true) {
+    document.querySelector('#speedgain-yes').checked = true
+  }
+  if (settings.motion.gainGeneration === false) {
+    document.querySelector('#speedgain-no').checked = true
+  }
   frequenciesRangeElement.querySelector('.frequencies-range-from').value = settings.audio.frequenciesRange.from
   frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
   notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
@@ -85,6 +93,7 @@ export function syncSettingsFrontend(settings) {
 export let settings = {
   motion: {
     threshold: 1.0,
+    gainGeneration: true,
   },
   audio: {
     toneDuration: 1.2,
@@ -110,7 +119,8 @@ export let settings = {
 export const mutations = {
   motion: {
     setThreshold: (threshold) => {
-      settings.motion.threshold = threshold
+    setGainGeneration: (value) => {
+      value === 'true' ? (settings.motion.gainGeneration = true) : (settings.motion.gainGeneration = false)
       syncSettings()
     },
   },
@@ -229,6 +239,10 @@ export function settingsInit() {
 
   thresholdElement.addEventListener('input', function () {
     mutations.motion.setThreshold(parseFloat(this.value))
+  })
+
+  gainGenerationElement.addEventListener('change', function (event) {
+    mutations.motion.setGainGeneration(event.target.value)
   })
 
   frequenciesRangeElement.addEventListener('input', function (event) {

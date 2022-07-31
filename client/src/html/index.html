@@ -157,7 +157,18 @@
         </div>
         <div>
           <span>Громкость:</span>
-          <input type="number" name="gain" class="gain" />
+        <div class="gain-generation">
+          <span>Влияние скорости на громкость:</span>
+          <div class="gain-generation__container">
+            <div class="radio-element">
+              <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
+              <label for="speedgain-yes">Да</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="speedgain" id="speedgain-no" value="false" />
+              <label for="speedgain-no">Нет</label>
+            </div>
+          </div>
         </div>
         <div>
           <div>Errors:</div>

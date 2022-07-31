@@ -224,19 +224,7 @@ select
     color: $green
     font-size: 5px !important
 
-.tuner
-  position: relative
-  margin-top: 15px
-
-  &__min
-  &__actual
-    position: absolute
-    transition: none
-  &__max
-    position: absolute
-    right: 0
-
-.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range
+.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range, .gain-generation
   flex-direction: column
   align-items: flex-start !important
 
@@ -248,3 +236,9 @@ select
   &__container
     width: 100%
     justify-content: space-between
+    width: 100%
+    margin-top: 15px
+
+.frequency-regime, .oscillator-regime, .gain-generation
+  @media (min-width: 500px)
+      flex-direction: row

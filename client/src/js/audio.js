@@ -21,6 +21,7 @@ let countElement = null // Количество осцилляторов в plur
 
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
+  countElement = document.querySelector('.motion__count')
 })
 
 // Связка это осциллятор => фильтр => громкость
@@ -88,7 +89,11 @@ function single(motion) {
   // В зависимости от скорости определяем громкость
   // Если движение закончилось, то тушим осциллятор
   if (motion.isMotion) {
-    gainNode.gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+    if (settings.motion.gainGeneration === true) {
+      gainNode.gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+    } else {
+      gainNode.gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
+    }
   } else {
     gainNode.gain.setTargetAtTime(settings.audio.attenuation, audioContext.currentTime, 0.005)
   }
@@ -156,7 +161,11 @@ function plural(motion) {
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
     biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
 
-    gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+    if (settings.motion.gainGeneration === true) {
+      gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+    } else {
+      gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
+    }
     countElement.innerText = oscillatorArray.length
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
