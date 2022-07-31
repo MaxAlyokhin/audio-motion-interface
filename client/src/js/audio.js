@@ -17,6 +17,7 @@ notesInit()
 // Генерируемая частота звука и html-элемент, куда будем её записывать
 let frequency = null
 let frequencyElement = null
+let countElement = null // Количество осцилляторов в plural-режиме
 
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
@@ -156,8 +157,7 @@ function plural(motion) {
     biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
 
     gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
-
-    console.log(oscillatorArray.length)
+    countElement.innerText = oscillatorArray.length
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
   // значит мы поймали последнее событие движения (движение остановлено).
@@ -177,6 +177,8 @@ function plural(motion) {
       oscillatorArray.shift()
       biquadFilterArray.shift()
       gainNodeArray.shift()
+
+      countElement.innerText = oscillatorArray.length
     }, settings.audio.toneDuration * 1000)
 
     motionIsOff = true

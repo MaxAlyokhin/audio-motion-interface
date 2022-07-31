@@ -17,6 +17,7 @@ let thresholdElement = null
 let waveElement = null
 let filterElement = null
 let gainElement = null
+let countContainerElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -30,11 +31,13 @@ window.addEventListener('DOMContentLoaded', () => {
   attenuationElement = document.querySelector('.attenuation-container')
   frequenciesRangeElement = document.querySelector('.frequencies-range')
   notesRangeElement = document.querySelector('.notes-range')
+  countContainerElement = document.querySelector('.motion__count-container')
 
   // Так как при инициализации у нас single-режим и непрерывный режим, то можно сразу убрать элементы
   durationElement.style.display = 'none'
   attenuationElement.style.display = 'none'
   notesRangeElement.style.display = 'none'
+  countContainerElement.style.display = 'none'
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -148,10 +151,12 @@ export const mutations = {
       if (oscillatorRegime === 'single') {
         durationElement.style.display = 'none'
         attenuationElement.style.display = 'none'
+        countContainerElement.style.display = 'none'
       }
       if (oscillatorRegime === 'plural') {
         durationElement.style.display = 'flex'
         attenuationElement.style.display = 'flex'
+        countContainerElement.style.display = 'flex'
       }
 
       syncSettings()
