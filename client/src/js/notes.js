@@ -9,21 +9,22 @@
 // const tonesArray[] - массив тонов (звукоряд)
 
 import { div, getNearbyValues, toFixedNumber } from './helpers'
+import { settings } from './settings'
 
-// Вычисленный звукоряд
-export const notes = []
-
-let tunerMinElement = null
+export const notes = [] // Вычисленный звукоряд
 let tunerActualElement = null
-let tunerMaxElement = null
+let percent = null
+let nearbyValues = null
+let maxNote = null
+let actualNote = null
+let previousNote = null
 
 window.addEventListener('DOMContentLoaded', () => {
-  tunerMinElement = document.querySelector('.tuner__min')
   tunerActualElement = document.querySelector('.tuner__actual')
-  tunerMaxElement = document.querySelector('.tuner__max')
 })
 
-export function notesInit(root = 8.1757, octaveAmount = 12, tonesInOctaveAmount = 12) {
+// Генератор звукоряда
+export function notesInit(root = 8.1757, octaveAmount = 11, tonesInOctaveAmount = 12) {
   let tonesAmount = octaveAmount * tonesInOctaveAmount // Количество тонов
 
   for (let i = 0; i < tonesAmount; i++) {
@@ -39,16 +40,14 @@ export function getNoteName(frequency) {
 
   // Если такого значения в массиве нет, значит мы звучим за диапазоном нот
   if (notesIndex < 0) {
-    return `За диапазоном нот`
+    return
   }
 
   // Номер октавы
   const octave = div(notesIndex, 12) - 1
-
   // Порядковый номер ноты в рамках октавы
-  // Например, D == 3 (C - C# - D)
+  // Например, D === 3 (C - C# - D)
   const noteNumberOnOctave = notesIndex + 1 - 12 * (octave + 1)
-
   // Собираем название ноты вместе с номером октавы
   const noteName = notesNames[noteNumberOnOctave - 1] + String(octave)
 
@@ -57,16 +56,25 @@ export function getNoteName(frequency) {
 
 // Функция приводит звучащий звук к ближайшей ноте
 export function pitchDetection(frequency) {
-  const nearbyValues = getNearbyValues(frequency, notes)
+  nearbyValues = getNearbyValues(frequency, notes)
 
-  tunerMinElement.innerText = `${nearbyValues[0]} / ${getNoteName(nearbyValues[0])}`
-  // Если попали в ноту, то выводим её имя
-  if (frequency === notes[notes.indexOf(nearbyValues[0]) + 1]) {
-    tunerActualElement.innerText = getNoteName(notes[notes.indexOf(nearbyValues[0]) + 1])
+  // В темперированном режиме сразу выводим имя ноты
+  // В непрерывном находим вышестоящую ноту и считаем проценты от нашего положения
+  // на отрезке между соседними нотами
+  // Обновляем DOM только при изменении значения
+  if (settings.audio.frequencyRegime === 'tempered') {
+    actualNote = getNoteName(frequency)
+
+    if (previousNote !== actualNote) {
+      tunerActualElement.innerText = actualNote
+    }
   } else {
-    tunerActualElement.innerText = frequency
-  }
+    maxNote = getNoteName(nearbyValues[1])
+    percent = toFixedNumber(((frequency - nearbyValues[0]) / (nearbyValues[1] - nearbyValues[0])) * 100, 1)
 
-  tunerMaxElement.innerText = `${nearbyValues[1]} / ${getNoteName(nearbyValues[1])}`
-  tunerActualElement.style.left = `${((frequency - nearbyValues[0]) / (nearbyValues[1] - nearbyValues[0])) * 100}%`
+    if (previousNote !== `${maxNote} (${percent}%)`) {
+      tunerActualElement.innerText = `${maxNote} (${percent}%)`
+      previousNote = `${maxNote} (${percent}%)`
+    }
+  }
 }
