@@ -16,7 +16,7 @@ import { socket, socketInit } from './websocket'
 export function motionInit() {
   // Проверяем наличие акселерометра на устройстве
   // iOS 13
-  if (typeof DeviceMotionEvent.requestPermission === 'function') {
+  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
     DeviceMotionEvent.requestPermission()
       .then((response) => {
         if (response == 'granted') {
@@ -83,13 +83,13 @@ export function motionInit() {
 
       // Вешаем слушатели вебсокет-событий
       socket.on('connect', () => {
-        connectionsToServer.innerText = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
         connectionsToServer.classList.remove('connections--wait', 'connections--error')
         connectionsToServer.classList.add('connections--ready')
       })
 
       socket.on('disconnect', () => {
-        connectionsToServer.innerText = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
         connectionsToServer.classList.remove('connections--wait', 'connections--ready')
         connectionsToServer.classList.add('connections--error')
       })
@@ -97,13 +97,13 @@ export function motionInit() {
       socket.on('connection message', (clientsSize) => {
         // Если остались только мы сами
         if (clientsSize === 1) {
-          connectionsStatus.innerText = `Ожидание подключений...`
+          connectionsStatus.textContent = `Ожидание подключений...`
           connectionsStatus.classList.remove('connections--ready')
           connectionsStatus.classList.add('connections--wait')
         }
         if (clientsSize > 1) {
           // Минус наше устройство
-          connectionsStatus.innerText = `Подключено (${clientsSize - 1})`
+          connectionsStatus.textContent = `Подключено (${clientsSize - 1})`
           connectionsStatus.classList.remove('connections--wait')
           connectionsStatus.classList.add('connections--ready')
 
@@ -118,20 +118,20 @@ export function motionInit() {
       socket.on('motion message', (motion) => {
         // Обновляем DOM только при изменении значения
         if (previousIsMotion !== motion.isMotion) {
-          isMotionElement.innerText = motion.isMotion
+          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
 
         if (previousOrientation !== motion.orientation) {
-          orientationElement.innerText = motion.orientation
+          settings.lite ? false : (orientationElement.textContent = motion.orientation)
           previousOrientation = motion.orientation
         }
 
         if (motion.isMotion && motion.maximum > settings.motion.threshold) {
-          alphaElement.innerText = motion.alpha
-          betaElement.innerText = motion.beta
-          gammaElement.innerText = motion.gamma
-          maximumElement.innerText = motion.maximumOnSession
+          settings.lite ? false : (alphaElement.textContent = motion.alpha)
+          settings.lite ? false : (betaElement.textContent = motion.beta)
+          settings.lite ? false : (gammaElement.textContent = motion.gamma)
+          settings.lite ? false : (maximumElement.textContent = motion.maximumOnSession)
 
           isMotionElement.classList.add('motion--yes')
         } else {
@@ -174,7 +174,7 @@ export function motionInit() {
       motion.orientation = orientation
       // Обновляем DOM только при изменении значения
       if (previousOrientation !== motion.orientation) {
-        orientationElement.innerText = motion.orientation
+        settings.lite ? false : (orientationElement.textContent = motion.orientation)
         previousOrientation = motion.orientation
       }
 
@@ -188,12 +188,12 @@ export function motionInit() {
         motion.maximumOnSession = previousMaximumMotion
 
         // Заполняем отчёт
-        alphaElement.innerText = motion.alpha
-        betaElement.innerText = motion.beta
-        gammaElement.innerText = motion.gamma
-        maximumElement.innerText = previousMaximumMotion
+        settings.lite ? false : (alphaElement.textContent = motion.alpha)
+        settings.lite ? false : (betaElement.textContent = motion.beta)
+        settings.lite ? false : (gammaElement.textContent = motion.gamma)
+        settings.lite ? false : (maximumElement.textContent = previousMaximumMotion)
         if (previousIsMotion !== motion.isMotion) {
-          isMotionElement.innerText = motion.isMotion
+          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
         isMotionElement.classList.add('motion--yes')
@@ -209,7 +209,7 @@ export function motionInit() {
       } else {
         motion.isMotion = false
         if (previousIsMotion !== motion.isMotion) {
-          isMotionElement.innerText = motion.isMotion
+          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
         isMotionElement.classList.remove('motion--yes')

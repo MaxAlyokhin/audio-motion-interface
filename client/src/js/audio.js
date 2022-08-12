@@ -76,7 +76,7 @@ function single(motion) {
 
   // Обновляем DOM только при изменении значения
   if (previousFrequency !== frequency) {
-    frequencyElement.innerText = frequency
+    settings.lite ? false : (frequencyElement.textContent = frequency)
     previousFrequency = frequency
   }
 
@@ -135,7 +135,7 @@ function plural(motion) {
 
   // Обновляем DOM только при изменении значения
   if (previousFrequency !== frequency) {
-    frequencyElement.innerText = frequency
+    settings.lite ? false : (frequencyElement.textContent = frequency)
     previousFrequency = frequency
   }
 
@@ -172,7 +172,7 @@ function plural(motion) {
     } else {
       gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
     }
-    countElement.innerText = oscillatorArray.length
+    settings.lite ? false : (countElement.textContent = oscillatorArray.length)
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
   // значит мы поймали последнее событие движения (движение остановлено).
@@ -193,7 +193,7 @@ function plural(motion) {
       biquadFilterArray.shift()
       gainNodeArray.shift()
 
-      countElement.innerText = oscillatorArray.length
+      settings.lite ? false : (countElement.textContent = oscillatorArray.length)
     }, settings.audio.toneDuration * 1000)
 
     motionIsOff = true
