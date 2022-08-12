@@ -19,6 +19,7 @@ let filterElement = null
 let gainElement = null
 let countContainerElement = null
 let gainGenerationElement = null
+let liteElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -34,6 +35,7 @@ window.addEventListener('DOMContentLoaded', () => {
   notesRangeElement = document.querySelector('.notes-range')
   countContainerElement = document.querySelector('.motion__count-container')
   gainGenerationElement = document.querySelector('.gain-generation__container')
+  liteElement = document.querySelector('.lite__container')
 
   // Так как при инициализации у нас single-режим и непрерывный режим, то можно сразу убрать элементы
   durationElement.style.display = 'none'
@@ -91,6 +93,7 @@ export function syncSettingsFrontend(settings) {
 
 // Настройки системы
 export let settings = {
+  lite: false,
   motion: {
     threshold: 1.0,
     gainGeneration: true,
@@ -117,6 +120,10 @@ export let settings = {
 
 // Мутации
 export const mutations = {
+  setLite: (value) => {
+    value === 'true' ? (settings.lite = true) : (settings.lite = false)
+    syncSettings()
+  },
   motion: {
     setThreshold: (threshold) => {
       isNaN(threshold) ? (settings.motion.threshold = 0) : (settings.motion.threshold = threshold)
@@ -312,6 +319,10 @@ export function settingsInit() {
 
   gainElement.addEventListener('input', function () {
     mutations.audio.setGain(parseFloat(this.value))
+  })
+
+  liteElement.addEventListener('change', function (event) {
+    mutations.setLite(event.target.value)
   })
 
   // Заполняем интерфейс дефолтными данными

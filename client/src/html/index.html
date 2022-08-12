@@ -107,6 +107,34 @@
           </div>
         </div>
 
+        <div class="gain-generation">
+          <span>Влияние скорости на громкость:</span>
+          <div class="gain-generation__container">
+            <div class="radio-element">
+              <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
+              <label for="speedgain-yes">Да</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="speedgain" id="speedgain-no" value="false" />
+              <label for="speedgain-no">Нет</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="lite">
+          <span>Режим экономии вычислительных ресурсов:</span>
+          <div class="lite__container">
+            <div class="radio-element">
+              <input type="radio" name="lite" id="lite-yes" value="true" />
+              <label for="lite-yes">Да</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="lite" id="lite-no" value="false" checked />
+              <label for="lite-no">Нет</label>
+            </div>
+          </div>
+        </div>
+
         <div class="frequencies-range">
           <span>Диапазон частот:</span>
           <div class="frequencies-range__container">
@@ -135,6 +163,7 @@
           <span>Отсечка датчика (м/с²): </span>
           <input type="number" min="0" name="threshold" class="threshold" />
         </div>
+
         <div>
           <span>Тип волны:</span>
           <select name="wave" class="wave">
@@ -164,19 +193,7 @@
           <span>Громкость:</span>
           <input type="number" min="0" name="gain" class="gain" />
         </div>
-        <div class="gain-generation">
-          <span>Влияние скорости на громкость:</span>
-          <div class="gain-generation__container">
-            <div class="radio-element">
-              <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
-              <label for="speedgain-yes">Да</label>
-            </div>
-            <div class="radio-element">
-              <input type="radio" name="speedgain" id="speedgain-no" value="false" />
-              <label for="speedgain-no">Нет</label>
-            </div>
-          </div>
-        </div>
+
         <div>
           <div>Errors:</div>
           <div class="errors"></div>
