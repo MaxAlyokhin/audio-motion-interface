@@ -183,7 +183,7 @@ select
 .info
   .regime
     font-weight: 600
-    color: $brown
+    color: $black
 
   .connections
     div
@@ -221,21 +221,7 @@ select
       &::before
         background-color: $red
 
-.notes
-  display: grid
-  grid-template-columns: repeat(12, 1fr)
-  grid-row-gap: 5px
-  margin-top: 15px;
-
-  span
-    font-size: 4px
-
-  &--active
-    font-weight: 600
-    color: $green
-    font-size: 5px !important
-
-.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range, .gain-generation
+.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range, .gain-generation, .lite
   flex-direction: column
   align-items: flex-start !important
 
@@ -249,6 +235,6 @@ select
     width: 100%
     margin-top: 15px
 
-.frequency-regime, .oscillator-regime, .gain-generation
+.frequency-regime, .oscillator-regime, .gain-generation, .lite
   @media (min-width: 500px)
       flex-direction: row

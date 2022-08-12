@@ -22,7 +22,6 @@
         <div class="connections">
           <div class="connections__to-server connections--wait">Подключение к вебсокет-серверу...</div>
           <div class="connections__status connections--wait">Ожидание подключений...</div>
-          <div class="connections__devices"></div>
         </div>
       </div>
 
@@ -64,8 +63,6 @@
           <span class="tuner__actual"></span>
         </div>
       </div>
-
-      <div class="notes"></div>
 
       <div class="settings">
         <div class="synthesis-regime mobile">
@@ -147,18 +144,22 @@
             <option value="triangle">triangle</option>
           </select>
         </div>
+
         <div class="duration-container">
           <span>Длительность тона:</span>
           <input type="number" min="0" name="duration" class="duration" />
         </div>
+
         <div class="attenuation-container">
           <span>Затухание:</span>
           <input type="number" min="0" name="attenuation" class="attenuation" />
         </div>
+
         <div>
           <span>Частота фильтра:</span>
           <input type="number" min="0" name="filter" class="filter" />
         </div>
+
         <div>
           <span>Громкость:</span>
           <input type="number" min="0" name="gain" class="gain" />
