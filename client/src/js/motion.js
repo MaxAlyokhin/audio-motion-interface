@@ -52,6 +52,7 @@ export function motionInit() {
   let previousIsMotion = null
 
   // HTML-элементы, где будут отображаться эти значения
+  let motionElement = document.querySelector('.motion')
   let alphaElement = document.querySelector('.motion__alpha')
   let betaElement = document.querySelector('.motion__beta')
   let gammaElement = document.querySelector('.motion__gamma')
@@ -100,17 +101,18 @@ export function motionInit() {
           connectionsStatus.textContent = `Ожидание подключений...`
           connectionsStatus.classList.remove('connections--ready')
           connectionsStatus.classList.add('connections--wait')
+          motionElement.classList.add('motion--inactive')
         }
         if (clientsSize > 1) {
           // Минус наше устройство
           connectionsStatus.textContent = `Подключено (${clientsSize - 1})`
           connectionsStatus.classList.remove('connections--wait')
           connectionsStatus.classList.add('connections--ready')
+          motionElement.classList.remove('motion--inactive')
 
           // При подключении смартфона к десктопу настройки десктопа переписывают настройки смартфона
           settings.audio.synthesisRegime = 'remote'
           socket.emit('settings message', settings)
-          // console.log(socket.request.headers);
         }
       })
 
