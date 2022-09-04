@@ -24,6 +24,7 @@ let interfaceRegimeElement = null
 let containerElement = null
 let interfaceRegimeOnElement = null
 let interfaceRegimeOnButtonElement = null
+let connectionsToServer = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -44,6 +45,7 @@ window.addEventListener('DOMContentLoaded', () => {
   containerElement = document.querySelector('.container')
   interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
   interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
+  connectionsToServer = document.querySelector('.connections__to-server')
 
   // Так как при инициализации у нас single-режим и непрерывный режим, то можно сразу убрать элементы
   durationElement.style.display = 'none'
@@ -65,12 +67,15 @@ export function syncSettingsFrontend(settings) {
     document.querySelector('#single').checked = true
     durationElement.style.display = 'none'
     attenuationElement.style.display = 'none'
+    countContainerElement.style.display = 'none'
   }
   if (settings.audio.oscillatorRegime === 'plural') {
     document.querySelector('#plural').checked = true
     durationElement.style.display = 'flex'
     attenuationElement.style.display = 'flex'
+    countContainerElement.style.display = 'flex '
   }
+
   if (settings.audio.frequencyRegime === 'continuous') {
     document.querySelector('#continuous').checked = true
     frequenciesRangeElement.style.display = 'flex'
@@ -81,12 +86,21 @@ export function syncSettingsFrontend(settings) {
     frequenciesRangeElement.style.display = 'none'
     notesRangeElement.style.display = 'flex'
   }
+
   if (settings.motion.gainGeneration === true) {
     document.querySelector('#speedgain-yes').checked = true
   }
   if (settings.motion.gainGeneration === false) {
     document.querySelector('#speedgain-no').checked = true
   }
+
+  if (settings.lite === false) {
+    liteElement.querySelector('#lite-no').checked = true
+  }
+  if (settings.lite === true) {
+    liteElement.querySelector('#lite-yes').checked = true
+  }
+
   frequenciesRangeElement.querySelector('.frequencies-range-from').value = settings.audio.frequenciesRange.from
   frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
   notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
@@ -131,6 +145,8 @@ export let settings = {
 export const mutations = {
   setLite: (value) => {
     value === 'true' ? (settings.lite = true) : (settings.lite = false)
+
+    syncSettings()
   },
   setInterfaceRegime: () => {
     settings.interfaceRegime = !settings.interfaceRegime
@@ -189,9 +205,11 @@ export const mutations = {
 
       if (settings.audio.synthesisRegime === 'local') {
         socket.disconnect()
+        document.querySelector('.info').style.display = 'none'
       }
       if (settings.audio.synthesisRegime === 'remote') {
         socket.connect()
+        document.querySelector('.info').style.display = 'block'
       }
     },
     setOscillatorRegime: (oscillatorRegime) => {
@@ -288,6 +306,19 @@ export function settingsInit() {
       socket.on('settings message', (settingsData) => {
         Object.assign(settings, settingsData) // Обновляем объект
         syncSettingsFrontend(settingsData) // Обновляем input-поля
+      })
+
+      // Вешаем слушатели вебсокет-событий
+      socket.on('connect', () => {
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.classList.remove('connections--wait', 'connections--error')
+        connectionsToServer.classList.add('connections--ready')
+      })
+
+      socket.on('disconnect', () => {
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.classList.remove('connections--wait', 'connections--ready')
+        connectionsToServer.classList.add('connections--error')
       })
     }
 

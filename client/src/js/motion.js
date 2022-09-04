@@ -76,6 +76,7 @@ export function motionInit() {
       document.querySelectorAll('.mobile').forEach((element) => {
         element.style.display = 'none'
       })
+      document.querySelector('.info').style.display = 'block'
 
       // Включаем сокет, чтобы слушать внешние события движения
       socketInit()
@@ -90,7 +91,7 @@ export function motionInit() {
       })
 
       socket.on('disconnect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером отсутствует'
         connectionsToServer.classList.remove('connections--wait', 'connections--ready')
         connectionsToServer.classList.add('connections--error')
       })
@@ -130,12 +131,13 @@ export function motionInit() {
         }
 
         if (motion.isMotion && motion.maximum > settings.motion.threshold) {
-          settings.lite ? false : (alphaElement.textContent = motion.alpha)
-          settings.lite ? false : (betaElement.textContent = motion.beta)
-          settings.lite ? false : (gammaElement.textContent = motion.gamma)
-          settings.lite ? false : (maximumElement.textContent = motion.maximumOnSession)
-
-          isMotionElement.classList.add('motion--yes')
+          if (!settings.lite) {
+            alphaElement.textContent = motion.alpha
+            betaElement.textContent = motion.beta
+            gammaElement.textContent = motion.gamma
+            maximumElement.textContent = motion.maximumOnSession
+            isMotionElement.classList.add('motion--yes')
+          }
         } else {
           isMotionElement.classList.remove('motion--yes')
         }
@@ -155,7 +157,9 @@ export function motionInit() {
     // Датчик есть (смартфон-режим)
     else if (receiverRegimeIsInit === false) {
       // Включаем фронтэнд для смартфона
-      document.querySelector('.info').style.display = 'none'
+      document.querySelectorAll('.desktop').forEach((element) => {
+        element.style.display = 'none'
+      })
 
       // Включаем гироскоп
       orientationInit()
@@ -189,16 +193,18 @@ export function motionInit() {
 
         motion.maximumOnSession = previousMaximumMotion
 
-        // Заполняем отчёт
-        settings.lite ? false : (alphaElement.textContent = motion.alpha)
-        settings.lite ? false : (betaElement.textContent = motion.beta)
-        settings.lite ? false : (gammaElement.textContent = motion.gamma)
-        settings.lite ? false : (maximumElement.textContent = previousMaximumMotion)
         if (previousIsMotion !== motion.isMotion) {
           settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
-        isMotionElement.classList.add('motion--yes')
+
+        if (!settings.lite) {
+          alphaElement.textContent = motion.alpha
+          betaElement.textContent = motion.beta
+          gammaElement.textContent = motion.gamma
+          maximumElement.textContent = previousMaximumMotion
+          isMotionElement.classList.add('motion--yes')
+        }
 
         // Генерируем звук на смартфоне
         if (settings.audio.synthesisRegime === 'local') {
@@ -206,6 +212,7 @@ export function motionInit() {
         }
         // Либо отдаём в вебсокет для десктопа
         if (settings.audio.synthesisRegime === 'remote') {
+          audio(motion)
           socket.emit('motion message', motion)
         }
       } else {
@@ -221,6 +228,7 @@ export function motionInit() {
           audio(motion)
         }
         if (settings.audio.synthesisRegime === 'remote') {
+          audio(motion)
           socket.emit('motion message', motion)
         }
       }
