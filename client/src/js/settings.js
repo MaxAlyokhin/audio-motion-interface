@@ -122,7 +122,7 @@ export let settings = {
 export const mutations = {
   setLite: (value) => {
     value === 'true' ? (settings.lite = true) : (settings.lite = false)
-    syncSettings()
+  },
   },
   motion: {
     setThreshold: (threshold) => {
