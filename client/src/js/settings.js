@@ -20,6 +20,10 @@ let gainElement = null
 let countContainerElement = null
 let gainGenerationElement = null
 let liteElement = null
+let interfaceRegimeElement = null
+let containerElement = null
+let interfaceRegimeOnElement = null
+let interfaceRegimeOnButtonElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -36,6 +40,10 @@ window.addEventListener('DOMContentLoaded', () => {
   countContainerElement = document.querySelector('.motion__count-container')
   gainGenerationElement = document.querySelector('.gain-generation__container')
   liteElement = document.querySelector('.lite__container')
+  interfaceRegimeElement = document.querySelector('.interface-regime')
+  containerElement = document.querySelector('.container')
+  interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
+  interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
 
   // Так как при инициализации у нас single-режим и непрерывный режим, то можно сразу убрать элементы
   durationElement.style.display = 'none'
@@ -94,6 +102,7 @@ export function syncSettingsFrontend(settings) {
 // Настройки системы
 export let settings = {
   lite: false,
+  interfaceRegime: true,
   motion: {
     threshold: 1.0,
     gainGeneration: true,
@@ -123,6 +132,24 @@ export const mutations = {
   setLite: (value) => {
     value === 'true' ? (settings.lite = true) : (settings.lite = false)
   },
+  setInterfaceRegime: () => {
+    settings.interfaceRegime = !settings.interfaceRegime
+
+    if (settings.interfaceRegime) {
+      interfaceRegimeOnElement.style.opacity = 0
+      setTimeout(() => {
+        interfaceRegimeOnElement.style.display = 'none'
+        containerElement.style.display = 'block'
+        containerElement.style.opacity = 1
+      }, 200)
+    } else {
+      containerElement.style.opacity = 0
+      setTimeout(() => {
+        containerElement.style.display = 'none'
+        interfaceRegimeOnElement.style.display = 'flex'
+        interfaceRegimeOnElement.style.opacity = 1
+      }, 200)
+    }
   },
   motion: {
     setThreshold: (threshold) => {
@@ -323,6 +350,31 @@ export function settingsInit() {
 
   liteElement.addEventListener('change', function (event) {
     mutations.setLite(event.target.value)
+  })
+
+  // Выключение интерфейса управления
+  interfaceRegimeElement.addEventListener('click', function () {
+    mutations.setInterfaceRegime()
+  })
+
+  // Перемещение кнопки включения интерфейса
+  interfaceRegimeOnButtonElement.addEventListener('touchmove', function (event) {
+    interfaceRegimeOnButtonElement.style.top = `${event.touches[0].pageY - 25}px`
+    interfaceRegimeOnButtonElement.style.left = `${event.touches[0].pageX - 25}px`
+  })
+
+  // Включение интерфейса управления
+  interfaceRegimeOnButtonElement.addEventListener('touchend', function (event) {
+    // Возвращаем кружок на место
+    setTimeout(() => {
+      interfaceRegimeOnButtonElement.style.top = `unset`
+      interfaceRegimeOnButtonElement.style.bottom = `40px`
+      interfaceRegimeOnButtonElement.style.left = `calc(50% - 25px)`
+    }, 200)
+
+    if (event.changedTouches[0].pageY < 75) {
+      mutations.setInterfaceRegime()
+    }
   })
 
   // Заполняем интерфейс дефолтными данными

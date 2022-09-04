@@ -41,10 +41,10 @@ a
 
 .container
   width: 100%
-  height: 100%
   padding: 20px
   max-width: 500px
   margin: auto
+  padding-bottom: 100px
 
   .title
     font-weight: 700
@@ -238,3 +238,42 @@ select
 .frequency-regime, .oscillator-regime, .gain-generation, .lite
   @media (min-width: 500px)
       flex-direction: row
+
+.interface-regime-container
+  position: relative
+  width: 100%
+  display: flex
+  justify-content: center
+
+.interface-regime
+  position: fixed
+
+.interface-regime-on
+  width: 100%
+  height: 100%
+  position: absolute
+  display: none
+  justify-content: center
+  align-items: center
+  padding: 40px
+  top: 0
+
+  &__button
+    border: 1px $black solid
+    border-radius: 50%
+    width: 50px
+    height: 50px
+    position: absolute
+    transition: none
+    bottom: 40px
+
+  &__line
+    height: 1px
+    width: 100%
+    position: absolute
+    top: 75px
+    border-top: 1px solid black
+
+  &__text
+    text-align: center
+    user-select: none
