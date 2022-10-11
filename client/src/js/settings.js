@@ -107,29 +107,44 @@ export let settings = {
 export const mutations = {
   motion: {
     setThreshold: (threshold) => {
-      settings.motion.threshold = threshold
+      isNaN(threshold) ? (settings.motion.threshold = 0) : (settings.motion.threshold = threshold)
+      syncSettings()
+    },
+
+    setGainGeneration: (value) => {
+      value === 'true' ? (settings.motion.gainGeneration = true) : (settings.motion.gainGeneration = false)
       syncSettings()
     },
   },
+
   audio: {
     setWaveType: (waveType) => {
       settings.audio.oscillatorType = String(waveType)
       syncSettings()
     },
     setDuration: (duration) => {
-      settings.audio.toneDuration = duration
+      // 0.05 - минимальная длина тона, которую можно погасить без пиков
+      isNaN(duration) || duration === 0 ? (settings.audio.toneDuration = 0.05) : (settings.audio.toneDuration = duration)
       syncSettings()
     },
     setBiquadFilterFrequency: (biquadFilterFrequency) => {
-      settings.audio.biquadFilterFrequency = biquadFilterFrequency
+      isNaN(biquadFilterFrequency)
+        ? (settings.audio.biquadFilterFrequency = 0)
+        : (settings.audio.biquadFilterFrequency = biquadFilterFrequency)
       syncSettings()
     },
     setAttenuation: (attenuation) => {
-      settings.audio.attenuation = attenuation
+      isNaN(attenuation) ? (settings.audio.attenuation = 0) : (settings.audio.attenuation = attenuation)
       syncSettings()
     },
+
+    setAttack: (attack) => {
+      isNaN(attack) ? (settings.audio.attack = 0) : (settings.audio.attack = attack)
+      syncSettings()
+    },
+
     setGain: (gain) => {
-      settings.audio.gain = gain
+      isNaN(gain) ? (settings.audio.gain = 0) : (settings.audio.gain = gain)
       syncSettings()
     },
     setSynthesisRegime: (synthesisRegime) => {
@@ -173,10 +188,24 @@ export const mutations = {
 
     setFrequencyRange: (rangeType, frequency) => {
       if (rangeType === 'from') {
-        settings.audio.frequenciesRange.from = frequency
+        if (isNaN(frequency)) {
+          settings.audio.frequenciesRange.from = 0
+        } else if (frequency > 24000 || frequency >= settings.audio.frequenciesRange.to) {
+          settings.audio.frequenciesRange.from = settings.audio.frequenciesRange.to - 1
+        } else {
+          settings.audio.frequenciesRange.from = frequency
+        }
       }
       if (rangeType === 'to') {
-        settings.audio.frequenciesRange.to = frequency
+        if (isNaN(frequency)) {
+          settings.audio.frequenciesRange.to = 0
+        } else if (frequency > 24000) {
+          settings.audio.frequenciesRange.to = 24000
+        } else if (frequency <= settings.audio.frequenciesRange.from) {
+          settings.audio.frequenciesRange.to = settings.audio.frequenciesRange.from + 1
+        } else {
+          settings.audio.frequenciesRange.to = frequency
+        }
       }
 
       syncSettings()
@@ -184,10 +213,24 @@ export const mutations = {
 
     setNoteRange: (rangeType, note) => {
       if (rangeType === 'from') {
-        settings.audio.notesRange.from = note
+        if (isNaN(note)) {
+          settings.audio.notesRange.from = 0
+        } else if (note > 138 || note >= settings.audio.notesRange.to) {
+          settings.audio.notesRange.from = settings.audio.notesRange.to - 1
+        } else {
+          settings.audio.notesRange.from = note
+        }
       }
       if (rangeType === 'to') {
-        settings.audio.notesRange.to = note
+        if (isNaN(note)) {
+          settings.audio.notesRange.to = 0
+        } else if (note > 138) {
+          settings.audio.notesRange.to = 138
+        } else if (note <= settings.audio.notesRange.from) {
+          settings.audio.notesRange.to = settings.audio.notesRange.from + 1
+        } else {
+          settings.audio.notesRange.to = note
+        }
       }
 
       syncSettings()
