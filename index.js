@@ -13,6 +13,7 @@ const server = https.createServer(
   },
   app
 )
+
 const io = new Server(server)
 
 app.use(express.static(`${__dirname}/client/dist`))
@@ -36,6 +37,6 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(3000, function () {
+server.listen(8080, '0.0.0.0', function () {
   console.log('Server is running')
 })

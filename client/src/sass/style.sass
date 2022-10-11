@@ -41,10 +41,10 @@ a
 
 .container
   width: 100%
-  height: 100%
   padding: 20px
-  max-width: 1000px
+  max-width: 500px
   margin: auto
+  padding-bottom: 100px
 
   .title
     font-weight: 700
@@ -83,12 +83,18 @@ a
   &--yes
     color: $green
 
+.motion
+  transition: $transition-long
+
+.inactive
+  filter: contrast(0.1)
+
 .button
   position: absolute
   bottom: 0
   display: flex
   justify-content: center
-  border: 1px black solid
+  border: 1px $black solid
   border-radius: 30px
   padding: 15px
   margin: 20px
@@ -96,10 +102,10 @@ a
   cursor: pointer
   max-width: 400px
   width: calc(100% - 40px)
+  background-color: $white
 
 .run
   &--is-running
-    // opacity: .2
     display: none
 
 .test
@@ -113,21 +119,30 @@ a
 input, select
   background-color: $white
   border: none
-  border-bottom: 1px solid black
-  width: 83px
-  border-radius: 10%
-  text-align: center
+  border-bottom: 1px solid $black
+  width: 100%
+  max-width: 115px;
+  text-align: right
+
+input[type="number"]
+	-moz-appearance: textfield
+	-webkit-appearance: textfield
+	appearance: textfield
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button
+	display: none
 
 input[type="radio"]
   appearance: none
-  border: 1px solid black
+  border: 1px solid $black
   width: 10px
   height: 10px
   border-radius: 50%
   min-width: 10px
 
   &:checked
-    border: 4px solid black
+    border: 4px solid $black
 
 input[type="checkbox"]
   appearance: none
@@ -141,7 +156,8 @@ input[type="checkbox"]
     background-color: $black
 
 select
-  text-align: left
+  text-align: right
+  appearance: none
 
 .frontendDesktop,
 .frontendMobile
@@ -155,10 +171,6 @@ select
   &__message
     color: $red
 
-.oscillator-regime
-  input
-    // width: auto
-
 .radio-element,
 .checkbox-element
   display: flex
@@ -170,9 +182,11 @@ select
     width: 100%
 
 .info
+  display: none
+
   .regime
     font-weight: 600
-    color: $brown
+    color: $black
 
   .connections
     div
@@ -181,8 +195,8 @@ select
 
       &::before
         content: ''
-        width: 7px
-        height: 7px
+        width: 8px
+        height: 8px
         border-radius: 50%
         top: 0
         left: 0
@@ -210,33 +224,7 @@ select
       &::before
         background-color: $red
 
-.notes
-  display: grid
-  grid-template-columns: repeat(12, 1fr)
-  grid-row-gap: 5px
-  margin-top: 15px;
-
-  span
-    font-size: 4px
-
-  &--active
-    font-weight: 600
-    color: $green
-    font-size: 5px !important
-
-.tuner
-  position: relative
-  margin-top: 15px
-
-  &__min
-  &__actual
-    position: absolute
-    transition: none
-  &__max
-    position: absolute
-    right: 0
-
-.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range
+.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range, .gain-generation, .lite
   flex-direction: column
   align-items: flex-start !important
 
@@ -246,5 +234,52 @@ select
 
 .notes-range, .frequencies-range
   &__container
-    width: 100%
     justify-content: space-between
+    width: 100%
+    margin-top: 15px
+
+.frequency-regime, .oscillator-regime, .gain-generation, .lite
+  @media (min-width: 500px)
+      flex-direction: row
+
+.interface-regime-container
+  position: relative
+  width: 100%
+  display: flex
+  justify-content: center
+
+.interface-regime
+  position: fixed
+
+.interface-regime-on
+  width: 100%
+  height: 100%
+  position: absolute
+  display: none
+  justify-content: center
+  align-items: center
+  padding: 40px
+  top: 0
+
+  &__button
+    border: 1px $black solid
+    border-radius: 50%
+    width: 50px
+    height: 50px
+    position: absolute
+    transition: none
+    bottom: 40px
+
+  &__line
+    height: 1px
+    width: 100%
+    position: absolute
+    top: 75px
+    border-top: 1px solid black
+
+  &__text
+    text-align: center
+    user-select: none
+
+.duration-container, .attenuation-container, .motion__count-container
+  display: flex
