@@ -80,16 +80,30 @@
           </div>
         </div>
 
-        <div class="oscillator-regime">
-          <span>Режим работы осцилляторов:</span>
-          <div class="oscillator-regime__container">
+        <div class="frequency-regime">
+          <span>Режим генерации частот:</span>
+          <div class="frequency-regime__container">
             <div class="radio-element">
-              <input type="radio" name="oscillator" id="single" value="single" checked />
-              <label for="single">single</label>
+              <input type="radio" name="frequency" id="continuous" value="continuous" checked />
+              <label for="continuous">Непрерывный</label>
             </div>
             <div class="radio-element">
-              <input type="radio" name="oscillator" id="plural" value="plural" />
-              <label for="plural">plural</label>
+              <input type="radio" name="frequency" id="tempered" value="tempered" />
+              <label for="tempered">Темперированный</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="gain-generation">
+          <span>Влияние скорости на громкость:</span>
+          <div class="gain-generation__container">
+            <div class="radio-element">
+              <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
+              <label for="speedgain-yes">Да</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="speedgain" id="speedgain-no" value="false" />
+              <label for="speedgain-no">Нет</label>
             </div>
           </div>
         </div>

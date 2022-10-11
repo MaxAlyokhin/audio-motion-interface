@@ -11,7 +11,6 @@ let attenuationElement = null
 let frequenciesRangeElement = null
 let notesRangeElement = null
 let synthesisRegimeElement = null
-let oscillatorRegimeElement = null
 let frequencyRegimeElement = null
 let thresholdElement = null
 let waveElement = null
@@ -48,16 +47,6 @@ function syncSettings() {
 
 // Функция обновляет input-поля в соответствии с пришедшим объектом настроек
 export function syncSettingsFrontend(settings) {
-  if (settings.audio.oscillatorRegime === 'single') {
-    document.querySelector('#single').checked = true
-    durationElement.style.display = 'none'
-    attenuationElement.style.display = 'none'
-  }
-  if (settings.audio.oscillatorRegime === 'plural') {
-    document.querySelector('#plural').checked = true
-    durationElement.style.display = 'flex'
-    attenuationElement.style.display = 'flex'
-  }
   if (settings.audio.frequencyRegime === 'continuous') {
     document.querySelector('#continuous').checked = true
     frequenciesRangeElement.style.display = 'flex'
@@ -94,7 +83,6 @@ export let settings = {
     attack: 0,
     gain: 0.08,
     synthesisRegime: 'local',
-    oscillatorRegime: 'single',
     frequencyRegime: 'continuous',
     frequenciesRange: {
       from: 0.0,
@@ -161,20 +149,7 @@ export const mutations = {
         socket.connect()
       }
     },
-    setOscillatorRegime: (oscillatorRegime) => {
-      settings.audio.oscillatorRegime = oscillatorRegime
 
-      if (oscillatorRegime === 'single') {
-        durationElement.style.display = 'none'
-        attenuationElement.style.display = 'none'
-      }
-      if (oscillatorRegime === 'plural') {
-        durationElement.style.display = 'flex'
-        attenuationElement.style.display = 'flex'
-      }
-
-      syncSettings()
-    },
     setFrequencyRegime: (frequencyRegime) => {
       settings.audio.frequencyRegime = frequencyRegime
 

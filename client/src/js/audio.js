@@ -24,79 +24,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // Связка это осциллятор => фильтр => громкость
 
-// TODO: в плюрале чтобы лишние ноты не создавались (дребезг контакта) когда скорость близка к отсечке
-// TODO: показывать в интерфейсе сколько нот играет параллельно в плюрале
-// TODO: режим левши/правши
-// TODO: сделать контроль перехода на противоположную полусферу
-// TODO: режим отключённого интерфейса (переключение происходит по жесту либо нажатию двух удалённых точек на экране)
-// TODO: баг при переходе между стратегиями синтеза - последний звук остаётся играть
+// По сути в обоих режимах каждому жесту соответствует свой осциллятор,
+// просто в сингле нет затухания и атаки, позволяющих накладывать звуки друг на друга
+// Стоит сделать единый режим,
 
-// Режим единственного осциллятора
+// Здесь включается осциллятор и далее уже не выключается за всё время сессии
+// TODO: возможно это причина BAG-1
 
-let oscillatorIsInit = false // Маркер уже созданной связки
-let oscillator = null
-let biquadFilter = null
-let gainNode = null
-
-function single(motion) {
-  // Собираем связку, делаем это только один раз в начале работы алгоритма
-  if (!oscillatorIsInit) {
-    oscillator = audioContext.createOscillator()
-    biquadFilter = audioContext.createBiquadFilter()
-    gainNode = audioContext.createGain()
-
-    oscillator.connect(biquadFilter)
-    biquadFilter.connect(gainNode)
-    gainNode.connect(audioContext.destination)
-
-    biquadFilter.type = 'lowpass'
-    biquadFilter.gain.value = 1
-
-    oscillator.start()
-    oscillatorIsInit = true
-  }
-
-  // Динамически настраиваем связку по каждому событию движения
-  if (settings.audio.frequencyRegime === 'continuous') {
-    let minFrequency = settings.audio.frequenciesRange.from
-    let maxFrequency = settings.audio.frequenciesRange.to
-
-    // 1 линейный вариант
-    // Градусы положения умножить на диапазон (разница значений) делённый на 180 (максимальное значение гироскопа) + минимальное значение
-    // frequency = toFixedNumber(motion.orientation * ((maxFrequency - minFrequency) / 180) + minFrequency, 4)
-
-    // 2 экспоненциальный вариант
-    // Градусы положения в степени log диапазона (разницы значений) по основанию 180 (максимальное значение гироскопа) + минимальное значение
-    frequency = toFixedNumber(Math.pow(motion.orientation, Math.log(maxFrequency - minFrequency) / Math.log(180)) + minFrequency, 4)
-  }
-  if (settings.audio.frequencyRegime === 'tempered') {
-    let minNote = settings.audio.notesRange.from
-    let maxNote = settings.audio.notesRange.to
-
-    // Начиная с minNote в звукоряде наверх (maxNote - minNote) нот по 180 градусам распределяем
-    frequency = notes[minNote + Math.floor(motion.orientation * ((maxNote - minNote) / 180))]
-  }
-
-  frequencyElement.innerText = frequency
-  pitchDetection(frequency)
-
-  oscillator.type = settings.audio.oscillatorType
-  oscillator.frequency.value = frequency
-  biquadFilter.frequency.value = settings.audio.biquadFilterFrequency
-
-  // В зависимости от скорости определяем громкость
-  // Если движение закончилось, то тушим осциллятор
-  if (motion.isMotion) {
-    gainNode.gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
-  } else {
-    gainNode.gain.setTargetAtTime(settings.audio.attenuation, audioContext.currentTime, 0.005)
-  }
-}
-
-// Режим множественных осцилляторов
-// Каждому отдельному движению соответствует свой осциллятор
-// У нас есть массив осцилляторов (вернее даже массивы элементов связки).
-// При превышении отсечки мы можем сказать, что движение началось.
+// Каждому жесту соответствует свой осциллятор
+// У нас есть массив осцилляторов (вернее массивы элементов-узлов графа)
+// При превышении отсечки мы можем сказать, что движение началось
 // При скорости ниже отсечки мы можем сказать, что движение закончилось,
 // отследив что это последнее событие движения в череде событий с помощью маркера motionIsOff.
 
@@ -199,11 +136,5 @@ function plural(motion) {
 }
 
 export function audio(motion) {
-  if (settings.audio.oscillatorRegime === 'single') {
-    single(motion)
-  }
-
-  if (settings.audio.oscillatorRegime === 'plural') {
-    plural(motion)
-  }
+  plural(motion)
 }
