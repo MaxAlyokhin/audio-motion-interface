@@ -105,6 +105,8 @@ let biquadFilterArray = [] // Массив фильтров
 let gainNodeArray = [] // Массив ручек громкости
 let motionIsOff = true // Маркер последнего события движения
 
+let now = null // Переменная для фиксации времени начала движения
+
 function plural(motion) {
   // Определяем частоту
   if (settings.audio.frequencyRegime === 'continuous') {
@@ -133,6 +135,8 @@ function plural(motion) {
   if (motion.isMotion) {
     // Собираем связку, делаем это только один раз в начале движения
     if (motionIsOff) {
+      // Фиксируем время начала движения
+      now = audioContext.currentTime
       oscillatorArray.push(audioContext.createOscillator())
       biquadFilterArray.push(audioContext.createBiquadFilter())
       gainNodeArray.push(audioContext.createGain())
@@ -143,6 +147,7 @@ function plural(motion) {
 
       biquadFilterArray[biquadFilterArray.length - 1].type = 'lowpass'
       biquadFilterArray[biquadFilterArray.length - 1].gain.value = 1
+      gainNodeArray[gainNodeArray.length - 1].gain.setValueAtTime(settings.audio.attenuation, now, 0.005)
 
       oscillatorArray[oscillatorArray.length - 1].start()
       motionIsOff = false
@@ -155,7 +160,14 @@ function plural(motion) {
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
     biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
 
-    gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+    // Управление громкостью
+    if (settings.audio.attack) {
+      gainNodeArray[gainNodeArray.length - 1].gain.linearRampToValueAtTime(settings.audio.gain, now + settings.audio.attack)
+    } else if (settings.motion.gainGeneration === true) {
+      gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+    } else {
+      gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
+    }
 
     console.log(oscillatorArray.length)
   }
@@ -167,9 +179,10 @@ function plural(motion) {
     // последних элементов в массивах на момент остановки движения
     gainNodeArray[gainNodeArray.length - 1].gain.exponentialRampToValueAtTime(
       settings.audio.attenuation,
-      audioContext.currentTime + settings.audio.toneDuration
+      audioContext.currentTime + settings.audio.toneDuration + settings.audio.attack
     )
-    oscillatorArray[oscillatorArray.length - 1].stop(audioContext.currentTime + settings.audio.toneDuration)
+
+    oscillatorArray[oscillatorArray.length - 1].stop(audioContext.currentTime + settings.audio.toneDuration + settings.audio.attack)
 
     // Планируем удаление этих элементов, они будут первыми с массивах
     // на момент вызова таймаута

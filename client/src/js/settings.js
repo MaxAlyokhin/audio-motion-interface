@@ -16,6 +16,7 @@ let frequencyRegimeElement = null
 let thresholdElement = null
 let waveElement = null
 let filterElement = null
+let attackElement = null
 let gainElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -25,6 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
   thresholdElement = document.querySelector('.threshold')
   waveElement = document.querySelector('.wave')
   filterElement = document.querySelector('.filter')
+  attackElement = document.querySelector('.attack')
   gainElement = document.querySelector('.gain')
   durationElement = document.querySelector('.duration-container')
   attenuationElement = document.querySelector('.attenuation-container')
@@ -73,6 +75,7 @@ export function syncSettingsFrontend(settings) {
   thresholdElement.value = settings.motion.threshold
   waveElement.value = settings.audio.oscillatorType
   filterElement.value = settings.audio.biquadFilterFrequency
+  attackElement.value = settings.audio.attack
   gainElement.value = settings.audio.gain
   durationElement.querySelector('.duration').value = settings.audio.toneDuration
   attenuationElement.querySelector('.attenuation').value = settings.audio.attenuation
@@ -88,6 +91,7 @@ export let settings = {
     oscillatorType: 'sine',
     biquadFilterFrequency: 600.0,
     attenuation: 0.0001,
+    attack: 0,
     gain: 0.08,
     synthesisRegime: 'local',
     oscillatorRegime: 'single',
@@ -301,6 +305,11 @@ export function settingsInit() {
 
   attenuationElement.addEventListener('input', function (event) {
     mutations.audio.setAttenuation(parseFloat(event.target.value))
+  })
+
+  attackElement.addEventListener('input', function () {
+    this.value != 0 ? gainGenerationOptionElement.classList.add('inactive') : gainGenerationOptionElement.classList.remove('inactive')
+    mutations.audio.setAttack(parseFloat(this.value))
   })
 
   gainElement.addEventListener('input', function () {
