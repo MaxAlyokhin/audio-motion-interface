@@ -17,12 +17,20 @@ notesInit()
 // Генерируемая частота звука и html-элемент, куда будем её записывать
 let frequency = null
 let frequencyElement = null
+let previousFrequency = null
+
+let countElement = null // Количество осцилляторов в plural-режиме
 
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
+  countElement = document.querySelector('.motion__count')
 })
 
-// Связка это осциллятор => фильтр => громкость
+// Граф - это осциллятор => фильтр => громкость
+// Событие движения - js-событие, генерируемое каждые 16мс смартфоном, содержащее параметры движения
+// События возникают даже в состоянии покоя - в этом случае параметры движения нулевые
+// Отсечка - минимальная скорость движения, при которой заводится система
+// Жест - набор событий движения от превышения отсечки до значения ниже отсечки
 
 // По сути в обоих режимах каждому жесту соответствует свой осциллятор,
 // просто в сингле нет затухания и атаки, позволяющих накладывать звуки друг на друга
@@ -65,15 +73,22 @@ function plural(motion) {
     // Начиная с minNote в звукоряде наверх (maxNote - minNote) нот по 180 градусам распределяем
     frequency = notes[minNote + Math.floor(motion.orientation * ((maxNote - minNote) / 180))]
   }
-  frequencyElement.innerText = frequency
+
+  // Обновляем DOM только при изменении значения
+  if (previousFrequency !== frequency) {
+    settings.lite ? false : (frequencyElement.textContent = frequency)
+    previousFrequency = frequency
+  }
+
   pitchDetection(frequency)
 
-  // При превышении отсечки создаём связку
+  // Отсечка превышена - движение началось
   if (motion.isMotion) {
-    // Собираем связку, делаем это только один раз в начале движения
+    // Собираем граф, делаем это только один раз в начале движения
     if (motionIsOff) {
       // Фиксируем время начала движения
       now = audioContext.currentTime
+
       oscillatorArray.push(audioContext.createOscillator())
       biquadFilterArray.push(audioContext.createBiquadFilter())
       gainNodeArray.push(audioContext.createGain())
@@ -82,20 +97,24 @@ function plural(motion) {
       biquadFilterArray[biquadFilterArray.length - 1].connect(gainNodeArray[gainNodeArray.length - 1])
       gainNodeArray[gainNodeArray.length - 1].connect(audioContext.destination)
 
+      oscillatorArray[oscillatorArray.length - 1].type = settings.audio.oscillatorType
+
       biquadFilterArray[biquadFilterArray.length - 1].type = 'lowpass'
       biquadFilterArray[biquadFilterArray.length - 1].gain.value = 1
+      biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
+
+      // Изначальная громкость минимальна
       gainNodeArray[gainNodeArray.length - 1].gain.setValueAtTime(settings.audio.attenuation, now, 0.005)
 
       oscillatorArray[oscillatorArray.length - 1].start()
+
       motionIsOff = false
     }
 
-    // Здесь во время движения мы управляем поведением последней собранной связки (length - 1 это последний элемент массивов)
-    // Динамически настраиваем связку
-    // Эти данные обновляются по каждому событию движения
-    oscillatorArray[oscillatorArray.length - 1].type = settings.audio.oscillatorType
+    // Здесь во время движения мы управляем поведением последнего собранного графа (length - 1 это последний элемент массивов)
+    // Динамически настраиваем граф - он обновляется по каждому событию движения
+
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
-    biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
 
     // Управление громкостью
     if (settings.audio.attack) {
@@ -106,11 +125,11 @@ function plural(motion) {
       gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
     }
 
-    console.log(oscillatorArray.length)
+    settings.lite ? false : (countElement.textContent = oscillatorArray.length)
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
   // значит мы поймали последнее событие движения (движение остановлено).
-  // Тогда планируем затухание сигнала и удаление связки
+  // Тогда планируем затухание сигнала и удаление графа
   else if (motionIsOff === false) {
     // Планируем затухание громкости и остановку осциллятора
     // последних элементов в массивах на момент остановки движения
@@ -127,11 +146,11 @@ function plural(motion) {
       oscillatorArray.shift()
       biquadFilterArray.shift()
       gainNodeArray.shift()
+
+      settings.lite ? false : (countElement.textContent = oscillatorArray.length)
     }, settings.audio.toneDuration * 1000)
 
     motionIsOff = true
-
-    console.log(oscillatorArray.length)
   }
 }
 

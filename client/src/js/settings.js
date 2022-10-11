@@ -17,10 +17,17 @@ let waveElement = null
 let filterElement = null
 let attackElement = null
 let gainElement = null
+let gainGenerationOptionElement = null
+let gainGenerationElement = null
+let liteElement = null
+let interfaceRegimeElement = null
+let containerElement = null
+let interfaceRegimeOnElement = null
+let interfaceRegimeOnButtonElement = null
+let connectionsToServer = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
-  oscillatorRegimeElement = document.querySelector('.oscillator-regime')
   frequencyRegimeElement = document.querySelector('.frequency-regime')
   thresholdElement = document.querySelector('.threshold')
   waveElement = document.querySelector('.wave')
@@ -31,11 +38,14 @@ window.addEventListener('DOMContentLoaded', () => {
   attenuationElement = document.querySelector('.attenuation-container')
   frequenciesRangeElement = document.querySelector('.frequencies-range')
   notesRangeElement = document.querySelector('.notes-range')
-
-  // Так как при инициализации у нас single-режим и непрерывный режим, то можно сразу убрать элементы
-  durationElement.style.display = 'none'
-  attenuationElement.style.display = 'none'
-  notesRangeElement.style.display = 'none'
+  gainGenerationOptionElement = document.querySelector('.gain-generation')
+  gainGenerationElement = document.querySelector('.gain-generation__container')
+  liteElement = document.querySelector('.lite__container')
+  interfaceRegimeElement = document.querySelector('.interface-regime')
+  containerElement = document.querySelector('.container')
+  interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
+  interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
+  connectionsToServer = document.querySelector('.connections__to-server')
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -57,6 +67,21 @@ export function syncSettingsFrontend(settings) {
     frequenciesRangeElement.style.display = 'none'
     notesRangeElement.style.display = 'flex'
   }
+
+  if (settings.motion.gainGeneration === true) {
+    document.querySelector('#speedgain-yes').checked = true
+  }
+  if (settings.motion.gainGeneration === false) {
+    document.querySelector('#speedgain-no').checked = true
+  }
+
+  if (settings.lite === false) {
+    liteElement.querySelector('#lite-no').checked = true
+  }
+  if (settings.lite === true) {
+    liteElement.querySelector('#lite-yes').checked = true
+  }
+
   frequenciesRangeElement.querySelector('.frequencies-range-from').value = settings.audio.frequenciesRange.from
   frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
   notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
@@ -72,8 +97,11 @@ export function syncSettingsFrontend(settings) {
 
 // Настройки системы
 export let settings = {
+  lite: false,
+  interfaceRegime: true,
   motion: {
     threshold: 1.0,
+    gainGeneration: true,
   },
   audio: {
     toneDuration: 1.2,
@@ -97,6 +125,31 @@ export let settings = {
 
 // Мутации
 export const mutations = {
+  setLite: (value) => {
+    value === 'true' ? (settings.lite = true) : (settings.lite = false)
+    syncSettings()
+  },
+
+  setInterfaceRegime: () => {
+    settings.interfaceRegime = !settings.interfaceRegime
+
+    if (settings.interfaceRegime) {
+      interfaceRegimeOnElement.style.opacity = 0
+      setTimeout(() => {
+        interfaceRegimeOnElement.style.display = 'none'
+        containerElement.style.display = 'block'
+        containerElement.style.opacity = 1
+      }, 200)
+    } else {
+      containerElement.style.opacity = 0
+      setTimeout(() => {
+        containerElement.style.display = 'none'
+        interfaceRegimeOnElement.style.display = 'flex'
+        interfaceRegimeOnElement.style.opacity = 1
+      }, 200)
+    }
+  },
+
   motion: {
     setThreshold: (threshold) => {
       isNaN(threshold) ? (settings.motion.threshold = 0) : (settings.motion.threshold = threshold)
@@ -114,17 +167,20 @@ export const mutations = {
       settings.audio.oscillatorType = String(waveType)
       syncSettings()
     },
+
     setDuration: (duration) => {
       // 0.05 - минимальная длина тона, которую можно погасить без пиков
       isNaN(duration) || duration === 0 ? (settings.audio.toneDuration = 0.05) : (settings.audio.toneDuration = duration)
       syncSettings()
     },
+
     setBiquadFilterFrequency: (biquadFilterFrequency) => {
       isNaN(biquadFilterFrequency)
         ? (settings.audio.biquadFilterFrequency = 0)
         : (settings.audio.biquadFilterFrequency = biquadFilterFrequency)
       syncSettings()
     },
+
     setAttenuation: (attenuation) => {
       isNaN(attenuation) ? (settings.audio.attenuation = 0) : (settings.audio.attenuation = attenuation)
       syncSettings()
@@ -139,14 +195,17 @@ export const mutations = {
       isNaN(gain) ? (settings.audio.gain = 0) : (settings.audio.gain = gain)
       syncSettings()
     },
+
     setSynthesisRegime: (synthesisRegime) => {
       settings.audio.synthesisRegime = synthesisRegime
 
       if (settings.audio.synthesisRegime === 'local') {
         socket.disconnect()
+        document.querySelector('.info').style.display = 'none'
       }
       if (settings.audio.synthesisRegime === 'remote') {
         socket.connect()
+        document.querySelector('.info').style.display = 'block'
       }
     },
 
@@ -231,13 +290,22 @@ export function settingsInit() {
         Object.assign(settings, settingsData) // Обновляем объект
         syncSettingsFrontend(settingsData) // Обновляем input-поля
       })
+
+      // Вешаем слушатели вебсокет-событий
+      socket.on('connect', () => {
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.classList.remove('connections--wait', 'connections--error')
+        connectionsToServer.classList.add('connections--ready')
+      })
+
+      socket.on('disconnect', () => {
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.classList.remove('connections--wait', 'connections--ready')
+        connectionsToServer.classList.add('connections--error')
+      })
     }
 
     mutations.audio.setSynthesisRegime(event.target.value)
-  })
-
-  oscillatorRegimeElement.addEventListener('change', function (event) {
-    mutations.audio.setOscillatorRegime(event.target.value)
   })
 
   frequencyRegimeElement.addEventListener('change', function (event) {
@@ -246,6 +314,10 @@ export function settingsInit() {
 
   thresholdElement.addEventListener('input', function () {
     mutations.motion.setThreshold(parseFloat(this.value))
+  })
+
+  gainGenerationElement.addEventListener('change', function (event) {
+    mutations.motion.setGainGeneration(event.target.value)
   })
 
   frequenciesRangeElement.addEventListener('input', function (event) {
@@ -289,6 +361,35 @@ export function settingsInit() {
 
   gainElement.addEventListener('input', function () {
     mutations.audio.setGain(parseFloat(this.value))
+  })
+
+  liteElement.addEventListener('change', function (event) {
+    mutations.setLite(event.target.value)
+  })
+
+  // Выключение интерфейса управления
+  interfaceRegimeElement.addEventListener('click', function () {
+    mutations.setInterfaceRegime()
+  })
+
+  // Перемещение кнопки включения интерфейса
+  interfaceRegimeOnButtonElement.addEventListener('touchmove', function (event) {
+    interfaceRegimeOnButtonElement.style.top = `${event.touches[0].pageY - 25}px`
+    interfaceRegimeOnButtonElement.style.left = `${event.touches[0].pageX - 25}px`
+  })
+
+  // Включение интерфейса управления
+  interfaceRegimeOnButtonElement.addEventListener('touchend', function (event) {
+    // Возвращаем кружок на место
+    setTimeout(() => {
+      interfaceRegimeOnButtonElement.style.top = `unset`
+      interfaceRegimeOnButtonElement.style.bottom = `40px`
+      interfaceRegimeOnButtonElement.style.left = `calc(50% - 25px)`
+    }, 200)
+
+    if (event.changedTouches[0].pageY < 75) {
+      mutations.setInterfaceRegime()
+    }
   })
 
   // Заполняем интерфейс дефолтными данными

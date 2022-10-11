@@ -18,11 +18,11 @@
       <div class="title">Audio-Motion Interface</div>
 
       <div class="info">
-        <div class="regime">Режим приёмника данных включён</div>
+        <div class="regime desktop">Режим приёмника данных включён</div>
+        <div class="regime mobile">Режим источника данных включён</div>
         <div class="connections">
-          <div class="connections__to-server connections--wait">Подключение к вебсокет-серверу...</div>
-          <div class="connections__status connections--wait">Ожидание подключений...</div>
-          <div class="connections__devices"></div>
+          <div class="connections__to-server connections--wai">Подключение к вебсокет-серверу...</div>
+          <div class="connections__status connections--wait desktop">Ожидание подключений...</div>
         </div>
       </div>
 
@@ -32,20 +32,16 @@
           <span class="motion__is-motion">false</span>
         </div>
         <div>
-          <span>Движение по оси α (м/с²)</span>
-          <span class="motion__alpha">0</span>
-        </div>
-        <div>
-          <span>Движение по оси β (м/с²)</span>
-          <span class="motion__beta">0</span>
-        </div>
-        <div>
-          <span>Движение по оси γ (м/с²)</span>
-          <span class="motion__gamma">0</span>
+          <span>Движение по осям α/β/γ (м/с²)</span>
+          <span><span class="motion__alpha">0</span>/<span class="motion__beta">0</span>/<span class="motion__gamma">0</span></span>
         </div>
         <div>
           <span>Максимальное значение (м/с²)</span>
           <span class="motion__maximum">0</span>
+        </div>
+        <div class="motion__count-container">
+          <span>Количество осцилляторов</span>
+          <span class="motion__count">0</span>
         </div>
         <div>
           <span>Положение смартфона по оси γ</span>
@@ -55,14 +51,10 @@
           <span>Генерируемая частота (Гц)</span>
           <span class="motion__frequency">0</span>
         </div>
-      </div>
-
-      <div class="notes"></div>
-
-      <div class="tuner">
-        <span class="tuner__min"></span>
-        <span class="tuner__actual"></span>
-        <span class="tuner__max"></span>
+        <div class="tuner">
+          <span>Нота</span>
+          <span class="tuner__actual"></span>
+        </div>
       </div>
 
       <div class="settings">
@@ -70,11 +62,11 @@
           <span>Стратегия синтеза:</span>
           <div class="synthesis-regime__container">
             <div class="radio-element">
-              <input type="radio" name="synthesis" id="local" checked />
+              <input type="radio" name="synthesis" id="local" value="local" checked />
               <label for="local">Локальная</label>
             </div>
             <div class="radio-element">
-              <input type="radio" name="synthesis" id="remote" />
+              <input type="radio" name="synthesis" id="remote" value="remote" />
               <label for="remote">Распределённая</label>
             </div>
           </div>
@@ -108,16 +100,16 @@
           </div>
         </div>
 
-        <div class="frequency-regime">
-          <span>Режим генерации частот:</span>
-          <div class="frequency-regime__container">
+        <div class="lite">
+          <span>Режим экономии вычислительных ресурсов:</span>
+          <div class="lite__container">
             <div class="radio-element">
-              <input type="radio" name="frequency" id="continuous" value="continuous" checked />
-              <label for="continuous">Непрерывный</label>
+              <input type="radio" name="lite" id="lite-yes" value="true" />
+              <label for="lite-yes">Да</label>
             </div>
             <div class="radio-element">
-              <input type="radio" name="frequency" id="tempered" value="tempered" />
-              <label for="tempered">Темперированный</label>
+              <input type="radio" name="lite" id="lite-no" value="false" checked />
+              <label for="lite-no">Нет</label>
             </div>
           </div>
         </div>
@@ -126,9 +118,11 @@
           <span>Диапазон частот:</span>
           <div class="frequencies-range__container">
             <span>От:</span>
-            <input type="number" name="frequencies-range-from" class="frequencies-range-from" />
+            <input type="number" min="0" max="24000" name="frequencies-range-from" class="frequencies-range-from" />
+          </div>
+          <div class="frequencies-range__container">
             <span>До:</span>
-            <input type="number" name="frequencies-range-to" class="frequencies-range-to" />
+            <input type="number" min="0" max="24000" name="frequencies-range-to" class="frequencies-range-to" />
           </div>
         </div>
 
@@ -136,16 +130,19 @@
           <span>Диапазон нот:</span>
           <div class="notes-range__container">
             <span>От:</span>
-            <input type="number" name="notes-range-from" class="notes-range-from" />
+            <input type="number" min="0" name="notes-range-from" class="notes-range-from" />
+          </div>
+          <div class="notes-range__container">
             <span>До:</span>
-            <input type="number" name="notes-range-to" class="notes-range-to" />
+            <input type="number" min="0" name="notes-range-to" class="notes-range-to" />
           </div>
         </div>
 
         <div>
           <span>Отсечка датчика (м/с²): </span>
-          <input type="number" name="threshold" class="threshold" />
+          <input type="number" min="0" name="threshold" class="threshold" />
         </div>
+
         <div>
           <span>Тип волны:</span>
           <select name="wave" class="wave">
@@ -155,27 +152,32 @@
             <option value="triangle">triangle</option>
           </select>
         </div>
+
         <div class="duration-container">
           <span>Длительность тона:</span>
-          <input type="number" name="duration" class="duration" />
+          <input type="number" min="0" name="duration" class="duration" />
         </div>
 
         <div>
           <span>Атака:</span>
           <input type="number" min="0" name="attack" class="attack" />
         </div>
-        <div class="attenuation-container">
-          <span>Затухание:</span>
-          <input type="number" name="attenuation" class="attenuation" />
-        </div>
-        <div>
-          <span>Частота фильтра:</span>
-          <input type="number" name="filter" class="filter" />
-        </div>
+
         <div>
           <span>Громкость:</span>
-          <input type="number" name="gain" class="gain" />
+          <input type="number" min="0" name="gain" class="gain" />
         </div>
+
+        <div class="attenuation-container">
+          <span>Релиз:</span>
+          <input type="number" min="0" name="attenuation" class="attenuation" />
+        </div>
+
+        <div>
+          <span>Частота фильтра:</span>
+          <input type="number" min="0" name="filter" class="filter" />
+        </div>
+
         <div>
           <div>Errors:</div>
           <div class="errors"></div>
@@ -184,11 +186,21 @@
 
       <div id="motionSupported" class="mobile"></div>
       <div id="orientationSupported" class="mobile"></div>
+
+      <div class="interface-regime-container mobile">
+        <button class="button interface-regime">Interface off</button>
+      </div>
     </div>
 
     <div class="cover">
       <div class="title">Audio-Motion Interface</div>
-      <div class="button run">Run</div>
+      <button class="button run">Run</button>
+    </div>
+
+    <div class="interface-regime-on mobile">
+      <button class="interface-regime-on__button"></button>
+      <div class="interface-regime-on__line"></div>
+      <div class="interface-regime-on__text">Slide up the circle to the line for unlock interface</div>
     </div>
   </body>
 </html>
