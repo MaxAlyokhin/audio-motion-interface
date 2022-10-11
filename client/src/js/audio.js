@@ -17,16 +17,19 @@ notesInit()
 // Генерируемая частота звука и html-элемент, куда будем её записывать
 let frequency = null
 let frequencyElement = null
-let previousFrequency = null
-
-let countElement = null // Количество осцилляторов в plural-режиме
 
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
-  countElement = document.querySelector('.motion__count')
 })
 
 // Связка это осциллятор => фильтр => громкость
+
+// TODO: в плюрале чтобы лишние ноты не создавались (дребезг контакта) когда скорость близка к отсечке
+// TODO: показывать в интерфейсе сколько нот играет параллельно в плюрале
+// TODO: режим левши/правши
+// TODO: сделать контроль перехода на противоположную полусферу
+// TODO: режим отключённого интерфейса (переключение происходит по жесту либо нажатию двух удалённых точек на экране)
+// TODO: баг при переходе между стратегиями синтеза - последний звук остаётся играть
 
 // Режим единственного осциллятора
 
@@ -74,12 +77,7 @@ function single(motion) {
     frequency = notes[minNote + Math.floor(motion.orientation * ((maxNote - minNote) / 180))]
   }
 
-  // Обновляем DOM только при изменении значения
-  if (previousFrequency !== frequency) {
-    settings.lite ? false : (frequencyElement.textContent = frequency)
-    previousFrequency = frequency
-  }
-
+  frequencyElement.innerText = frequency
   pitchDetection(frequency)
 
   oscillator.type = settings.audio.oscillatorType
@@ -89,11 +87,7 @@ function single(motion) {
   // В зависимости от скорости определяем громкость
   // Если движение закончилось, то тушим осциллятор
   if (motion.isMotion) {
-    if (settings.motion.gainGeneration === true) {
-      gainNode.gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
-    } else {
-      gainNode.gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
-    }
+    gainNode.gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
   } else {
     gainNode.gain.setTargetAtTime(settings.audio.attenuation, audioContext.currentTime, 0.005)
   }
@@ -132,13 +126,7 @@ function plural(motion) {
     // Начиная с minNote в звукоряде наверх (maxNote - minNote) нот по 180 градусам распределяем
     frequency = notes[minNote + Math.floor(motion.orientation * ((maxNote - minNote) / 180))]
   }
-
-  // Обновляем DOM только при изменении значения
-  if (previousFrequency !== frequency) {
-    settings.lite ? false : (frequencyElement.textContent = frequency)
-    previousFrequency = frequency
-  }
-
+  frequencyElement.innerText = frequency
   pitchDetection(frequency)
 
   // При превышении отсечки создаём связку
@@ -167,12 +155,9 @@ function plural(motion) {
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
     biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
 
-    if (settings.motion.gainGeneration === true) {
-      gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
-    } else {
-      gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
-    }
-    settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+    gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
+
+    console.log(oscillatorArray.length)
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
   // значит мы поймали последнее событие движения (движение остановлено).
@@ -192,11 +177,11 @@ function plural(motion) {
       oscillatorArray.shift()
       biquadFilterArray.shift()
       gainNodeArray.shift()
-
-      settings.lite ? false : (countElement.textContent = oscillatorArray.length)
     }, settings.audio.toneDuration * 1000)
 
     motionIsOff = true
+
+    console.log(oscillatorArray.length)
   }
 }
 

@@ -16,7 +16,7 @@ import { socket, socketInit } from './websocket'
 export function motionInit() {
   // Проверяем наличие акселерометра на устройстве
   // iOS 13
-  if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+  if (typeof DeviceMotionEvent.requestPermission === 'function') {
     DeviceMotionEvent.requestPermission()
       .then((response) => {
         if (response == 'granted') {
@@ -48,11 +48,8 @@ export function motionInit() {
   }
 
   let previousMaximumMotion = 0
-  let previousOrientation = null
-  let previousIsMotion = null
 
   // HTML-элементы, где будут отображаться эти значения
-  let motionElement = document.querySelector('.motion')
   let alphaElement = document.querySelector('.motion__alpha')
   let betaElement = document.querySelector('.motion__beta')
   let gammaElement = document.querySelector('.motion__gamma')
@@ -76,7 +73,6 @@ export function motionInit() {
       document.querySelectorAll('.mobile').forEach((element) => {
         element.style.display = 'none'
       })
-      document.querySelector('.info').style.display = 'block'
 
       // Включаем сокет, чтобы слушать внешние события движения
       socketInit()
@@ -85,13 +81,13 @@ export function motionInit() {
 
       // Вешаем слушатели вебсокет-событий
       socket.on('connect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.innerText = 'Связь с вебсокет-сервером установлена'
         connectionsToServer.classList.remove('connections--wait', 'connections--error')
         connectionsToServer.classList.add('connections--ready')
       })
 
       socket.on('disconnect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером отсутствует'
+        connectionsToServer.innerText = 'Связь с вебсокет-сервером потеряна'
         connectionsToServer.classList.remove('connections--wait', 'connections--ready')
         connectionsToServer.classList.add('connections--error')
       })
@@ -99,45 +95,36 @@ export function motionInit() {
       socket.on('connection message', (clientsSize) => {
         // Если остались только мы сами
         if (clientsSize === 1) {
-          connectionsStatus.textContent = `Ожидание подключений...`
+          connectionsStatus.innerText = `Ожидание подключений...`
           connectionsStatus.classList.remove('connections--ready')
           connectionsStatus.classList.add('connections--wait')
-          motionElement.classList.add('motion--inactive')
         }
         if (clientsSize > 1) {
           // Минус наше устройство
-          connectionsStatus.textContent = `Подключено (${clientsSize - 1})`
+          connectionsStatus.innerText = `Подключено (${clientsSize - 1})`
           connectionsStatus.classList.remove('connections--wait')
           connectionsStatus.classList.add('connections--ready')
-          motionElement.classList.remove('motion--inactive')
 
           // При подключении смартфона к десктопу настройки десктопа переписывают настройки смартфона
           settings.audio.synthesisRegime = 'remote'
           socket.emit('settings message', settings)
+          // console.log(socket.request.headers);
         }
       })
 
       // По обновлению объекта движения
       socket.on('motion message', (motion) => {
-        // Обновляем DOM только при изменении значения
-        if (previousIsMotion !== motion.isMotion) {
-          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
-          previousIsMotion = motion.isMotion
-        }
+        isMotionElement.innerText = motion.isMotion
 
-        if (previousOrientation !== motion.orientation) {
-          settings.lite ? false : (orientationElement.textContent = motion.orientation)
-          previousOrientation = motion.orientation
-        }
+        orientationElement.innerText = motion.orientation
 
         if (motion.isMotion && motion.maximum > settings.motion.threshold) {
-          if (!settings.lite) {
-            alphaElement.textContent = motion.alpha
-            betaElement.textContent = motion.beta
-            gammaElement.textContent = motion.gamma
-            maximumElement.textContent = motion.maximumOnSession
-            isMotionElement.classList.add('motion--yes')
-          }
+          alphaElement.innerText = motion.alpha
+          betaElement.innerText = motion.beta
+          gammaElement.innerText = motion.gamma
+          maximumElement.innerText = motion.maximumOnSession
+
+          isMotionElement.classList.add('motion--yes')
         } else {
           isMotionElement.classList.remove('motion--yes')
         }
@@ -157,9 +144,7 @@ export function motionInit() {
     // Датчик есть (смартфон-режим)
     else if (receiverRegimeIsInit === false) {
       // Включаем фронтэнд для смартфона
-      document.querySelectorAll('.desktop').forEach((element) => {
-        element.style.display = 'none'
-      })
+      document.querySelector('.info').style.display = 'none'
 
       // Включаем гироскоп
       orientationInit()
@@ -178,11 +163,7 @@ export function motionInit() {
       motion.maximum = Math.max(motion.alpha, motion.beta, motion.gamma)
 
       motion.orientation = orientation
-      // Обновляем DOM только при изменении значения
-      if (previousOrientation !== motion.orientation) {
-        settings.lite ? false : (orientationElement.textContent = motion.orientation)
-        previousOrientation = motion.orientation
-      }
+      orientationElement.innerText = motion.orientation
 
       // Здесь отсекаем часть событий ниже порога threshold
       if (motion.maximum >= settings.motion.threshold) {
@@ -193,18 +174,13 @@ export function motionInit() {
 
         motion.maximumOnSession = previousMaximumMotion
 
-        if (previousIsMotion !== motion.isMotion) {
-          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
-          previousIsMotion = motion.isMotion
-        }
-
-        if (!settings.lite) {
-          alphaElement.textContent = motion.alpha
-          betaElement.textContent = motion.beta
-          gammaElement.textContent = motion.gamma
-          maximumElement.textContent = previousMaximumMotion
-          isMotionElement.classList.add('motion--yes')
-        }
+        // Заполняем отчёт
+        alphaElement.innerText = motion.alpha
+        betaElement.innerText = motion.beta
+        gammaElement.innerText = motion.gamma
+        maximumElement.innerText = previousMaximumMotion
+        isMotionElement.innerText = motion.isMotion
+        isMotionElement.classList.add('motion--yes')
 
         // Генерируем звук на смартфоне
         if (settings.audio.synthesisRegime === 'local') {
@@ -212,15 +188,11 @@ export function motionInit() {
         }
         // Либо отдаём в вебсокет для десктопа
         if (settings.audio.synthesisRegime === 'remote') {
-          audio(motion)
           socket.emit('motion message', motion)
         }
       } else {
         motion.isMotion = false
-        if (previousIsMotion !== motion.isMotion) {
-          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
-          previousIsMotion = motion.isMotion
-        }
+        isMotionElement.innerText = motion.isMotion
         isMotionElement.classList.remove('motion--yes')
 
         // Здесь тоже вызываем с isMotion = false, чтобы закончить работу осциллятора
@@ -228,7 +200,6 @@ export function motionInit() {
           audio(motion)
         }
         if (settings.audio.synthesisRegime === 'remote') {
-          audio(motion)
           socket.emit('motion message', motion)
         }
       }
