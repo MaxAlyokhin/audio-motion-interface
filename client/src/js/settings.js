@@ -6,7 +6,7 @@
 import { socketInit, socketIsInit, socket } from './websocket'
 
 // Элементы настроек
-let durationElement = null
+let releaseElement = null
 let attenuationElement = null
 let frequenciesRangeElement = null
 let notesRangeElement = null
@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', () => {
   filterElement = document.querySelector('.filter')
   attackElement = document.querySelector('.attack')
   gainElement = document.querySelector('.gain')
-  durationElement = document.querySelector('.duration-container')
+  releaseElement = document.querySelector('.release-container')
   attenuationElement = document.querySelector('.attenuation-container')
   frequenciesRangeElement = document.querySelector('.frequencies-range')
   notesRangeElement = document.querySelector('.notes-range')
@@ -91,7 +91,7 @@ export function syncSettingsFrontend(settings) {
   filterElement.value = settings.audio.biquadFilterFrequency
   attackElement.value = settings.audio.attack
   gainElement.value = settings.audio.gain
-  durationElement.querySelector('.duration').value = settings.audio.toneDuration
+  releaseElement.querySelector('.release').value = settings.audio.release
   attenuationElement.querySelector('.attenuation').value = settings.audio.attenuation
 }
 
@@ -104,7 +104,7 @@ export let settings = {
     gainGeneration: true,
   },
   audio: {
-    toneDuration: 1.2,
+    release: 1.2,
     oscillatorType: 'sine',
     biquadFilterFrequency: 600.0,
     attenuation: 0.0001,
@@ -168,9 +168,9 @@ export const mutations = {
       syncSettings()
     },
 
-    setDuration: (duration) => {
+    setrelease: (release) => {
       // 0.05 - минимальная длина тона, которую можно погасить без пиков
-      isNaN(duration) || duration === 0 ? (settings.audio.toneDuration = 0.05) : (settings.audio.toneDuration = duration)
+      isNaN(release) || release === 0 ? (settings.audio.release = 0.05) : (settings.audio.release = release)
       syncSettings()
     },
 
@@ -182,7 +182,7 @@ export const mutations = {
     },
 
     setAttenuation: (attenuation) => {
-      isNaN(attenuation) ? (settings.audio.attenuation = 0) : (settings.audio.attenuation = attenuation)
+      isNaN(attenuation) || attenuation === 0 ? (settings.audio.attenuation = 0.0001) : (settings.audio.attenuation = attenuation)
       syncSettings()
     },
 
@@ -342,8 +342,8 @@ export function settingsInit() {
     mutations.audio.setWaveType(this.options[this.selectedIndex].text)
   })
 
-  durationElement.addEventListener('input', function (event) {
-    mutations.audio.setDuration(parseFloat(event.target.value))
+  releaseElement.addEventListener('input', function (event) {
+    mutations.audio.setrelease(parseFloat(event.target.value))
   })
 
   filterElement.addEventListener('input', function () {

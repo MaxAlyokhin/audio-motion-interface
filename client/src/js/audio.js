@@ -31,19 +31,15 @@ window.addEventListener('DOMContentLoaded', () => {
 // События возникают даже в состоянии покоя - в этом случае параметры движения нулевые
 // Отсечка - минимальная скорость движения, при которой заводится система
 // Жест - набор событий движения от превышения отсечки до значения ниже отсечки
-
-// По сути в обоих режимах каждому жесту соответствует свой осциллятор,
-// просто в сингле нет затухания и атаки, позволяющих накладывать звуки друг на друга
-// Стоит сделать единый режим,
-
-// Здесь включается осциллятор и далее уже не выключается за всё время сессии
-// TODO: возможно это причина BAG-1
-
 // Каждому жесту соответствует свой осциллятор
+
 // У нас есть массив осцилляторов (вернее массивы элементов-узлов графа)
 // При превышении отсечки мы можем сказать, что движение началось
 // При скорости ниже отсечки мы можем сказать, что движение закончилось,
 // отследив что это последнее событие движения в череде событий с помощью маркера motionIsOff.
+
+// Здесь включается осциллятор и далее уже не выключается за всё время сессии
+// TODO: возможно это причина BAG-1
 
 let oscillatorArray = [] // Массив осцилляторов
 let biquadFilterArray = [] // Массив фильтров
@@ -52,7 +48,7 @@ let motionIsOff = true // Маркер последнего события дв�
 
 let now = null // Переменная для фиксации времени начала движения
 
-function plural(motion) {
+export function audio(motion) {
   // Определяем частоту
   if (settings.audio.frequencyRegime === 'continuous') {
     let minFrequency = settings.audio.frequenciesRange.from
@@ -104,7 +100,7 @@ function plural(motion) {
       biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
 
       // Изначальная громкость минимальна
-      gainNodeArray[gainNodeArray.length - 1].gain.setValueAtTime(settings.audio.attenuation, now, 0.005)
+      gainNodeArray[gainNodeArray.length - 1].gain.setValueAtTime(0.0001, now, 0.005)
 
       oscillatorArray[oscillatorArray.length - 1].start()
 
@@ -131,14 +127,19 @@ function plural(motion) {
   // значит мы поймали последнее событие движения (движение остановлено).
   // Тогда планируем затухание сигнала и удаление графа
   else if (motionIsOff === false) {
+    let end = audioContext.currentTime
     // Планируем затухание громкости и остановку осциллятора
     // последних элементов в массивах на момент остановки движения
     gainNodeArray[gainNodeArray.length - 1].gain.exponentialRampToValueAtTime(
       settings.audio.attenuation,
-      audioContext.currentTime + settings.audio.toneDuration + settings.audio.attack
+      end + settings.audio.release + settings.audio.attack
     )
 
-    oscillatorArray[oscillatorArray.length - 1].stop(audioContext.currentTime + settings.audio.toneDuration + settings.audio.attack)
+    // Удаление возможных пиков
+    gainNodeArray[gainNodeArray.length - 1].gain.setTargetAtTime(0.0001, end + settings.audio.release + settings.audio.attack, 0.005)
+
+    // + 0.1 это время полного погашения громкости на setTargetAtTime с запасом
+    oscillatorArray[oscillatorArray.length - 1].stop(end + settings.audio.release + settings.audio.attack + 0.1)
 
     // Планируем удаление этих элементов, они будут первыми с массивах
     // на момент вызова таймаута
@@ -148,12 +149,8 @@ function plural(motion) {
       gainNodeArray.shift()
 
       settings.lite ? false : (countElement.textContent = oscillatorArray.length)
-    }, settings.audio.toneDuration * 1000)
+    }, end + settings.audio.release + settings.audio.attack * 1000 + 0.1)
 
     motionIsOff = true
   }
-}
-
-export function audio(motion) {
-  plural(motion)
 }
