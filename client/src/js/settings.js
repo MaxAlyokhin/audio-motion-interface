@@ -3,6 +3,7 @@
 // Мутации запускаются по событиям интерфейса управления
 // и синхронизируют настройки по вебсокету с удалённым десктопом
 
+import { updateCompressorSettings } from './audio'
 import { socketInit, socketIsInit, socket } from './websocket'
 
 // Элементы настроек
@@ -26,6 +27,7 @@ let containerElement = null
 let interfaceRegimeOnElement = null
 let interfaceRegimeOnButtonElement = null
 let connectionsToServer = null
+let compressorElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -48,6 +50,7 @@ window.addEventListener('DOMContentLoaded', () => {
   interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
   interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
   connectionsToServer = document.querySelector('.connections__to-server')
+  compressorElement = document.querySelector('.compressor-element')
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -96,6 +99,11 @@ export function syncSettingsFrontend(settings) {
   gainElement.value = settings.audio.gain
   releaseElement.querySelector('.release').value = settings.audio.release
   attenuationElement.querySelector('.attenuation').value = settings.audio.attenuation
+  compressorElement.querySelector('.compressor-threshold').value = settings.audio.compressor.threshold
+  compressorElement.querySelector('.compressor-knee').value = settings.audio.compressor.knee
+  compressorElement.querySelector('.compressor-ratio').value = settings.audio.compressor.ratio
+  compressorElement.querySelector('.compressor-attack').value = settings.audio.compressor.attack
+  compressorElement.querySelector('.compressor-release').value = settings.audio.compressor.release
 }
 
 // Настройки системы
@@ -123,6 +131,13 @@ export let settings = {
     notesRange: {
       from: 48,
       to: 60,
+    },
+    compressor: {
+      threshold: -50,
+      knee: 40,
+      ratio: 12,
+      attack: 0,
+      release: 0.25,
     },
   },
 }
@@ -287,6 +302,63 @@ export const mutations = {
 
       syncSettings()
     },
+
+    setCompressorParameter: (parameter, value) => {
+      switch (parameter) {
+        case 'threshold':
+          if (isNaN(value) || value < -100) {
+            settings.audio.compressor[parameter] = -100
+          } else if (value > 0) {
+            settings.audio.compressor[parameter] = 0
+          } else {
+            settings.audio.compressor[parameter] = value
+          }
+          break
+
+        case 'knee':
+          if (isNaN(value)) {
+            settings.audio.compressor[parameter] = 0
+          } else if (value > 40) {
+            settings.audio.compressor[parameter] = 40
+          } else {
+            settings.audio.compressor[parameter] = value
+          }
+          break
+
+        case 'ratio':
+          if (isNaN(value)) {
+            settings.audio.compressor[parameter] = 1
+          } else if (value > 20) {
+            settings.audio.compressor[parameter] = 20
+          } else {
+            settings.audio.compressor[parameter] = value
+          }
+          break
+
+        case 'attack':
+          if (isNaN(value)) {
+            settings.audio.compressor[parameter] = 0
+          } else if (value > 1) {
+            settings.audio.compressor[parameter] = 1
+          } else {
+            settings.audio.compressor[parameter] = value
+          }
+          break
+
+        case 'release':
+          if (isNaN(value)) {
+            settings.audio.compressor[parameter] = 0
+          } else if (value > 1) {
+            settings.audio.compressor[parameter] = 1
+          } else {
+            settings.audio.compressor[parameter] = value
+          }
+          break
+      }
+
+      updateCompressorSettings(settings.audio.compressor)
+      syncSettings()
+    },
   },
 }
 
@@ -410,6 +482,14 @@ export function settingsInit() {
     }
   })
 
+  compressorElement.addEventListener('input', function (event) {
+    const parameter = event.target.classList[0].split('-')[1]
+    mutations.audio.setCompressorParameter(parameter, parseFloat(event.target.value))
+  })
+
   // Заполняем интерфейс дефолтными данными
   syncSettingsFrontend(settings)
+
+  // Настраиваем компрессор
+  updateCompressorSettings(settings.audio.compressor)
 }

@@ -48,15 +48,18 @@ let motionIsOff = true // Маркер последнего события дв�
 
 let now = null // Переменная для фиксации времени начала движения
 
-export function audio(motion) {
-  // Определяем частоту
-  if (settings.audio.frequencyRegime === 'continuous') {
-    let minFrequency = settings.audio.frequenciesRange.from
-    let maxFrequency = settings.audio.frequenciesRange.to
+// Все осцилляторы будут подключаться к одному компрессору
+const compressor = audioContext.createDynamicsCompressor()
+compressor.connect(audioContext.destination)
 
-    // 1 линейный вариант
-    // Градусы положения умножить на диапазон (разница значений) делённый на 180 (максимальное значение гироскопа) + минимальное значение
-    // frequency = toFixedNumber(motion.orientation * ((maxFrequency - minFrequency) / 180) + minFrequency, 4)
+// Функция обновляет параметры компрессора
+export function updateCompressorSettings({ threshold, knee, ratio, attack, release }) {
+  compressor.threshold.setValueAtTime(threshold, audioContext.currentTime)
+  compressor.knee.setValueAtTime(knee, audioContext.currentTime)
+  compressor.ratio.setValueAtTime(ratio, audioContext.currentTime)
+  compressor.attack.setValueAtTime(attack, audioContext.currentTime)
+  compressor.release.setValueAtTime(release, audioContext.currentTime)
+}
 
 // Функция вызывается ≈ каждые 16мс
 export function audio(motion) {

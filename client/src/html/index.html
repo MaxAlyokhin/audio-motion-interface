@@ -184,6 +184,29 @@
             <input type="number" name="factor" class="factor" />
           </div>
         </div>
+
+        <div class="compressor-element">
+          <span>Компрессор</span>
+          <div class="compressor-element__container">
+            <span>Threshold:</span>
+            <input type="number" min="-100" max="0" step="1" name="compressor-threshold" class="compressor-threshold" />
+          </div>
+          <div class="compressor-element__container">
+            <span>Knee:</span>
+            <input type="number" min="0" max="40" step="1" name="compressor-knee" class="compressor-knee" />
+          </div>
+          <div class="compressor-element__container">
+            <span>Ratio:</span>
+            <input type="number" min="1" max="20" step="1" name="compressor-ratio" class="compressor-ratio" />
+          </div>
+          <div class="compressor-element__container">
+            <span>Attack:</span>
+            <input type="number" min="0" max="1" step="0.001" name="compressor-attack" class="compressor-attack" />
+          </div>
+          <div class="compressor-element__container">
+            <span>Release:</span>
+            <input type="number" min="0" max="1" step="0.01" name="compressor-release" class="compressor-release" />
+          </div>
         </div>
 
         <div>

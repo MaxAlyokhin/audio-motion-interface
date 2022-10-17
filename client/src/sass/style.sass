@@ -226,7 +226,15 @@ select
       &::before
         background-color: $red
 
-.synthesis-regime, .oscillator-regime, .frequency-regime, .notes-range, .frequencies-range, .gain-generation, .lite
+.synthesis-regime,
+.oscillator-regime,
+.frequency-regime,
+.notes-range,
+.frequencies-range,
+.gain-generation,
+.lite,
+.filter-element,
+.compressor-element
   flex-direction: column
   align-items: flex-start !important
 
@@ -234,7 +242,7 @@ select
     display: flex
     column-gap: 20px
 
-.notes-range, .frequencies-range
+.notes-range, .frequencies-range, .filter-element, .compressor-element
   &__container
     justify-content: space-between
     width: 100%
@@ -285,3 +293,13 @@ select
 
 .release-container, .attenuation-container, .motion__count-container
   display: flex
+
+.frequencies-range, .notes-range, .filter-element, .compressor-element
+  border-left: 1px solid black
+  padding-left: 10px
+
+  > span
+    font-weight: 700
+
+.container.mobile
+  padding-bottom: 100px
