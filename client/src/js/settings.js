@@ -15,6 +15,7 @@ let frequencyRegimeElement = null
 let thresholdElement = null
 let waveElement = null
 let filterElement = null
+let factorElement = null
 let attackElement = null
 let gainElement = null
 let gainGenerationOptionElement = null
@@ -32,6 +33,7 @@ window.addEventListener('DOMContentLoaded', () => {
   thresholdElement = document.querySelector('.threshold')
   waveElement = document.querySelector('.wave')
   filterElement = document.querySelector('.filter')
+  factorElement = document.querySelector('.factor')
   attackElement = document.querySelector('.attack')
   gainElement = document.querySelector('.gain')
   releaseElement = document.querySelector('.release-container')
@@ -89,6 +91,7 @@ export function syncSettingsFrontend(settings) {
   thresholdElement.value = settings.motion.threshold
   waveElement.value = settings.audio.oscillatorType
   filterElement.value = settings.audio.biquadFilterFrequency
+  factorElement.value = settings.audio.biquadFilterQ
   attackElement.value = settings.audio.attack
   gainElement.value = settings.audio.gain
   releaseElement.querySelector('.release').value = settings.audio.release
@@ -104,12 +107,13 @@ export let settings = {
     gainGeneration: true,
   },
   audio: {
+    attack: 0,
     release: 1.2,
+    gain: 0.08,
     oscillatorType: 'sine',
     biquadFilterFrequency: 600.0,
+    biquadFilterQ: 1,
     attenuation: 0.0001,
-    attack: 0,
-    gain: 0.08,
     synthesisRegime: 'local',
     frequencyRegime: 'continuous',
     frequenciesRange: {
@@ -168,16 +172,26 @@ export const mutations = {
       syncSettings()
     },
 
-    setrelease: (release) => {
+    setRelease: (release) => {
       // 0.05 - минимальная длина тона, которую можно погасить без пиков
       isNaN(release) || release === 0 ? (settings.audio.release = 0.05) : (settings.audio.release = release)
       syncSettings()
     },
 
     setBiquadFilterFrequency: (biquadFilterFrequency) => {
-      isNaN(biquadFilterFrequency)
-        ? (settings.audio.biquadFilterFrequency = 0)
-        : (settings.audio.biquadFilterFrequency = biquadFilterFrequency)
+      isNaN(biquadFilterFrequency) ? (settings.audio.biquadFilterFrequency = 0) : (settings.audio.biquadFilterFrequency = biquadFilterFrequency)
+      syncSettings()
+    },
+
+    setBiquadFilterQ: (biquadFilterQ) => {
+      if (isNaN(biquadFilterQ) || biquadFilterQ === 0) {
+        settings.audio.biquadFilterQ = 0.0001
+      } else if (biquadFilterQ > 1000) {
+        settings.audio.biquadFilterQ = 1000
+      } else {
+        settings.audio.biquadFilterQ = biquadFilterQ
+      }
+
       syncSettings()
     },
 
@@ -343,11 +357,15 @@ export function settingsInit() {
   })
 
   releaseElement.addEventListener('input', function (event) {
-    mutations.audio.setrelease(parseFloat(event.target.value))
+    mutations.audio.setRelease(parseFloat(event.target.value))
   })
 
   filterElement.addEventListener('input', function () {
     mutations.audio.setBiquadFilterFrequency(parseFloat(this.value))
+  })
+
+  factorElement.addEventListener('input', function () {
+    mutations.audio.setBiquadFilterQ(parseFloat(this.value))
   })
 
   attenuationElement.addEventListener('input', function (event) {

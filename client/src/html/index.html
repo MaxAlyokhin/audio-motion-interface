@@ -114,30 +114,6 @@
           </div>
         </div>
 
-        <div class="frequencies-range">
-          <span>Диапазон частот:</span>
-          <div class="frequencies-range__container">
-            <span>От:</span>
-            <input type="number" min="0" max="24000" name="frequencies-range-from" class="frequencies-range-from" />
-          </div>
-          <div class="frequencies-range__container">
-            <span>До:</span>
-            <input type="number" min="0" max="24000" name="frequencies-range-to" class="frequencies-range-to" />
-          </div>
-        </div>
-
-        <div class="notes-range">
-          <span>Диапазон нот:</span>
-          <div class="notes-range__container">
-            <span>От:</span>
-            <input type="number" min="0" name="notes-range-from" class="notes-range-from" />
-          </div>
-          <div class="notes-range__container">
-            <span>До:</span>
-            <input type="number" min="0" name="notes-range-to" class="notes-range-to" />
-          </div>
-        </div>
-
         <div>
           <span>Отсечка датчика (м/с²): </span>
           <input type="number" min="0" name="threshold" class="threshold" />
@@ -173,9 +149,41 @@
           <input type="number" min="0" name="attenuation" class="attenuation" />
         </div>
 
-        <div>
-          <span>Частота фильтра:</span>
-          <input type="number" min="0" name="filter" class="filter" />
+        <div class="frequencies-range">
+          <span>Диапазон частот</span>
+          <div class="frequencies-range__container">
+            <span>От:</span>
+            <input type="number" min="0" max="24000" name="frequencies-range-from" class="frequencies-range-from" />
+          </div>
+          <div class="frequencies-range__container">
+            <span>До:</span>
+            <input type="number" min="0" max="24000" name="frequencies-range-to" class="frequencies-range-to" />
+          </div>
+        </div>
+
+        <div class="notes-range">
+          <span>Диапазон нот:</span>
+          <div class="notes-range__container">
+            <span>От:</span>
+            <input type="number" min="0" name="notes-range-from" class="notes-range-from" />
+          </div>
+          <div class="notes-range__container">
+            <span>До:</span>
+            <input type="number" min="0" name="notes-range-to" class="notes-range-to" />
+          </div>
+        </div>
+
+        <div class="filter-element">
+          <span>Фильтр</span>
+          <div class="filter-element__container">
+            <span>Частота:</span>
+            <input type="number" name="filter" class="filter"" />
+          </div>
+          <div class="filter-element__container">
+            <span>Q-фактор:</span>
+            <input type="number" name="factor" class="factor" />
+          </div>
+        </div>
         </div>
 
         <div>

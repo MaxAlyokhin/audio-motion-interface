@@ -32,8 +32,7 @@ export function motionInit() {
   }
   // Нет акселерометра
   else {
-    document.querySelector('#motionSupported').innerHTML =
-      'Error: accelerometer is not supported.<br>Ошибка: акселерометр не поддерживается.<br>'
+    document.querySelector('#motionSupported').innerHTML = 'Error: accelerometer is not supported.<br>Ошибка: акселерометр не поддерживается.<br>'
   }
 
   // Инициализируем объект движения
@@ -160,6 +159,7 @@ export function motionInit() {
       document.querySelectorAll('.desktop').forEach((element) => {
         element.style.display = 'none'
       })
+      document.querySelector('.container').classList.add('mobile')
 
       // Включаем гироскоп
       orientationInit()
