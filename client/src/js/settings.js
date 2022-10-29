@@ -144,7 +144,7 @@ export let settings = {
       to: 60,
     },
     compressor: {
-      threshold: -50,
+      threshold: 0,
       knee: 40,
       ratio: 12,
       attack: 0,
@@ -188,7 +188,7 @@ export const mutations = {
 
   motion: {
     setThreshold: (threshold) => {
-      isNaN(threshold) ? (settings.motion.threshold = 0) : (settings.motion.threshold = threshold)
+      isNaN(threshold) || threshold < 0 ? (settings.motion.threshold = 0) : (settings.motion.threshold = threshold)
       syncSettings()
     },
 
@@ -206,12 +206,19 @@ export const mutations = {
 
     setRelease: (release) => {
       // 0.05 - минимальная длина тона, которую можно погасить без пиков
-      isNaN(release) || release === 0 ? (settings.audio.release = 0.05) : (settings.audio.release = release)
+      isNaN(release) || release === 0 || release < 0 ? (settings.audio.release = 0.05) : (settings.audio.release = release)
       syncSettings()
     },
 
     setBiquadFilterFrequency: (biquadFilterFrequency) => {
-      isNaN(biquadFilterFrequency) ? (settings.audio.biquadFilterFrequency = 0) : (settings.audio.biquadFilterFrequency = biquadFilterFrequency)
+      if (isNaN(biquadFilterFrequency) || biquadFilterFrequency < 0) {
+        settings.audio.biquadFilterFrequency = 0
+      } else if (biquadFilterFrequency > 24000) {
+        settings.audio.biquadFilterFrequency = 24000
+      } else {
+        settings.audio.biquadFilterFrequency = biquadFilterFrequency
+      }
+
       syncSettings()
     },
 
@@ -228,17 +235,17 @@ export const mutations = {
     },
 
     setAttenuation: (attenuation) => {
-      isNaN(attenuation) || attenuation === 0 ? (settings.audio.attenuation = 0.0001) : (settings.audio.attenuation = attenuation)
+      isNaN(attenuation) || attenuation === 0 || attenuation < 0 ? (settings.audio.attenuation = 0.0001) : (settings.audio.attenuation = attenuation)
       syncSettings()
     },
 
     setAttack: (attack) => {
-      isNaN(attack) ? (settings.audio.attack = 0) : (settings.audio.attack = attack)
+      isNaN(attack) || attack < 0 ? (settings.audio.attack = 0) : (settings.audio.attack = attack)
       syncSettings()
     },
 
     setGain: (gain) => {
-      isNaN(gain) ? (settings.audio.gain = 0) : (settings.audio.gain = gain)
+      isNaN(gain) || gain < 0 ? (settings.audio.gain = 0) : (settings.audio.gain = gain)
       syncSettings()
     },
 
@@ -272,7 +279,7 @@ export const mutations = {
 
     setFrequencyRange: (rangeType, frequency) => {
       if (rangeType === 'from') {
-        if (isNaN(frequency)) {
+        if (isNaN(frequency) || frequency < 0) {
           settings.audio.frequenciesRange.from = 0
         } else if (frequency > 24000 || frequency >= settings.audio.frequenciesRange.to) {
           settings.audio.frequenciesRange.from = settings.audio.frequenciesRange.to - 1
@@ -281,7 +288,7 @@ export const mutations = {
         }
       }
       if (rangeType === 'to') {
-        if (isNaN(frequency)) {
+        if (isNaN(frequency) || frequency < 0) {
           settings.audio.frequenciesRange.to = 0
         } else if (frequency > 24000) {
           settings.audio.frequenciesRange.to = 24000
@@ -297,7 +304,7 @@ export const mutations = {
 
     setNoteRange: (rangeType, note) => {
       if (rangeType === 'from') {
-        if (isNaN(note)) {
+        if (isNaN(note) || note < 0) {
           settings.audio.notesRange.from = 0
         } else if (note > 138 || note >= settings.audio.notesRange.to) {
           settings.audio.notesRange.from = settings.audio.notesRange.to - 1
@@ -306,7 +313,7 @@ export const mutations = {
         }
       }
       if (rangeType === 'to') {
-        if (isNaN(note)) {
+        if (isNaN(note) || note < 0) {
           settings.audio.notesRange.to = 0
         } else if (note > 138) {
           settings.audio.notesRange.to = 138
@@ -333,7 +340,7 @@ export const mutations = {
           break
 
         case 'knee':
-          if (isNaN(value)) {
+          if (isNaN(value) || value < 0) {
             settings.audio.compressor[parameter] = 0
           } else if (value > 40) {
             settings.audio.compressor[parameter] = 40
@@ -343,7 +350,7 @@ export const mutations = {
           break
 
         case 'ratio':
-          if (isNaN(value)) {
+          if (isNaN(value) || value < 0) {
             settings.audio.compressor[parameter] = 1
           } else if (value > 20) {
             settings.audio.compressor[parameter] = 20
@@ -353,7 +360,7 @@ export const mutations = {
           break
 
         case 'attack':
-          if (isNaN(value)) {
+          if (isNaN(value) || value < 0) {
             settings.audio.compressor[parameter] = 0
           } else if (value > 1) {
             settings.audio.compressor[parameter] = 1
@@ -363,7 +370,7 @@ export const mutations = {
           break
 
         case 'release':
-          if (isNaN(value)) {
+          if (isNaN(value) || value < 0) {
             settings.audio.compressor[parameter] = 0
           } else if (value > 1) {
             settings.audio.compressor[parameter] = 1
