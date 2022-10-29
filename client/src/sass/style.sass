@@ -234,7 +234,8 @@ select
 .gain-generation,
 .lite,
 .filter-element,
-.compressor-element
+.compressor-element,
+.lfo
   flex-direction: column
   align-items: flex-start !important
 
@@ -242,7 +243,7 @@ select
     display: flex
     column-gap: 20px
 
-.notes-range, .frequencies-range, .filter-element, .compressor-element
+.notes-range, .frequencies-range, .filter-element, .compressor-element, .lfo
   &__container
     justify-content: space-between
     width: 100%
@@ -294,7 +295,7 @@ select
 .release-container, .attenuation-container, .motion__count-container
   display: flex
 
-.frequencies-range, .notes-range, .filter-element, .compressor-element
+.frequencies-range, .notes-range, .filter-element, .compressor-element, .lfo
   border-left: 1px solid black
   padding-left: 10px
 
@@ -303,3 +304,9 @@ select
 
 .container.mobile
   padding-bottom: 100px
+
+.lfo
+  &__container
+    &--radio
+      width: auto
+      margin-top: 0

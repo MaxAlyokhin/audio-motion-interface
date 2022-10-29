@@ -28,6 +28,7 @@ let interfaceRegimeOnElement = null
 let interfaceRegimeOnButtonElement = null
 let connectionsToServer = null
 let compressorElement = null
+let LFOElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -51,6 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
   interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
   connectionsToServer = document.querySelector('.connections__to-server')
   compressorElement = document.querySelector('.compressor-element')
+  LFOElement = document.querySelector('.lfo')
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -104,6 +106,15 @@ export function syncSettingsFrontend(settings) {
   compressorElement.querySelector('.compressor-ratio').value = settings.audio.compressor.ratio
   compressorElement.querySelector('.compressor-attack').value = settings.audio.compressor.attack
   compressorElement.querySelector('.compressor-release').value = settings.audio.compressor.release
+  LFOElement.querySelector('.lfo-wave').value = settings.audio.LFO.type
+  LFOElement.querySelector('.rate').value = settings.audio.LFO.rate
+  LFOElement.querySelector('.depth').value = settings.audio.LFO.depth
+  if (settings.audio.LFO.enabled === true) {
+    LFOElement.querySelector('#lfo-on').checked = true
+  }
+  if (settings.audio.LFO.enabled === false) {
+    LFOElement.querySelector('#lfo-off').checked = true
+  }
 }
 
 // Настройки системы
@@ -138,6 +149,12 @@ export let settings = {
       ratio: 12,
       attack: 0,
       release: 0.25,
+    },
+    LFO: {
+      enabled: true,
+      type: 'sine',
+      rate: 1,
+      depth: 1,
     },
   },
 }
@@ -359,6 +376,40 @@ export const mutations = {
       updateCompressorSettings(settings.audio.compressor)
       syncSettings()
     },
+
+    setLFOParameter: (parameter, value) => {
+      switch (parameter) {
+        case 'rate':
+          if (isNaN(value) || value < 0) {
+            settings.audio.LFO.rate = 0
+          } else if (value > 24000) {
+            settings.audio.LFO.rate = 24000
+          } else {
+            settings.audio.LFO.rate = value
+          }
+          break
+
+        case 'depth':
+          if (isNaN(value) || value < 0) {
+            settings.audio.LFO.depth = 0
+          } else if (value > 1) {
+            settings.audio.LFO.depth = 1
+          } else {
+            settings.audio.LFO.depth = value
+          }
+
+          break
+
+        case 'enabled':
+          settings.audio.LFO.enabled = value === 'true' ? (settings.audio.LFO.enabled = true) : (settings.audio.LFO.enabled = false)
+          break
+
+        case 'type':
+          settings.audio.LFO.type = value
+      }
+
+      syncSettings()
+    },
   },
 }
 
@@ -485,6 +536,16 @@ export function settingsInit() {
   compressorElement.addEventListener('input', function (event) {
     const parameter = event.target.classList[0].split('-')[1]
     mutations.audio.setCompressorParameter(parameter, parseFloat(event.target.value))
+  })
+
+  LFOElement.addEventListener('input', function (event) {
+    if (event.target.name === 'lfo') {
+      mutations.audio.setLFOParameter('enabled', event.target.value)
+    } else if (event.target.name === 'lfo-wave') {
+      mutations.audio.setLFOParameter('type', event.target.options[event.target.selectedIndex].text)
+    } else {
+      mutations.audio.setLFOParameter(String(event.target.name), parseFloat(event.target.value))
+    }
   })
 
   // Заполняем интерфейс дефолтными данными

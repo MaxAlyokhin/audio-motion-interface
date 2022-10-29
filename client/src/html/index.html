@@ -185,6 +185,40 @@
           </div>
         </div>
 
+        <div class="lfo">
+          <span>LFO</span>
+          <div class="lfo__container">
+            <span>Подключить:</span>
+            <div class="lfo__container lfo__container--radio">
+              <div class="radio-element">
+                <input type="radio" name="lfo" id="lfo-on" value="true" checked />
+                <label for="lfo-on">Да</label>
+              </div>
+              <div class="radio-element">
+                <input type="radio" name="lfo" id="lfo-off" value="false" />
+                <label for="lfo-off">Нет</label>
+              </div>
+            </div>
+          </div>
+          <div class="lfo__container">
+            <span>Тип волны:</span>
+            <select name="lfo-wave" class="lfo-wave">
+              <option value="sine">sine</option>
+              <option value="square">square</option>
+              <option value="sawtooth">sawtooth</option>
+              <option value="triangle">triangle</option>
+            </select>
+          </div>
+          <div class="lfo__container">
+            <span>Частота (Rate):</span>
+            <input type="number" name="rate" class="rate" />
+          </div>
+          <div class="lfo__container">
+            <span>Амплитуда (Depth):</span>
+            <input type="number" step="0.1" name="depth" class="depth" />
+          </div>
+        </div>
+
         <div class="compressor-element">
           <span>Компрессор</span>
           <div class="compressor-element__container">
