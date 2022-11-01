@@ -124,7 +124,7 @@ export function motionInit() {
           previousIsMotion = motion.isMotion
         }
 
-        if (previousOrientation !== motion.orientation) {
+        if (previousOrientation !== motion.orientation && motion.orientation !== false) {
           settings.lite ? false : (orientationElement.textContent = motion.orientation)
           previousOrientation = motion.orientation
         }
@@ -179,13 +179,13 @@ export function motionInit() {
 
       motion.orientation = orientation
       // Обновляем DOM только при изменении значения
-      if (previousOrientation !== motion.orientation) {
+      if (previousOrientation !== motion.orientation && motion.orientation !== false) {
         settings.lite ? false : (orientationElement.textContent = motion.orientation)
         previousOrientation = motion.orientation
       }
 
       // Здесь отсекаем часть событий ниже порога threshold
-      if (motion.maximum >= settings.motion.threshold) {
+      if (motion.maximum >= settings.motion.threshold && motion.orientation !== false) {
         motion.isMotion = true
 
         // Сравниваем с предыдущим значением и находим наибольшее

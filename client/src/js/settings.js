@@ -22,6 +22,7 @@ let gainElement = null
 let gainGenerationOptionElement = null
 let gainGenerationElement = null
 let liteElement = null
+let sphereElement = null
 let interfaceRegimeElement = null
 let containerElement = null
 let interfaceRegimeOnElement = null
@@ -46,6 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
   gainGenerationOptionElement = document.querySelector('.gain-generation')
   gainGenerationElement = document.querySelector('.gain-generation__container')
   liteElement = document.querySelector('.lite__container')
+  sphereElement = document.querySelector('.sphere__container')
   interfaceRegimeElement = document.querySelector('.interface-regime')
   containerElement = document.querySelector('.container')
   interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
@@ -89,6 +91,13 @@ export function syncSettingsFrontend(settings) {
     liteElement.querySelector('#lite-yes').checked = true
   }
 
+  if (settings.motion.semiSphere === 'left') {
+    sphereElement.querySelector('#sphere-left').checked = true
+  }
+  if (settings.motion.semiSphere === 'right') {
+    sphereElement.querySelector('#sphere-right').checked = true
+  }
+
   frequenciesRangeElement.querySelector('.frequencies-range-from').value = settings.audio.frequenciesRange.from
   frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
   notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
@@ -124,6 +133,7 @@ export let settings = {
   motion: {
     threshold: 1.0,
     gainGeneration: true,
+    semiSphere: 'left',
   },
   audio: {
     attack: 0,
@@ -163,6 +173,11 @@ export let settings = {
 export const mutations = {
   setLite: (value) => {
     value === 'true' ? (settings.lite = true) : (settings.lite = false)
+    syncSettings()
+  },
+
+  setSemiSphere: (value) => {
+    settings.motion.semiSphere = value
     syncSettings()
   },
 
@@ -513,6 +528,10 @@ export function settingsInit() {
 
   liteElement.addEventListener('change', function (event) {
     mutations.setLite(event.target.value)
+  })
+
+  sphereElement.addEventListener('change', function (event) {
+    mutations.setSemiSphere(event.target.value)
   })
 
   // Выключение интерфейса управления
