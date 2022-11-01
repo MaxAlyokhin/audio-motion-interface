@@ -37,6 +37,9 @@ let motionTimeoutArray = []
 // (функционально в этом нет особого смысла, но для UX это создаёт впечатление перезапуска системы)
 let interfaceIsBlocked = false
 
+// Таймаута срабатывания системы
+let audioTimeoutIsOff = true
+
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
   countElement = document.querySelector('.motion__count')
@@ -552,14 +555,8 @@ const fourierCoefficients = {
   },
 }
 
-const squareWave = audioContext.createPeriodicWave(
-  Float32Array.from(fourierCoefficients.square.real),
-  Float32Array.from(fourierCoefficients.square.imag)
-)
-const sawtoothWave = audioContext.createPeriodicWave(
-  Float32Array.from(fourierCoefficients.sawtooth.real),
-  Float32Array.from(fourierCoefficients.sawtooth.imag)
-)
+const squareWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.square.real), Float32Array.from(fourierCoefficients.square.imag))
+const sawtoothWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.sawtooth.real), Float32Array.from(fourierCoefficients.sawtooth.imag))
 
 // Все осцилляторы будут подключаться к одному компрессору
 const compressor = audioContext.createDynamicsCompressor()
@@ -598,7 +595,7 @@ export function audio(motion) {
   pitchDetection(frequency)
 
   // Отсечка превышена - движение началось
-  if (motion.isMotion && !interfaceIsBlocked) {
+  if (motion.isMotion && !interfaceIsBlocked && audioTimeoutIsOff) {
     // Собираем граф, делаем это только один раз в начале движения
     if (motionIsOff) {
       oscillatorArray.push(audioContext.createOscillator())
@@ -661,6 +658,7 @@ export function audio(motion) {
     }
 
     settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+
     if (oscillatorArray.length >= 120) countElement.classList.add('warning')
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
@@ -698,6 +696,13 @@ export function audio(motion) {
       }, (settings.audio.release + settings.audio.attack + 0.1) * 1000)
     )
 
-    motionIsOff = true
+    motionIsOff = true // Движение закончено
+
+    // Ставим таймаут от случайных движений после этого
+    audioTimeoutIsOff = false
+
+    setTimeout(() => {
+      audioTimeoutIsOff = true
+    }, settings.motion.timeout)
   }
 }

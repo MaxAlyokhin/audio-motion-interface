@@ -30,6 +30,7 @@ let interfaceRegimeOnButtonElement = null
 let connectionsToServer = null
 let compressorElement = null
 let LFOElement = null
+let timeoutElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -55,6 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
   connectionsToServer = document.querySelector('.connections__to-server')
   compressorElement = document.querySelector('.compressor-element')
   LFOElement = document.querySelector('.lfo')
+  timeoutElement = document.querySelector('.timeout')
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -118,6 +120,7 @@ export function syncSettingsFrontend(settings) {
   LFOElement.querySelector('.lfo-wave').value = settings.audio.LFO.type
   LFOElement.querySelector('.rate').value = settings.audio.LFO.rate
   LFOElement.querySelector('.depth').value = settings.audio.LFO.depth
+  timeoutElement.value = settings.motion.timeout
   if (settings.audio.LFO.enabled === true) {
     LFOElement.querySelector('#lfo-on').checked = true
   }
@@ -132,7 +135,8 @@ export let settings = {
   interfaceRegime: true,
   motion: {
     threshold: 1.0,
-    gainGeneration: true,
+    timeout: 150,
+    gainGeneration: false,
     semiSphere: 'right',
   },
   audio: {
@@ -211,6 +215,11 @@ export const mutations = {
       value === 'true' ? (settings.motion.gainGeneration = true) : (settings.motion.gainGeneration = false)
       syncSettings()
     },
+
+    setMotionTimeout: (timeout) => {
+      isNaN(timeout) || timeout < 0 ? (settings.motion.timeout = 0) : (settings.motion.timeout = timeout)
+      syncSettings()
+    }
   },
 
   audio: {
@@ -473,6 +482,10 @@ export function settingsInit() {
 
   thresholdElement.addEventListener('input', function () {
     mutations.motion.setThreshold(parseFloat(this.value))
+  })
+
+  timeoutElement.addEventListener('input', function () {
+    mutations.motion.setMotionTimeout(parseFloat(this.value))
   })
 
   gainGenerationElement.addEventListener('change', function (event) {
