@@ -133,7 +133,7 @@ export let settings = {
   motion: {
     threshold: 1.0,
     gainGeneration: true,
-    semiSphere: 'left',
+    semiSphere: 'right',
   },
   audio: {
     attack: 0,

@@ -20,10 +20,66 @@ let frequencyElement = null
 let previousFrequency = null // Для более эффективной работы с обновлением DOM
 
 let countElement = null // Количество осцилляторов
+let bodyElement = null // body для анимирования по сбросу осцилляторов
+
+let oscillatorArray = [] // Массив осцилляторов
+let biquadFilterArray = [] // Массив фильтров
+let LFOArray = [] // Массив осцилляторов
+let LFOGainArray = [] // Массив фильтров
+let envelopeArray = [] // Массив ручек громкости, реализующих огибающую (envelope)
+let masterGainArray = [] // Ручка громкости, управляемая LFO
+let motionIsOff = true // Маркер последнего события движения
+
+// Для кнопки очистки осцилляторов
+// Массив таймаутов в конце функции audio(), по которым очищаются массивы
+let motionTimeoutArray = []
+// Для 2ух-секундной блокировки интерфеса
+// (функционально в этом нет особого смысла, но для UX это создаёт впечатление перезапуска системы)
+let interfaceIsBlocked = false
 
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
   countElement = document.querySelector('.motion__count')
+  bodyElement = document.querySelector('body')
+
+  // Кнопка очистки осцилляторов
+  document.querySelector('.off').addEventListener('change', function () {
+    bodyElement.classList.add('inactive')
+
+    motionIsOff = true // Заканчиваем последнее движение
+    interfaceIsBlocked = true // Блокируем интерфейс
+
+    // Очищаем таймауты в конце функции audio()
+    motionTimeoutArray.forEach((timeout) => {
+      clearTimeout(timeout)
+    })
+
+    // Останавливаем осцилляторы
+    oscillatorArray.forEach((oscillator) => {
+      oscillator.stop()
+    })
+
+    // Очищаем систему от всех элементов графа
+    oscillatorArray.length = 0
+    biquadFilterArray.length = 0
+    envelopeArray.length = 0
+
+    if (settings.audio.LFO.enabled) {
+      LFOArray.length = 0
+      LFOGainArray.length = 0
+      masterGainArray.length = 0
+    }
+
+    // Отображаем обнулённый счётчик осцилляторов
+    settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+
+    // Приводим интерфейс в исходную
+    setTimeout(() => {
+      bodyElement.classList.remove('inactive')
+      this.querySelector('#off').checked = false
+      interfaceIsBlocked = false
+    }, 2000)
+  })
 })
 
 // Граф - это осциллятор => фильтр => громкость
@@ -37,18 +93,6 @@ window.addEventListener('DOMContentLoaded', () => {
 // При превышении отсечки мы можем сказать, что движение началось
 // При скорости ниже отсечки мы можем сказать, что движение закончилось,
 // отследив что это последнее событие движения в череде событий с помощью маркера motionIsOff.
-
-// Здесь включается осциллятор и далее уже не выключается за всё время сессии
-// повесить слушать на кнопку, по нажатию в цикле стопать все осцилляторы в массиве и удалять
-// TODO: возможно это причина BAG-1
-
-let oscillatorArray = [] // Массив осцилляторов
-let biquadFilterArray = [] // Массив фильтров
-let LFOArray = [] // Массив осцилляторов
-let LFOGainArray = [] // Массив фильтров
-let envelopeArray = [] // Массив ручек громкости, реализующих огибающую (envelope)
-let masterGainArray = [] // Ручка громкости, управляемая LFO
-let motionIsOff = true // Маркер последнего события движения
 
 // Стандартные square и sawtooth осциллографы слишком резко меняют свои значения,
 // из-за чего возникают щелчки
@@ -554,11 +598,9 @@ export function audio(motion) {
   pitchDetection(frequency)
 
   // Отсечка превышена - движение началось
-  if (motion.isMotion) {
-
+  if (motion.isMotion && !interfaceIsBlocked) {
     // Собираем граф, делаем это только один раз в начале движения
     if (motionIsOff) {
-
       oscillatorArray.push(audioContext.createOscillator())
       biquadFilterArray.push(audioContext.createBiquadFilter())
       envelopeArray.push(audioContext.createGain())
@@ -624,7 +666,7 @@ export function audio(motion) {
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
   // значит мы поймали последнее событие движения (движение остановлено).
   // Тогда планируем затухание сигнала и удаление графа
-  else if (motionIsOff === false) {
+  else if (!motionIsOff) {
     const end = audioContext.currentTime + settings.audio.release + settings.audio.attack
 
     // Планируем затухание громкости и остановку осциллятора
@@ -639,20 +681,22 @@ export function audio(motion) {
 
     // Планируем удаление этих элементов, они будут первыми с массивах
     // на момент вызова таймаута
-    setTimeout(() => {
-      oscillatorArray.shift()
-      biquadFilterArray.shift()
-      envelopeArray.shift()
+    motionTimeoutArray.push(
+      setTimeout(() => {
+        oscillatorArray.shift()
+        biquadFilterArray.shift()
+        envelopeArray.shift()
 
-      if (settings.audio.LFO.enabled) {
-        LFOArray.shift()
-        LFOGainArray.shift()
-        masterGainArray.shift()
-      }
+        if (settings.audio.LFO.enabled) {
+          LFOArray.shift()
+          LFOGainArray.shift()
+          masterGainArray.shift()
+        }
 
-      settings.lite ? false : (countElement.textContent = oscillatorArray.length)
-      if (oscillatorArray.length < 120) countElement.classList.remove('warning')
-    }, (settings.audio.release + settings.audio.attack + 0.1) * 1000)
+        settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+        if (oscillatorArray.length < 120) countElement.classList.remove('warning')
+      }, (settings.audio.release + settings.audio.attack + 0.1) * 1000)
+    )
 
     motionIsOff = true
   }
