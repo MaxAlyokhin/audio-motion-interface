@@ -13,8 +13,6 @@ import hash from 'gulp-hash' // Добавляет хэш
 import browserSync from 'browser-sync' // Сервер
 import htmlmin from 'gulp-htmlmin' // Минификация html
 import rsync from 'gulp-rsync' // ssh-доступ на сервер
-import { exec } from 'child_process' // Для деплоя - позволяет запустить bash для gulp-rsync
-import deploySettings from './deploySettings.js' // Настройки деплоя
 
 const { src, dest, watch, series, parallel } = gulp
 const { reload } = browserSync

@@ -162,7 +162,7 @@ export let settings = {
       knee: 40,
       ratio: 12,
       attack: 0,
-      release: 0.25,
+      release: 0,
     },
     LFO: {
       enabled: true,
