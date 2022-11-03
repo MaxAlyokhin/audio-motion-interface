@@ -24,19 +24,21 @@ io.on('connection', (socket) => {
   io.emit('connection message', io.of('/').sockets.size)
 
   socket.on('disconnect', (reason) => {
+    console.log('Disconnected!')
     io.emit('connection message', io.of('/').sockets.size)
   })
 
   socket.on('motion message', (motionData) => {
-    // console.log(motionData)
     io.emit('motion message', motionData)
   })
+
   socket.on('settings message', (settingsData) => {
-    console.log(settingsData)
     io.emit('settings message', settingsData)
   })
 })
 
-server.listen(8080, '0.0.0.0', function () {
-  console.log('Server is running')
+server.listen(443, '0.0.0.0', function () {
+  require('dns').lookup(require('os').hostname(), function (err, ip, fam) {
+    console.log(`AMI is running on https://${ip}`)
+  })
 })
