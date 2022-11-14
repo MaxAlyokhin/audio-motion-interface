@@ -31,6 +31,8 @@ let connectionsToServer = null
 let compressorElement = null
 let LFOElement = null
 let timeoutElement = null
+let themeElement = null
+let bodyElement = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -57,6 +59,8 @@ window.addEventListener('DOMContentLoaded', () => {
   compressorElement = document.querySelector('.compressor-element')
   LFOElement = document.querySelector('.lfo')
   timeoutElement = document.querySelector('.timeout')
+  themeElement = document.querySelector('.theme__container')
+  bodyElement = document.querySelector('body')
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -86,11 +90,20 @@ export function syncSettingsFrontend(settings) {
     document.querySelector('#speedgain-no').checked = true
   }
 
-  if (settings.lite === false) {
+  if (settings.ui.lite === false) {
     liteElement.querySelector('#lite-no').checked = true
   }
-  if (settings.lite === true) {
+  if (settings.ui.lite === true) {
     liteElement.querySelector('#lite-yes').checked = true
+  }
+
+  if (settings.ui.theme === 'dark') {
+    themeElement.querySelector('#theme-dark').checked = true
+    bodyElement.classList.add('dark')
+  }
+  if (settings.ui.theme === 'light') {
+    themeElement.querySelector('#theme-light').checked = true
+    bodyElement.classList.remove('dark')
   }
 
   if (settings.motion.semiSphere === 'left') {
@@ -131,8 +144,11 @@ export function syncSettingsFrontend(settings) {
 
 // Настройки системы
 export let settings = {
-  lite: false,
-  interfaceRegime: true,
+  ui: {
+    lite: false,
+    interfaceRegime: true,
+    theme: 'dark'
+  },
   motion: {
     threshold: 1.0,
     timeout: 150,
@@ -176,7 +192,12 @@ export let settings = {
 // Мутации
 export const mutations = {
   setLite: (value) => {
-    value === 'true' ? (settings.lite = true) : (settings.lite = false)
+    value === 'true' ? (settings.ui.lite = true) : (settings.ui.lite = false)
+    syncSettings()
+  },
+
+  setTheme: (value) => {
+    settings.ui.theme = value
     syncSettings()
   },
 
@@ -186,9 +207,9 @@ export const mutations = {
   },
 
   setInterfaceRegime: () => {
-    settings.interfaceRegime = !settings.interfaceRegime
+    settings.ui.interfaceRegime = !settings.ui.interfaceRegime
 
-    if (settings.interfaceRegime) {
+    if (settings.ui.interfaceRegime) {
       interfaceRegimeOnElement.style.opacity = 0
       setTimeout(() => {
         interfaceRegimeOnElement.style.display = 'none'
@@ -541,6 +562,13 @@ export function settingsInit() {
 
   liteElement.addEventListener('change', function (event) {
     mutations.setLite(event.target.value)
+  })
+
+  themeElement.addEventListener('change', function (event) {
+    mutations.setTheme(event.target.value)
+
+    if (event.target.value === 'dark') bodyElement.classList.add('dark')
+    if (event.target.value === 'light') bodyElement.classList.remove('dark')
   })
 
   sphereElement.addEventListener('change', function (event) {

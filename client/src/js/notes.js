@@ -62,14 +62,14 @@ export function pitchDetection(frequency) {
     actualNote = getNoteName(frequency)
 
     if (previousNote !== actualNote) {
-      settings.lite ? false : (tunerActualElement.textContent = actualNote)
+      settings.ui.lite ? false : (tunerActualElement.textContent = actualNote)
     }
   } else {
     maxNote = getNoteName(nearbyValues[1])
     percent = toFixedNumber(((frequency - nearbyValues[0]) / (nearbyValues[1] - nearbyValues[0])) * 100, 1)
 
     if (previousNote !== `${maxNote} (${percent}%)`) {
-      settings.lite ? false : (tunerActualElement.textContent = `${maxNote} (${percent}%)`)
+      settings.ui.lite ? false : (tunerActualElement.textContent = `${maxNote} (${percent}%)`)
       previousNote = `${maxNote} (${percent}%)`
     }
   }

@@ -13,7 +13,7 @@
     <!-- endinject -->
   </head>
 
-  <body>
+  <body class="dark">
     <div class="container">
       <div class="title">AUDIO-MOTION INTERFACE <img class="title__qr desktop" src="img/qr.png" alt=""><img class="title__fullscreen mobile" src="img/fullscreen.png" alt=""></div>
 
@@ -96,20 +96,6 @@
             <div class="radio-element">
               <input type="radio" name="speedgain" id="speedgain-no" value="false" />
               <label for="speedgain-no">Нет</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="lite">
-          <span>Режим экономии вычислительных ресурсов:</span>
-          <div class="lite__container">
-            <div class="radio-element">
-              <input type="radio" name="lite" id="lite-yes" value="true" />
-              <label for="lite-yes">Да</label>
-            </div>
-            <div class="radio-element">
-              <input type="radio" name="lite" id="lite-no" value="false" checked />
-              <label for="lite-no">Нет</label>
             </div>
           </div>
         </div>
@@ -271,8 +257,36 @@
           </div>
         </div>
 
+        <div class="lite">
+          <span>Режим экономии вычислительных ресурсов:</span>
+          <div class="lite__container">
+            <div class="radio-element">
+              <input type="radio" name="lite" id="lite-yes" value="true" />
+              <label for="lite-yes">Да</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="lite" id="lite-no" value="false" checked />
+              <label for="lite-no">Нет</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="theme">
+          <span>Тема:</span>
+          <div class="theme__container">
+            <div class="radio-element">
+              <input type="radio" name="theme" id="theme-dark" value="dark" checked />
+              <label for="theme-dark">Тёмная</label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="theme" id="theme-light" value="light" />
+              <label for="theme-light">Светлая</label>
+            </div>
+          </div>
+        </div>
+
         <div>
-          <div>Errors:</div>
+          <div>Ошибки:</div>
           <div class="errors"></div>
         </div>
       </div>

@@ -74,7 +74,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // Отображаем обнулённый счётчик осцилляторов
-    settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+    settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
 
     // Приводим интерфейс в исходную
     setTimeout(() => {
@@ -587,7 +587,7 @@ export function audio(motion) {
 
   // Обновляем DOM только при изменении значения
   if (previousFrequency !== frequency) {
-    settings.lite ? false : (frequencyElement.textContent = frequency)
+    settings.ui.lite ? false : (frequencyElement.textContent = frequency)
     previousFrequency = frequency
   }
 
@@ -657,7 +657,7 @@ export function audio(motion) {
       envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
     }
 
-    settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+    settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
 
     if (oscillatorArray.length >= 120) countElement.classList.add('warning')
   }
@@ -691,7 +691,7 @@ export function audio(motion) {
           masterGainArray.shift()
         }
 
-        settings.lite ? false : (countElement.textContent = oscillatorArray.length)
+        settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
         if (oscillatorArray.length < 120) countElement.classList.remove('warning')
       }, (settings.audio.release + settings.audio.attack + 0.1) * 1000)
     )

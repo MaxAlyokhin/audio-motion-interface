@@ -161,17 +161,17 @@ export function motionInit() {
       socket.on('motion message', (motion) => {
         // Обновляем DOM только при изменении значения
         if (previousIsMotion !== motion.isMotion) {
-          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
+          settings.ui.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
 
         if (previousOrientation !== motion.orientation && motion.orientation !== false) {
-          settings.lite ? false : (orientationElement.textContent = motion.orientation)
+          settings.ui.lite ? false : (orientationElement.textContent = motion.orientation)
           previousOrientation = motion.orientation
         }
 
         if (motion.isMotion && motion.maximum > settings.motion.threshold) {
-          if (!settings.lite) {
+          if (!settings.ui.lite) {
             alphaElement.textContent = motion.alpha
             betaElement.textContent = motion.beta
             gammaElement.textContent = motion.gamma
@@ -236,7 +236,7 @@ export function motionInit() {
       motion.orientation = orientation
       // Обновляем DOM только при изменении значения
       if (previousOrientation !== motion.orientation && motion.orientation !== false) {
-        settings.lite ? false : (orientationElement.textContent = motion.orientation)
+        settings.ui.lite ? false : (orientationElement.textContent = motion.orientation)
         previousOrientation = motion.orientation
       }
 
@@ -250,11 +250,11 @@ export function motionInit() {
         motion.maximumOnSession = previousMaximumMotion
 
         if (previousIsMotion !== motion.isMotion) {
-          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
+          settings.ui.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
 
-        if (!settings.lite) {
+        if (!settings.ui.lite) {
           alphaElement.textContent = motion.alpha
           betaElement.textContent = motion.beta
           gammaElement.textContent = motion.gamma
@@ -274,7 +274,7 @@ export function motionInit() {
       } else {
         motion.isMotion = false
         if (previousIsMotion !== motion.isMotion) {
-          settings.lite ? false : (isMotionElement.textContent = motion.isMotion)
+          settings.ui.lite ? false : (isMotionElement.textContent = motion.isMotion)
           previousIsMotion = motion.isMotion
         }
         isMotionElement.classList.remove('motion--yes')

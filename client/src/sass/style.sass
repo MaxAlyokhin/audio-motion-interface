@@ -4,7 +4,6 @@
 @import "mixins"
 
 *
-  transition: $transition
   box-sizing: border-box
   &:active,
   &:hover,
@@ -59,6 +58,10 @@ a
       width: 12px
       position: absolute
       right: 0
+      transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
+
+    &__fullscreen
+      filter: invert(1)
 
     &__qr
       cursor: pointer
@@ -133,7 +136,7 @@ a
     color: $green
 
 .motion
-  transition: $transition-long
+  transition: filter 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
 .inactive
   filter: contrast(0.1)
@@ -175,6 +178,7 @@ input, select
   width: 100%
   max-width: 115px;
   text-align: right
+  transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
 input[type="number"]
 	-moz-appearance: textfield
@@ -192,6 +196,7 @@ input[type="radio"]
   height: 10px
   border-radius: 50%
   min-width: 10px
+  transition: border-width 200ms cubic-bezier(0.83, 0, 0.17, 1), border-color 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
   &:checked
     border: 4px solid $black
@@ -239,6 +244,7 @@ select
   .regime
     font-weight: 600
     color: $black
+    transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
   .connections
     div
@@ -254,6 +260,7 @@ select
         left: 0
         display: inline-block
         margin-right: 5px
+        transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
     &--ready
       &::before
@@ -286,7 +293,8 @@ select
 .filter-element,
 .compressor-element,
 .lfo,
-.sphere
+.sphere,
+.theme
   flex-direction: column
   align-items: flex-start !important
 
@@ -300,7 +308,7 @@ select
     width: 100%
     margin-top: 15px
 
-.frequency-regime, .oscillator-regime, .gain-generation, .lite, .sphere
+.frequency-regime, .oscillator-regime, .gain-generation, .lite, .sphere, .theme
   @media (min-width: 500px)
     flex-direction: row
 
@@ -312,6 +320,7 @@ select
 
 .interface-regime
   position: fixed
+  transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
 .interface-regime-on
   width: 100%
@@ -349,6 +358,7 @@ select
 .frequencies-range, .notes-range, .filter-element, .compressor-element, .lfo
   border-left: 1px solid black
   padding-left: 10px
+  transition: border 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
   > span
     font-weight: 700
@@ -361,3 +371,95 @@ select
     &--radio
       width: auto
       margin-top: 0
+
+// Dark mode
+body.dark
+  background: $black-dark
+  color: $white-dark
+
+  .title
+    &__fullscreen
+      filter: none
+
+    &__qr
+      filter: invert(1)
+
+  a
+    color: inherit
+
+    &:hover
+      color: $white-dark
+
+  .qr
+    &__container
+      background: black
+      box-shadow: 0 5px 25px #000000f0
+
+    &__text
+      span
+        color: $blue-dark
+
+    &__code
+      filter: invert(1)
+
+  .cover
+    background: $black-dark
+
+  .motion, .settings
+    &__is-motion
+      color: $red-dark
+
+    &--yes
+      color: $green-dark
+
+  .warning
+    color: $red-dark
+
+  .button
+    border: 1px $white-dark solid
+    background-color: $black-dark
+    color: $white-dark
+
+  input, select
+    background-color: transparent
+    border-bottom: 1px solid $white-dark
+    color: $white-dark
+
+  input[type="radio"]
+    border: 1px solid $white-dark
+
+    &:checked
+      border: 4px solid $white-dark
+
+  input[type="checkbox"]
+    border: 1px solid $white-dark
+
+    &:checked
+      background-color: $white-dark
+
+  .errors
+    &__message
+      color: $red-dark
+
+  .info
+    .regime
+      color: $white-dark
+
+    .connections
+      &--ready
+        &::before
+          background-color: $green-dark
+
+      &--error
+        &::before
+          background-color: $red-dark
+
+  .interface-regime-on
+    &__button
+      border: 1px $white-dark solid
+
+    &__line
+      border-top: 1px solid white
+
+  .frequencies-range, .notes-range, .filter-element, .compressor-element, .lfo
+    border-left: 1px solid white
