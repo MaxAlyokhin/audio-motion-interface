@@ -12,6 +12,7 @@ import { toFixedNumber } from './helpers'
 import { orientation, orientationInit } from './orientation'
 import { settings, settingsInit, syncSettingsFrontend } from './settings'
 import { socket, socketInit } from './websocket'
+import QRious from "qrious";
 
 export function motionInit() {
   // Проверяем наличие акселерометра на устройстве
@@ -60,6 +61,7 @@ export function motionInit() {
   let orientationElement = document.querySelector('.motion__orientation')
   let connectionsToServer = document.querySelector('.connections__to-server')
   let connectionsStatus = document.querySelector('.connections__status')
+  let qrElement = document.querySelector('.qr')
 
   // По первому событию движения мы можем однозначно определить
   // в смартфоне мы находимся или на десктопе (event.acceleration === null)
@@ -76,6 +78,37 @@ export function motionInit() {
         element.style.display = 'none'
       })
       document.querySelector('.info').style.display = 'block'
+
+      // Генерируем QR-код для попапа
+      fetch(`/hostname`)
+        .then((response) => {
+          if (response.status !== 200) {
+            document.querySelector('.errors').innerHTML += `Ошибка при загрузке данных с сервера.<br>Статус: ${response.status}`
+            return
+          }
+
+          // Если всё в порядке, то парсим ответ
+          response.text().then((data) => {
+            new QRious({
+              element: document.querySelector('.qr__code'),
+              value: `https://${data}?remote`,
+              backgroundAlpha: 0,
+              size: 300
+            })
+
+            const qrText = document.querySelector('.qr__text span')
+            qrText.textContent = `https://${data}?remote`
+            qrText.href = `https://${data}?remote`
+          })
+        })
+        .catch((error) => {
+          throw new Error("Ошибка связи с сервером. Проверьте подключение к интернету.")
+        })
+
+      // Вешаем обработчик на кнопку показа попапа с QR-кодом
+      document.querySelector('.title__qr').addEventListener('click', () => {
+        qrElement.classList.toggle('qr--show')
+      })
 
       // Включаем сокет, чтобы слушать внешние события движения
       socketInit()
@@ -102,6 +135,7 @@ export function motionInit() {
           connectionsStatus.classList.remove('connections--ready')
           connectionsStatus.classList.add('connections--wait')
           motionElement.classList.add('inactive')
+          qrElement.classList.add('qr--show')
         }
         if (clientsSize > 1) {
           // Минус наше устройство
@@ -109,6 +143,7 @@ export function motionInit() {
           connectionsStatus.classList.remove('connections--wait')
           connectionsStatus.classList.add('connections--ready')
           motionElement.classList.remove('inactive')
+          qrElement.classList.remove('qr--show')
 
           // При подключении смартфона к десктопу настройки десктопа переписывают настройки смартфона
           settings.audio.synthesisRegime = 'remote'

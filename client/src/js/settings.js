@@ -592,4 +592,39 @@ export function settingsInit() {
 
   // Настраиваем компрессор
   updateCompressorSettings(settings.audio.compressor)
+
+  // Если в URL есть ?remote, то сразу переключаем в соответствующий режим
+  const markerFromURL = document.location.search.slice(1)
+
+  if (markerFromURL === 'remote') {
+    settings.audio.synthesisRegime = 'remote'
+    document.querySelector('#remote').checked = true
+
+    if (!socketIsInit) {
+      socketInit()
+
+      socket.connect()
+
+      // По обновлению объекта настроек
+      socket.on('settings message', (settingsData) => {
+        Object.assign(settings, settingsData) // Обновляем объект
+        syncSettingsFrontend(settingsData) // Обновляем input-поля
+      })
+
+      // Вешаем слушатели вебсокет-событий
+      socket.on('connect', () => {
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.classList.remove('connections--wait', 'connections--error')
+        connectionsToServer.classList.add('connections--ready')
+      })
+
+      socket.on('disconnect', () => {
+        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.classList.remove('connections--wait', 'connections--ready')
+        connectionsToServer.classList.add('connections--error')
+      })
+    }
+
+    mutations.audio.setSynthesisRegime('remote')
+  }
 }

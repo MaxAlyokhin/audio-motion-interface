@@ -1,6 +1,6 @@
 import { motionInit } from './motion'
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
   // Показываем контент
   document.querySelector('body').style.opacity = 1
 

@@ -1,8 +1,11 @@
 const fs = require('fs')
+const os = require('os')
 const https = require('https')
 const express = require('express')
 const { Server } = require('socket.io')
+const { lookup } = require('dns')
 
+const hostname = os.hostname()
 const app = express()
 const server = https.createServer(
   {
@@ -37,8 +40,28 @@ io.on('connection', (socket) => {
   })
 })
 
+let address = null
+
+app.get('/hostname', (request, responce) => {
+  responce.status(200).type('text/html')
+  responce.send(address)
+})
+
+const options = {
+  family: 4,
+  all: true,
+}
+
 server.listen(443, '0.0.0.0', function () {
-  require('dns').lookup(require('os').hostname(), function (err, ip, fam) {
-    console.log(`AMI is running on https://${ip}`)
+  lookup(hostname, options, function (err, ips, fam) {
+    ips.forEach(ip => {
+      if (ip.address.indexOf('192.168') === 0) {
+        address = ip.address
+      } else {
+        address = 'ami.stranno.su'
+      }
+    })
   })
 })
+
+
