@@ -34,6 +34,7 @@
     "webpack-stream": "^6.1.2"
   },
   "dependencies": {
+    "fscreen": "^1.2.0",
     "qrious": "^4.0.2"
   }
 }

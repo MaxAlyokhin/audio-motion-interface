@@ -7,12 +7,14 @@
 // - генерирует объект движения по каждому событию движения
 // - определяет, отдавать ли объект движения в вебсокет или отдавать его в обработчик аудио
 
+import QRious from 'qrious'
+import fscreen from 'fscreen'
+
 import { audio } from './audio'
 import { toFixedNumber } from './helpers'
 import { orientation, orientationInit } from './orientation'
 import { settings, settingsInit, syncSettingsFrontend } from './settings'
 import { socket, socketInit } from './websocket'
-import QRious from "qrious";
 
 export function motionInit() {
   // Проверяем наличие акселерометра на устройстве
@@ -62,12 +64,16 @@ export function motionInit() {
   let connectionsToServer = document.querySelector('.connections__to-server')
   let connectionsStatus = document.querySelector('.connections__status')
   let qrElement = document.querySelector('.qr')
+  let rootElement = document.querySelector('html')
 
   // По первому событию движения мы можем однозначно определить
   // в смартфоне мы находимся или на десктопе (event.acceleration === null)
   // Изначально мы не знаем, где находимся
   let isDesktop = undefined
   let receiverRegimeIsInit = false
+
+  // Fullscreen маркер
+  let fullscreenIsOn = false
 
   // Функция вызывается по каждому событию движения
   function onMotion(event) {
@@ -93,7 +99,7 @@ export function motionInit() {
               element: document.querySelector('.qr__code'),
               value: `https://${data}?remote`,
               backgroundAlpha: 0,
-              size: 300
+              size: 300,
             })
 
             const qrText = document.querySelector('.qr__text span')
@@ -102,7 +108,7 @@ export function motionInit() {
           })
         })
         .catch((error) => {
-          throw new Error("Ошибка связи с сервером. Проверьте подключение к интернету.")
+          throw new Error('Ошибка связи с сервером. Проверьте подключение к интернету.')
         })
 
       // Вешаем обработчик на кнопку показа попапа с QR-кодом
@@ -195,6 +201,21 @@ export function motionInit() {
         element.style.display = 'none'
       })
       document.querySelector('.container').classList.add('mobile')
+
+      if (fscreen.fullscreenEnabled) {
+        document.querySelector('.title__fullscreen').addEventListener('click', () => {
+          if (fullscreenIsOn) {
+            fscreen.exitFullscreen()
+            fullscreenIsOn = false
+          } else {
+            fscreen.requestFullscreen(rootElement)
+            fullscreenIsOn = true
+          }
+        })
+      } else {
+        // Если фуллскрин не поддерживается, то убираем кнопку
+        document.querySelector('.title__fullscreen').style.display = 'none'
+      }
 
       // Включаем гироскоп
       orientationInit()
