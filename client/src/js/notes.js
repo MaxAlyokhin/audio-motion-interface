@@ -29,6 +29,12 @@ export function notesInit(root = 8.1757, octaveAmount = 11, tonesInOctaveAmount 
   }
 }
 
+/**
+ * Определяет имя ноты через частоту
+ * @param {Number} frequency - частота
+ * @return {String} noteName - имя ноты
+ */
+
 const notesNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 export function getNoteName(frequency) {
   // Находим индекс в массиве нот

@@ -20,7 +20,7 @@ let frequencyElement = null
 let previousFrequency = null // Для более эффективной работы с обновлением DOM
 
 let countElement = null // Количество осцилляторов
-let bodyElement = null // body для анимирования по сбросу осцилляторов
+let containerElement = null // body для анимирования по сбросу осцилляторов
 
 let oscillatorArray = [] // Массив осцилляторов
 let biquadFilterArray = [] // Массив фильтров
@@ -43,11 +43,11 @@ let audioTimeoutIsOff = true
 window.addEventListener('DOMContentLoaded', () => {
   frequencyElement = document.querySelector('.motion__frequency')
   countElement = document.querySelector('.motion__count')
-  bodyElement = document.querySelector('body')
+  containerElement = document.querySelector('.container')
 
   // Кнопка очистки осцилляторов
   document.querySelector('.off').addEventListener('change', function () {
-    bodyElement.classList.add('inactive')
+    containerElement.classList.add('inactive')
 
     motionIsOff = true // Заканчиваем последнее движение
     interfaceIsBlocked = true // Блокируем интерфейс
@@ -78,7 +78,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Приводим интерфейс в исходную
     setTimeout(() => {
-      bodyElement.classList.remove('inactive')
+      containerElement.classList.remove('inactive')
       this.querySelector('#off').checked = false
       interfaceIsBlocked = false
     }, 2000)

@@ -12,7 +12,7 @@ window.addEventListener('load', () => {
       document.querySelector('.cover').style.opacity = 0
       setTimeout(() => {
         document.querySelector('.cover').style.display = 'none'
-      }, 200)
+      }, 1000)
     },
     // Сработает только один раз
     { once: true }

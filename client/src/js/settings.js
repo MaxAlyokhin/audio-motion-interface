@@ -4,6 +4,8 @@
 // и синхронизируют настройки по вебсокету с удалённым десктопом
 
 import { updateCompressorSettings } from './audio'
+import { toFixedNumber } from './helpers'
+import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
 
 // Элементы настроек
@@ -33,6 +35,7 @@ let LFOElement = null
 let timeoutElement = null
 let themeElement = null
 let bodyElement = null
+let slideElements = null
 
 window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -61,6 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
   timeoutElement = document.querySelector('.timeout')
   themeElement = document.querySelector('.theme__container')
   bodyElement = document.querySelector('body')
+  slideElements = document.querySelectorAll('.slide')
 })
 
 // Функция синхронизирует настройки со смартфона с десктопом
@@ -117,6 +121,8 @@ export function syncSettingsFrontend(settings) {
   frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
   notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
   notesRangeElement.querySelector('.notes-range-to').value = settings.audio.notesRange.to
+  notesRangeElement.querySelector('.notes-range__from-span').textContent = getNoteName(notes[settings.audio.notesRange.from])
+  notesRangeElement.querySelector('.notes-range__to-span').textContent = getNoteName(notes[settings.audio.notesRange.to])
   thresholdElement.value = settings.motion.threshold
   waveElement.value = settings.audio.oscillatorType
   filterElement.value = settings.audio.biquadFilterFrequency
@@ -351,7 +357,7 @@ export const mutations = {
       if (rangeType === 'from') {
         if (isNaN(note) || note < 0) {
           settings.audio.notesRange.from = 0
-        } else if (note > 138 || note >= settings.audio.notesRange.to) {
+        } else if (note > 131 || note >= settings.audio.notesRange.to) {
           settings.audio.notesRange.from = settings.audio.notesRange.to - 1
         } else {
           settings.audio.notesRange.from = note
@@ -360,8 +366,8 @@ export const mutations = {
       if (rangeType === 'to') {
         if (isNaN(note) || note < 0) {
           settings.audio.notesRange.to = 0
-        } else if (note > 138) {
-          settings.audio.notesRange.to = 138
+        } else if (note >= 131) {
+          settings.audio.notesRange.to = 131
         } else if (note <= settings.audio.notesRange.from) {
           settings.audio.notesRange.to = settings.audio.notesRange.from + 1
         } else {
@@ -501,33 +507,36 @@ export function settingsInit() {
     mutations.audio.setFrequencyRegime(event.target.value)
   })
 
-  thresholdElement.addEventListener('input', function () {
-    mutations.motion.setThreshold(parseFloat(this.value))
+  thresholdElement.addEventListener('input', function (event) {
+    mutations.motion.setThreshold(parseFloat(event.value || this.value))
   })
 
-  timeoutElement.addEventListener('input', function () {
-    mutations.motion.setMotionTimeout(parseFloat(this.value))
+  timeoutElement.addEventListener('input', function (event) {
+    mutations.motion.setMotionTimeout(parseFloat(event.value || this.value))
   })
 
   gainGenerationElement.addEventListener('change', function (event) {
-    mutations.motion.setGainGeneration(event.target.value)
+    mutations.motion.setGainGeneration(event.value || event.target.value)
   })
 
   frequenciesRangeElement.addEventListener('input', function (event) {
     if (event.target.classList[0] === 'frequencies-range-from') {
-      mutations.audio.setFrequencyRange('from', parseFloat(event.target.value))
+      mutations.audio.setFrequencyRange('from', parseFloat(event.value || event.target.value))
     }
     if (event.target.classList[0] === 'frequencies-range-to') {
-      mutations.audio.setFrequencyRange('to', parseFloat(event.target.value))
+      mutations.audio.setFrequencyRange('to', parseFloat(event.value || event.target.value))
     }
   })
 
   notesRangeElement.addEventListener('input', function (event) {
     if (event.target.classList[0] === 'notes-range-from') {
-      mutations.audio.setNoteRange('from', parseFloat(event.target.value))
+      console.log(event.value);
+      mutations.audio.setNoteRange('from', parseFloat(event.value || event.target.value))
+      notesRangeElement.querySelector('.notes-range__from-span').textContent = getNoteName(notes[settings.audio.notesRange.from])
     }
     if (event.target.classList[0] === 'notes-range-to') {
-      mutations.audio.setNoteRange('to', parseFloat(event.target.value))
+      mutations.audio.setNoteRange('to', parseFloat(event.value || event.target.value))
+      notesRangeElement.querySelector('.notes-range__to-span').textContent = getNoteName(notes[settings.audio.notesRange.to])
     }
   })
 
@@ -536,28 +545,28 @@ export function settingsInit() {
   })
 
   releaseElement.addEventListener('input', function (event) {
-    mutations.audio.setRelease(parseFloat(event.target.value))
+    mutations.audio.setRelease(parseFloat(event.value || event.target.value))
   })
 
-  filterElement.addEventListener('input', function () {
-    mutations.audio.setBiquadFilterFrequency(parseFloat(this.value))
+  filterElement.addEventListener('input', function (event) {
+    mutations.audio.setBiquadFilterFrequency(parseFloat(event.value || this.value))
   })
 
-  factorElement.addEventListener('input', function () {
-    mutations.audio.setBiquadFilterQ(parseFloat(this.value))
+  factorElement.addEventListener('input', function (event) {
+    mutations.audio.setBiquadFilterQ(parseFloat(event.value || this.value))
   })
 
   attenuationElement.addEventListener('input', function (event) {
-    mutations.audio.setAttenuation(parseFloat(event.target.value))
+    mutations.audio.setAttenuation(parseFloat(event.value || event.target.value))
   })
 
-  attackElement.addEventListener('input', function () {
+  attackElement.addEventListener('input', function (event) {
     this.value != 0 ? gainGenerationOptionElement.classList.add('inactive') : gainGenerationOptionElement.classList.remove('inactive')
-    mutations.audio.setAttack(parseFloat(this.value))
+    mutations.audio.setAttack(parseFloat(event.value || this.value))
   })
 
-  gainElement.addEventListener('input', function () {
-    mutations.audio.setGain(parseFloat(this.value))
+  gainElement.addEventListener('input', function (event) {
+    mutations.audio.setGain(parseFloat(event.value || this.value))
   })
 
   liteElement.addEventListener('change', function (event) {
@@ -602,7 +611,7 @@ export function settingsInit() {
 
   compressorElement.addEventListener('input', function (event) {
     const parameter = event.target.classList[0].split('-')[1]
-    mutations.audio.setCompressorParameter(parameter, parseFloat(event.target.value))
+    mutations.audio.setCompressorParameter(parameter, parseFloat(event.value || event.target.value))
   })
 
   LFOElement.addEventListener('input', function (event) {
@@ -611,8 +620,58 @@ export function settingsInit() {
     } else if (event.target.name === 'lfo-wave') {
       mutations.audio.setLFOParameter('type', event.target.options[event.target.selectedIndex].text)
     } else {
-      mutations.audio.setLFOParameter(String(event.target.name), parseFloat(event.target.value))
+      mutations.audio.setLFOParameter(String(event.target.name), parseFloat(event.value || event.target.value))
     }
+  })
+
+  // Обработка изменения input-значений через слайд
+  // У каждого инпута есть атрибут slide, который определяет соотношение
+  // кол-во пикселей / 1 пункт input-поля
+  slideElements.forEach(slideElement => {
+    let initialClientX = 0 // Изначальное положение курсора мыши после клика
+    let initialInputValue = 0 // Изначальное значение инпут-поля, которое будем изменять
+    let currentInputElement = null // Поле, которое изменяем
+
+    function slideHandler(event) {
+      // Имитируем input-событие
+      let inputEvent = new Event('input', { bubbles: true })
+
+      // С кастомным полем value (то есть не нативное target.value!),
+      // в котором к исходному значению поля прибавляем вычисленное
+      // и делим на атрибут slide
+      inputEvent.value = toFixedNumber(
+        Number(initialInputValue) + (Number(((event.clientX || event.touches[0].clientX) - initialClientX) / currentInputElement.attributes.slide.value) * currentInputElement.attributes.step.value),
+        currentInputElement.attributes.coefficient.value
+      )
+
+      currentInputElement.dispatchEvent(inputEvent)
+    }
+
+    slideElement.addEventListener('mousedown', function (event) {
+      currentInputElement = this.querySelector('input')
+
+      initialClientX = event.clientX
+      initialInputValue = currentInputElement.value
+
+      bodyElement.addEventListener('mousemove', slideHandler)
+
+      bodyElement.addEventListener('mouseup', function (event) {
+        bodyElement.removeEventListener('mousemove', slideHandler)
+      })
+    })
+
+    slideElement.addEventListener('touchstart', function (event) {
+      currentInputElement = this.querySelector('input')
+
+      initialClientX = event.touches[0].clientX
+      initialInputValue = currentInputElement.value
+
+      this.addEventListener('touchmove', slideHandler)
+
+      bodyElement.addEventListener('touchend', function (event) {
+        bodyElement.removeEventListener('touchmove', slideHandler)
+      })
+    })
   })
 
   // Заполняем интерфейс дефолтными данными

@@ -44,6 +44,7 @@ a
   padding: 20px
   max-width: 500px
   margin: auto
+  user-select: none
 
   .title
     font-weight: 1000
@@ -58,7 +59,7 @@ a
       width: 12px
       position: absolute
       right: 0
-      transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
+      transition: color 1000ms cubic-bezier(0.83, 0, 0.17, 1), scale 200ms cubic-bezier(0.83, 0, 0.17, 1)
 
     &__fullscreen
       filter: invert(1)
@@ -116,6 +117,7 @@ a
   position: fixed
   top: 0
   flex-direction: column
+  transition: $transition-long
 
   .title
     font-size: calc(1em + 2vw)
@@ -372,6 +374,27 @@ select
       width: auto
       margin-top: 0
 
+.notes-range
+  &__inputs
+    position: relative
+    max-width: 115px
+    width: 100%
+
+    input
+      position: absolute
+      color: transparent !important
+
+    span
+      text-align: right
+      width: 100%
+      display: block
+
+  &__from, &__to
+    color: transparent
+
+.slide
+  cursor: w-resize
+
 // Dark mode
 body.dark
   background: $black-dark
@@ -463,3 +486,4 @@ body.dark
 
   .frequencies-range, .notes-range, .filter-element, .compressor-element, .lfo
     border-left: 1px solid white
+
