@@ -25,7 +25,6 @@
     "gulp-include": "^2.4.1",
     "gulp-inject": "^5.0.5",
     "gulp-livereload": "^4.0.1",
-    "gulp-rsync": "^0.0.9",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "imagemin-pngquant": "^8.0.0",
