@@ -1,7 +1,6 @@
 @import "fonts"
 @import "vars"
 @import "normalize"
-@import "mixins"
 
 *
   box-sizing: border-box
@@ -180,7 +179,7 @@ input, select
   width: 100%
   max-width: 115px;
   text-align: right
-  transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
+  transition: $transition-long
 
 option
   background-color: $white
@@ -250,7 +249,7 @@ select
   .regime
     font-weight: 600
     color: $black
-    transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
+    transition: $transition-long
 
   .connections
     div
@@ -266,7 +265,7 @@ select
         left: 0
         display: inline-block
         margin-right: 5px
-        transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
+        transition: $transition-long
 
     &--ready
       &::before
@@ -326,7 +325,7 @@ select
 
 .interface-regime
   position: fixed
-  transition: all 1000ms cubic-bezier(0.83, 0, 0.17, 1)
+  transition: $transition-long
 
 .interface-regime-on
   width: 100%

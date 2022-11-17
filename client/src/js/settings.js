@@ -530,7 +530,6 @@ export function settingsInit() {
 
   notesRangeElement.addEventListener('input', function (event) {
     if (event.target.classList[0] === 'notes-range-from') {
-      console.log(event.value);
       mutations.audio.setNoteRange('from', parseFloat(event.value || event.target.value))
       notesRangeElement.querySelector('.notes-range__from-span').textContent = getNoteName(notes[settings.audio.notesRange.from])
     }

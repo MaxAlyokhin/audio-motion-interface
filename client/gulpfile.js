@@ -12,7 +12,6 @@ import inject from 'gulp-inject' // Инжекция css и js в index.html
 import hash from 'gulp-hash' // Добавляет хэш
 import browserSync from 'browser-sync' // Сервер
 import htmlmin from 'gulp-htmlmin' // Минификация html
-import rsync from 'gulp-rsync' // ssh-доступ на сервер
 
 const { src, dest, watch, series, parallel } = gulp
 const { reload } = browserSync
@@ -144,8 +143,6 @@ function js() {
     src([
       // Путь до исходных файлов в src в необходимом порядке
       'src/js/*.js',
-      // 'src/js/main.js',
-      // 'src/js/suspectDetectionLight.js',
     ])
       // Собираем
       .pipe(
@@ -209,38 +206,10 @@ function clean(cb) {
   rimraf(path.clean, cb)
 }
 
-// Отправляем файлы на сервер
-// Работает только в подсистеме WSL
-export function remoteSync() {
-  return src('dist/**').pipe(rsync(deploySettings))
-}
-
-// Вызывает remoteSync() из-под bash
-// export function deploy() {
-//   return exec('bash -c "gulp remoteSync"', (error, stdout, stderr) => {
-//     if (error) {
-//       throw error
-//     }
-//     console.log(stdout)
-//     console.log(stderr)
-//   })
-// }
-
 // Команды:
 
 // Собрать проект
-export const build = series(clean, style, js, image, fonts, libs, html, staticFiles, remoteSync)
-
-export const deploy = series(style, js, image, staticFiles, fonts, libs, html, remoteSync, function () {
-  browserSync(config)
-  watch(path.watch.html, series(html, remoteSync))
-  watch(path.watch.sass, series(style, html, remoteSync))
-  watch(path.watch.js, series(js, html, remoteSync))
-  watch(path.watch.img, image, remoteSync)
-  watch(path.watch.static, staticFiles, remoteSync)
-  watch(path.watch.fonts, fonts, remoteSync)
-  watch(path.watch.libs, series(libs, html, remoteSync))
-})
+export const build = series(clean, style, js, image, fonts, libs, html, staticFiles)
 
 // По дефолту всё собираем и запускаем сервер
 const _default = series(style, js, image, staticFiles, fonts, libs, html, function () {

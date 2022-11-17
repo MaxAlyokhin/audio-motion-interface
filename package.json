@@ -1,6 +1,6 @@
 {
   "name": "ami-backend",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Websocket and http backend for AMI",
   "author": "Max Alyokhin",
   "license": "MIT",
