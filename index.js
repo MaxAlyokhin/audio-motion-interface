@@ -4,13 +4,14 @@ const https = require('https')
 const express = require('express')
 const { Server } = require('socket.io')
 const { lookup } = require('dns')
+const open = require('open')
 
 const hostname = os.hostname()
 const app = express()
 const server = https.createServer(
   {
-    key: fs.readFileSync('./localhost+2-key.pem'),
-    cert: fs.readFileSync('./localhost+2.pem'),
+    key: fs.readFileSync(`${__dirname}/localhost+2-key.pem`),
+    cert: fs.readFileSync(`${__dirname}/localhost+2.pem`),
     requestCert: false,
     rejectUnauthorized: false,
   },
@@ -22,12 +23,12 @@ const io = new Server(server)
 app.use(express.static(`${__dirname}/client/dist`))
 
 io.on('connection', (socket) => {
-  console.log('Connected!')
+  console.log(`${getDate()} New device is connected`)
 
   io.emit('connection message', io.of('/').sockets.size)
 
   socket.on('disconnect', (reason) => {
-    console.log('Disconnected!')
+    console.log(`${getDate()} Device is disconnected`)
     io.emit('connection message', io.of('/').sockets.size)
   })
 
@@ -39,6 +40,11 @@ io.on('connection', (socket) => {
     io.emit('settings message', settingsData)
   })
 })
+
+function getDate() {
+  let date = new Date()
+  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`
+}
 
 let address = null
 
@@ -53,10 +59,14 @@ const options = {
 }
 
 server.listen(443, '0.0.0.0', function () {
+  console.log(`${getDate()} Audio-motion interface is up and running`)
   lookup(hostname, options, function (err, ips, fam) {
     ips.forEach(ip => {
       if (ip.address.indexOf('192.168') === 0) {
         address = ip.address
+        console.log(`${getDate()} Opening https://${address} in default browser`)
+        open(`https://${address}`)
+        console.log(`${getDate()} Close terminal for exit from AMI`)
       } else {
         address = 'ami.stranno.su'
       }
