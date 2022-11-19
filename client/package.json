@@ -33,6 +33,7 @@
     "webpack-stream": "^6.1.2"
   },
   "dependencies": {
+    "current-device": "^0.10.2",
     "fscreen": "^1.2.0",
     "qrious": "^4.0.2"
   }
