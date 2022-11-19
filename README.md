@@ -248,7 +248,7 @@ MacOS:
 
 `ngrok http https://localhost`
 
-На компе открываем https://localhost
+На компьютере открываем https://localhost
 
 На смартфоне сгенеренную ngrok ссылку на туннель.
 
