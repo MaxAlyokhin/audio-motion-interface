@@ -67,87 +67,6 @@ window.addEventListener('DOMContentLoaded', () => {
   slideElements = document.querySelectorAll('.slide')
 })
 
-// Функция синхронизирует настройки со смартфона с десктопом
-function syncSettings() {
-  if (socketIsInit) {
-    socket.emit('settings message', settings)
-  }
-}
-
-// Функция обновляет input-поля в соответствии с пришедшим объектом настроек
-export function syncSettingsFrontend(settings) {
-  if (settings.audio.frequencyRegime === 'continuous') {
-    document.querySelector('#continuous').checked = true
-    frequenciesRangeElement.style.display = 'flex'
-    notesRangeElement.style.display = 'none'
-  }
-  if (settings.audio.frequencyRegime === 'tempered') {
-    document.querySelector('#tempered').checked = true
-    frequenciesRangeElement.style.display = 'none'
-    notesRangeElement.style.display = 'flex'
-  }
-
-  if (settings.motion.gainGeneration === true) {
-    document.querySelector('#speedgain-yes').checked = true
-  }
-  if (settings.motion.gainGeneration === false) {
-    document.querySelector('#speedgain-no').checked = true
-  }
-
-  if (settings.ui.lite === false) {
-    liteElement.querySelector('#lite-no').checked = true
-  }
-  if (settings.ui.lite === true) {
-    liteElement.querySelector('#lite-yes').checked = true
-  }
-
-  if (settings.ui.theme === 'dark') {
-    themeElement.querySelector('#theme-dark').checked = true
-    bodyElement.classList.add('dark')
-  }
-  if (settings.ui.theme === 'light') {
-    themeElement.querySelector('#theme-light').checked = true
-    bodyElement.classList.remove('dark')
-  }
-
-  if (settings.motion.semiSphere === 'left') {
-    sphereElement.querySelector('#sphere-left').checked = true
-  }
-  if (settings.motion.semiSphere === 'right') {
-    sphereElement.querySelector('#sphere-right').checked = true
-  }
-
-  frequenciesRangeElement.querySelector('.frequencies-range-from').value = settings.audio.frequenciesRange.from
-  frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
-  notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
-  notesRangeElement.querySelector('.notes-range-to').value = settings.audio.notesRange.to
-  notesRangeElement.querySelector('.notes-range__from-span').textContent = getNoteName(notes[settings.audio.notesRange.from])
-  notesRangeElement.querySelector('.notes-range__to-span').textContent = getNoteName(notes[settings.audio.notesRange.to])
-  thresholdElement.value = settings.motion.threshold
-  waveElement.value = settings.audio.oscillatorType
-  filterElement.value = settings.audio.biquadFilterFrequency
-  factorElement.value = settings.audio.biquadFilterQ
-  attackElement.value = settings.audio.attack
-  gainElement.value = settings.audio.gain
-  releaseElement.querySelector('.release').value = settings.audio.release
-  attenuationElement.querySelector('.attenuation').value = settings.audio.attenuation
-  compressorElement.querySelector('.compressor-threshold').value = settings.audio.compressor.threshold
-  compressorElement.querySelector('.compressor-knee').value = settings.audio.compressor.knee
-  compressorElement.querySelector('.compressor-ratio').value = settings.audio.compressor.ratio
-  compressorElement.querySelector('.compressor-attack').value = settings.audio.compressor.attack
-  compressorElement.querySelector('.compressor-release').value = settings.audio.compressor.release
-  LFOElement.querySelector('.lfo-wave').value = settings.audio.LFO.type
-  LFOElement.querySelector('.rate').value = settings.audio.LFO.rate
-  LFOElement.querySelector('.depth').value = settings.audio.LFO.depth
-  timeoutElement.value = settings.motion.timeout
-  if (settings.audio.LFO.enabled === true) {
-    LFOElement.querySelector('#lfo-on').checked = true
-  }
-  if (settings.audio.LFO.enabled === false) {
-    LFOElement.querySelector('#lfo-off').checked = true
-  }
-}
-
 // Настройки системы
 export let settings = {
   ui: {
@@ -471,6 +390,80 @@ export const mutations = {
   },
 }
 
+// Функция обновляет input-поля в соответствии с пришедшим объектом настроек
+export function syncSettingsFrontend(settings) {
+  if (settings.audio.frequencyRegime === 'continuous') {
+    document.querySelector('#continuous').checked = true
+    frequenciesRangeElement.style.display = 'flex'
+    notesRangeElement.style.display = 'none'
+  }
+  if (settings.audio.frequencyRegime === 'tempered') {
+    document.querySelector('#tempered').checked = true
+    frequenciesRangeElement.style.display = 'none'
+    notesRangeElement.style.display = 'flex'
+  }
+
+  if (settings.motion.gainGeneration === true) {
+    document.querySelector('#speedgain-yes').checked = true
+  }
+  if (settings.motion.gainGeneration === false) {
+    document.querySelector('#speedgain-no').checked = true
+  }
+
+  if (settings.ui.lite === false) {
+    liteElement.querySelector('#lite-no').checked = true
+  }
+  if (settings.ui.lite === true) {
+    liteElement.querySelector('#lite-yes').checked = true
+  }
+
+  if (settings.ui.theme === 'dark') {
+    themeElement.querySelector('#theme-dark').checked = true
+    bodyElement.classList.add('dark')
+  }
+  if (settings.ui.theme === 'light') {
+    themeElement.querySelector('#theme-light').checked = true
+    bodyElement.classList.remove('dark')
+  }
+
+  if (settings.motion.semiSphere === 'left') {
+    sphereElement.querySelector('#sphere-left').checked = true
+  }
+  if (settings.motion.semiSphere === 'right') {
+    sphereElement.querySelector('#sphere-right').checked = true
+  }
+
+  frequenciesRangeElement.querySelector('.frequencies-range-from').value = settings.audio.frequenciesRange.from
+  frequenciesRangeElement.querySelector('.frequencies-range-to').value = settings.audio.frequenciesRange.to
+  notesRangeElement.querySelector('.notes-range-from').value = settings.audio.notesRange.from
+  notesRangeElement.querySelector('.notes-range-to').value = settings.audio.notesRange.to
+  notesRangeElement.querySelector('.notes-range__from-span').textContent = getNoteName(notes[settings.audio.notesRange.from])
+  notesRangeElement.querySelector('.notes-range__to-span').textContent = getNoteName(notes[settings.audio.notesRange.to])
+  thresholdElement.value = settings.motion.threshold
+  waveElement.value = settings.audio.oscillatorType
+  filterElement.value = settings.audio.biquadFilterFrequency
+  factorElement.value = settings.audio.biquadFilterQ
+  attackElement.value = settings.audio.attack
+  gainElement.value = settings.audio.gain
+  releaseElement.querySelector('.release').value = settings.audio.release
+  attenuationElement.querySelector('.attenuation').value = settings.audio.attenuation
+  compressorElement.querySelector('.compressor-threshold').value = settings.audio.compressor.threshold
+  compressorElement.querySelector('.compressor-knee').value = settings.audio.compressor.knee
+  compressorElement.querySelector('.compressor-ratio').value = settings.audio.compressor.ratio
+  compressorElement.querySelector('.compressor-attack').value = settings.audio.compressor.attack
+  compressorElement.querySelector('.compressor-release').value = settings.audio.compressor.release
+  LFOElement.querySelector('.lfo-wave').value = settings.audio.LFO.type
+  LFOElement.querySelector('.rate').value = settings.audio.LFO.rate
+  LFOElement.querySelector('.depth').value = settings.audio.LFO.depth
+  timeoutElement.value = settings.motion.timeout
+  if (settings.audio.LFO.enabled === true) {
+    LFOElement.querySelector('#lfo-on').checked = true
+  }
+  if (settings.audio.LFO.enabled === false) {
+    LFOElement.querySelector('#lfo-off').checked = true
+  }
+}
+
 // Связываем объект настроек с интерфейсом управления
 export function settingsInit() {
   // Включение веб-сокета на смартфоне
@@ -713,4 +706,13 @@ export function settingsInit() {
 
     mutations.audio.setSynthesisRegime('remote')
   }
+}
+
+// Функция синхронизирует настройки со смартфона с десктопом
+function syncSettings() {
+  if (socketIsInit) {
+    socket.emit('settings message', settings)
+  }
+
+  syncSettingsFrontend(settings)
 }
