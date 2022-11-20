@@ -83,7 +83,6 @@ export function motionInit() {
       // Включаем гироскоп
       orientationInit()
 
-      // isDesktop = false
       receiverRegimeIsInit = true
     }
 

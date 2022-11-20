@@ -159,7 +159,7 @@ export let settings = {
     threshold: 1.0,
     timeout: 150,
     gainGeneration: false,
-    semiSphere: 'right',
+    semiSphere: 'left',
   },
   audio: {
     attack: 0,
@@ -590,8 +590,8 @@ export function settingsInit() {
 
   // Перемещение кнопки включения интерфейса
   interfaceRegimeOnButtonElement.addEventListener('touchmove', function (event) {
-    interfaceRegimeOnButtonElement.style.top = `${event.touches[0].pageY - 25}px`
-    interfaceRegimeOnButtonElement.style.left = `${event.touches[0].pageX - 25}px`
+    interfaceRegimeOnButtonElement.style.top = `${event.touches[0].clientY - 25}px`
+    interfaceRegimeOnButtonElement.style.left = `${event.touches[0].clientX - 25}px`
   })
 
   // Включение интерфейса управления
@@ -603,7 +603,7 @@ export function settingsInit() {
       interfaceRegimeOnButtonElement.style.left = `calc(50% - 25px)`
     }, 200)
 
-    if (event.changedTouches[0].pageY < 75) {
+    if (event.changedTouches[0].clientY < 75) {
       mutations.setInterfaceRegime()
     }
   })

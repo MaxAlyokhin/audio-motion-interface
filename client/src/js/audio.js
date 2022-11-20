@@ -3,99 +3,9 @@ import { notes, notesInit, pitchDetection } from './notes'
 import { settings } from './settings'
 
 let audioContext = null
-
-// Проверяем поддержку контекста браузером
-try {
-  audioContext = new (window.AudioContext || window.webkitAudioContext)()
-} catch (error) {
-  window.alert(`Браузер не поддерживается / Browser is not support`)
-}
-
-// Определяем массив нот в рамках равномерной темперации
-notesInit()
-
-// Генерируемая частота звука и html-элемент, куда будем её записывать
-let frequency = null
-let frequencyElement = null
-let previousFrequency = null // Для более эффективной работы с обновлением DOM
-
-let countElement = null // Количество осцилляторов
-let containerElement = null // body для анимирования по сбросу осцилляторов
-
-let oscillatorArray = [] // Массив осцилляторов
-let biquadFilterArray = [] // Массив фильтров
-let LFOArray = [] // Массив осцилляторов
-let LFOGainArray = [] // Массив фильтров
-let envelopeArray = [] // Массив ручек громкости, реализующих огибающую (envelope)
-let masterGainArray = [] // Ручка громкости, управляемая LFO
-let motionIsOff = true // Маркер последнего события движения
-
-// Для кнопки очистки осцилляторов
-// Массив таймаутов в конце функции audio(), по которым очищаются массивы
-let motionTimeoutArray = []
-// Для 2ух-секундной блокировки интерфеса
-// (функционально в этом нет особого смысла, но для UX это создаёт впечатление перезапуска системы)
-let interfaceIsBlocked = false
-
-// Таймаута срабатывания системы
-let audioTimeoutIsOff = true
-
-window.addEventListener('DOMContentLoaded', () => {
-  frequencyElement = document.querySelector('.motion__frequency')
-  countElement = document.querySelector('.motion__count')
-  containerElement = document.querySelector('.container')
-
-  // Кнопка очистки осцилляторов
-  document.querySelector('.off').addEventListener('change', function () {
-    containerElement.classList.add('inactive')
-
-    motionIsOff = true // Заканчиваем последнее движение
-    interfaceIsBlocked = true // Блокируем интерфейс
-
-    // Очищаем таймауты в конце функции audio()
-    motionTimeoutArray.forEach((timeout) => {
-      clearTimeout(timeout)
-    })
-
-    // Останавливаем осцилляторы
-    oscillatorArray.forEach((oscillator) => {
-      oscillator.stop()
-    })
-
-    // Очищаем систему от всех элементов графа
-    oscillatorArray.length = 0
-    biquadFilterArray.length = 0
-    envelopeArray.length = 0
-
-    if (settings.audio.LFO.enabled) {
-      LFOArray.length = 0
-      LFOGainArray.length = 0
-      masterGainArray.length = 0
-    }
-
-    // Отображаем обнулённый счётчик осцилляторов
-    settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
-
-    // Приводим интерфейс в исходную
-    setTimeout(() => {
-      containerElement.classList.remove('inactive')
-      this.querySelector('#off').checked = false
-      interfaceIsBlocked = false
-    }, 2000)
-  })
-})
-
-// Граф - это осциллятор => фильтр => громкость
-// Событие движения - js-событие, генерируемое каждые 16мс смартфоном, содержащее параметры движения
-// События возникают даже в состоянии покоя - в этом случае параметры движения нулевые
-// Отсечка - минимальная скорость движения, при которой заводится система
-// Жест - набор событий движения от превышения отсечки до значения ниже отсечки
-// Каждому жесту соответствует свой осциллятор
-
-// У нас есть массив осцилляторов (вернее массивы элементов-узлов графа)
-// При превышении отсечки мы можем сказать, что движение началось
-// При скорости ниже отсечки мы можем сказать, что движение закончилось,
-// отследив что это последнее событие движения в череде событий с помощью маркера motionIsOff.
+let squareWave = null
+let sawtoothWave = null
+let compressor = null
 
 // Стандартные square и sawtooth осциллографы слишком резко меняют свои значения,
 // из-за чего возникают щелчки
@@ -555,12 +465,107 @@ const fourierCoefficients = {
   },
 }
 
-const squareWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.square.real), Float32Array.from(fourierCoefficients.square.imag))
-const sawtoothWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.sawtooth.real), Float32Array.from(fourierCoefficients.sawtooth.imag))
+export function audioInit() {
+  // // Проверяем поддержку контекста браузером
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  } catch (error) {
+    window.alert(`Браузер не поддерживается / Browser is not support`)
+  }
 
-// Все осцилляторы будут подключаться к одному компрессору
-const compressor = audioContext.createDynamicsCompressor()
-compressor.connect(audioContext.destination)
+  squareWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.square.real), Float32Array.from(fourierCoefficients.square.imag))
+  sawtoothWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.sawtooth.real), Float32Array.from(fourierCoefficients.sawtooth.imag))
+
+  // Все осцилляторы будут подключаться к одному компрессору
+  compressor = audioContext.createDynamicsCompressor()
+  compressor.connect(audioContext.destination)
+}
+
+// Определяем массив нот в рамках равномерной темперации
+notesInit()
+
+// Генерируемая частота звука и html-элемент, куда будем её записывать
+let frequency = null
+let frequencyElement = null
+let previousFrequency = null // Для более эффективной работы с обновлением DOM
+
+let countElement = null // Количество осцилляторов
+let containerElement = null // body для анимирования по сбросу осцилляторов
+
+let oscillatorArray = [] // Массив осцилляторов
+let biquadFilterArray = [] // Массив фильтров
+let LFOArray = [] // Массив осцилляторов
+let LFOGainArray = [] // Массив фильтров
+let envelopeArray = [] // Массив ручек громкости, реализующих огибающую (envelope)
+let masterGainArray = [] // Ручка громкости, управляемая LFO
+let motionIsOff = true // Маркер последнего события движения
+
+// Для кнопки очистки осцилляторов
+// Массив таймаутов в конце функции audio(), по которым очищаются массивы
+let motionTimeoutArray = []
+// Для 2ух-секундной блокировки интерфеса
+// (функционально в этом нет особого смысла, но для UX это создаёт впечатление перезапуска системы)
+let interfaceIsBlocked = false
+
+// Таймаута срабатывания системы
+let audioTimeoutIsOff = true
+
+window.addEventListener('DOMContentLoaded', () => {
+  frequencyElement = document.querySelector('.motion__frequency')
+  countElement = document.querySelector('.motion__count')
+  containerElement = document.querySelector('.container')
+
+  // Кнопка очистки осцилляторов
+  document.querySelector('.off').addEventListener('change', function () {
+    containerElement.classList.add('inactive')
+
+    motionIsOff = true // Заканчиваем последнее движение
+    interfaceIsBlocked = true // Блокируем интерфейс
+
+    // Очищаем таймауты в конце функции audio()
+    motionTimeoutArray.forEach((timeout) => {
+      clearTimeout(timeout)
+    })
+
+    // Останавливаем осцилляторы
+    oscillatorArray.forEach((oscillator) => {
+      oscillator.stop()
+    })
+
+    // Очищаем систему от всех элементов графа
+    oscillatorArray.length = 0
+    biquadFilterArray.length = 0
+    envelopeArray.length = 0
+
+    if (settings.audio.LFO.enabled) {
+      LFOArray.length = 0
+      LFOGainArray.length = 0
+      masterGainArray.length = 0
+    }
+
+    // Отображаем обнулённый счётчик осцилляторов
+    settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
+
+    // Приводим интерфейс в исходную
+    setTimeout(() => {
+      containerElement.classList.remove('inactive')
+      this.querySelector('#off').checked = false
+      interfaceIsBlocked = false
+    }, 2000)
+  })
+})
+
+// Граф - это осциллятор => фильтр => громкость
+// Событие движения - js-событие, генерируемое каждые 16мс смартфоном, содержащее параметры движения
+// События возникают даже в состоянии покоя - в этом случае параметры движения нулевые
+// Отсечка - минимальная скорость движения, при которой заводится система
+// Жест - набор событий движения от превышения отсечки до значения ниже отсечки
+// Каждому жесту соответствует свой осциллятор
+
+// У нас есть массив осцилляторов (вернее массивы элементов-узлов графа)
+// При превышении отсечки мы можем сказать, что движение началось
+// При скорости ниже отсечки мы можем сказать, что движение закончилось,
+// отследив что это последнее событие движения в череде событий с помощью маркера motionIsOff.
 
 // Функция обновляет параметры компрессора
 export function updateCompressorSettings({ threshold, knee, ratio, attack, release }) {

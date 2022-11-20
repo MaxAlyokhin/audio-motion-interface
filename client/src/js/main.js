@@ -1,3 +1,4 @@
+import { audioInit } from './audio'
 import { motionInit } from './motion'
 
 window.addEventListener('load', () => {
@@ -8,7 +9,9 @@ window.addEventListener('load', () => {
   document.querySelector('.button.run').addEventListener(
     'click',
     function () {
+      audioInit()
       motionInit()
+
       document.querySelector('.cover').style.opacity = 0
       setTimeout(() => {
         document.querySelector('.cover').style.display = 'none'
