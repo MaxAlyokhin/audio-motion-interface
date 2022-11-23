@@ -18,100 +18,100 @@
       <div class="title">AUDIO-MOTION INTERFACE <img class="title__qr desktop" src="img/qr.png" alt=""><img class="title__fullscreen mobile" src="img/fullscreen.png" alt=""></div>
 
       <div class="info">
-        <div class="regime desktop">Режим приёмника данных включён</div>
-        <div class="regime mobile">Режим источника данных включён</div>
+        <div class="regime desktop"></div>
+        <div class="regime mobile"></div>
         <div class="connections">
-          <div class="connections__to-server connections--wait">Подключение к вебсокет-серверу...</div>
-          <div class="connections__status connections--wait desktop">Ожидание подключений...</div>
+          <div class="connections__to-server connections--wait"></div>
+          <div class="connections__status connections--wait desktop"></div>
         </div>
       </div>
 
       <div class="motion">
         <div>
-          <span>Наличие движения</span>
+          <span class="is-motion"></span>
           <span class="motion__is-motion">false</span>
         </div>
         <div>
-          <span>Движение по осям α/β/γ (м/с²)</span>
+          <span class="motion-coords"></span>
           <span><span class="motion__alpha">0</span>/<span class="motion__beta">0</span>/<span class="motion__gamma">0</span></span>
         </div>
         <div>
-          <span>Максимальное значение (м/с²)</span>
+          <span class="motion-max"></span>
           <span class="motion__maximum">0</span>
         </div>
         <div class="motion__count-container">
-          <span>Количество осцилляторов</span>
+          <span class="osc-count"></span>
           <span class="motion__count">0</span>
         </div>
         <div>
-          <span>Положение смартфона по оси γ</span>
+          <span class="orientation-coords"></span>
           <span class="motion__orientation">0</span>
         </div>
         <div>
-          <span>Генерируемая частота (Гц)</span>
+          <span class="generated-frequency"></span>
           <span class="motion__frequency">0</span>
         </div>
         <div class="tuner">
-          <span>Нота</span>
+          <span class="tuner__note"></span>
           <span class="tuner__actual"></span>
         </div>
       </div>
 
       <div class="settings">
         <div class="synthesis-regime mobile">
-          <span>Стратегия синтеза:</span>
+          <span></span>
           <div class="synthesis-regime__container">
             <div class="radio-element">
               <input type="radio" name="synthesis" id="local" value="local" checked />
-              <label for="local">Локальная</label>
+              <label class="synthesis-local" for="local"></label>
             </div>
             <div class="radio-element">
               <input type="radio" name="synthesis" id="remote" value="remote" />
-              <label for="remote">Распределённая</label>
+              <label class="synthesis-remote" for="remote"></label>
             </div>
           </div>
         </div>
 
         <div class="frequency-regime">
-          <span>Режим генерации частот:</span>
+          <span></span>
           <div class="frequency-regime__container">
             <div class="radio-element">
               <input type="radio" name="frequency" id="continuous" value="continuous" checked />
-              <label for="continuous">Непрерывный</label>
+              <label class="continuous" for="continuous"></label>
             </div>
             <div class="radio-element">
               <input type="radio" name="frequency" id="tempered" value="tempered" />
-              <label for="tempered">Темперированный</label>
+              <label class="tempered" for="tempered"></label>
             </div>
           </div>
         </div>
 
         <div class="gain-generation">
-          <span>Влияние скорости на громкость:</span>
+          <span></span>
           <div class="gain-generation__container">
             <div class="radio-element">
               <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
-              <label for="speedgain-yes">Да</label>
+              <label class="speedgain-yes" for="speedgain-yes"></label>
             </div>
             <div class="radio-element">
               <input type="radio" name="speedgain" id="speedgain-no" value="false" />
-              <label for="speedgain-no">Нет</label>
+              <label class="speedgain-no" for="speedgain-no"></label>
             </div>
           </div>
         </div>
 
         <div class="slide">
-          <span>Отсечка датчика (м/с²):</span>
+          <span class="cutoff"></span>
           <input slide="7" coefficient="1" step="0.1" type="number" min="0" name="threshold" class="threshold" />
         </div>
 
         <div class="slide">
-          <span>Таймаут датчика (мс):</span>
+          <span class="timeout-span"></span>
           <input slide="1" coefficient="0" step="1" type="number" min="0" name="timeout" class="timeout" />
         </div>
 
         <div>
-          <span>Тип волны:</span>
+          <span class="wave-type"></span>
           <select name="wave" class="wave">
             <option value="sine">sine</option>
             <option value="square">square</option>
@@ -121,41 +121,41 @@
         </div>
 
         <div class="slide">
-          <span>Атака:</span>
+          <span class="attack-span"></span>
           <input slide="10" coefficient="1" step="0.1" type="number" min="0" name="attack" class="attack" />
         </div>
 
         <div class="slide">
-          <span>Громкость:</span>
+          <span class="gain-span"></span>
           <input slide="10" coefficient="2" step="0.01" type="number" min="0" name="gain" class="gain" />
         </div>
 
         <div class="release-container slide">
-          <span>Затухание (Release):</span>
+          <span></span>
           <input slide="3" coefficient="1" step="0.1" type="number" min="0" name="release" class="release" />
         </div>
 
         <div class="attenuation-container slide">
-          <span>Затухание до значения:</span>
+          <span></span>
           <input slide="0.01" coefficient="4" step="0.0001" type="number" min="0" name="attenuation" class="attenuation" />
         </div>
 
         <div class="frequencies-range">
-          <span>Диапазон частот</span>
+          <span class="freq-range-span"></span>
           <div class="frequencies-range__container slide">
-            <span>От:</span>
+            <span class="freq-from"></span>
             <input type="number" slide="0.01" coefficient="1" step="0.1" name="frequencies-range-from" class="frequencies-range-from" />
           </div>
           <div class="frequencies-range__container slide">
-            <span>До:</span>
+            <span class="freq-to"></span>
             <input type="number" slide="0.01" coefficient="1" step="0.1" name="frequencies-range-to" class="frequencies-range-to" />
           </div>
         </div>
 
         <div class="notes-range">
-          <span>Диапазон нот:</span>
+          <span class="notes-range-span"></span>
           <div class="notes-range__container slide">
-            <span>От:</span>
+            <span class="notes-range-from"></span>
             <div class="notes-range__inputs">
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-from" class="notes-range-from" />
               <span class="notes-range__from-span"></span>
@@ -163,7 +163,7 @@
 
           </div>
           <div class="notes-range__container slide">
-            <span>До:</span>
+            <span class="notes-range-to"></span>
             <div class="notes-range__inputs">
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-to" class="notes-range-to" />
               <span class="notes-range__to-span"></span>
@@ -172,13 +172,13 @@
         </div>
 
         <div class="filter-element">
-          <span>Фильтр</span>
+          <span class="filter-span"></span>
           <div class="filter-element__container slide">
-            <span>Частота:</span>
+            <span class="filter-freq"></span>
             <input type="number" slide="0.01" coefficient="1" step="0.1" name="filter" class="filter" />
           </div>
           <div class="filter-element__container slide">
-            <span>Q-фактор:</span>
+            <span class="filter-q"></span>
             <input type="number" slide="1" coefficient="1" step="0.1" name="factor" class="factor" />
           </div>
         </div>
@@ -186,20 +186,20 @@
         <div class="lfo">
           <span>LFO</span>
           <div class="lfo__container">
-            <span>Подключить:</span>
+            <span class="lfo-power"></span>
             <div class="lfo__container lfo__container--radio">
               <div class="radio-element">
                 <input type="radio" name="lfo" id="lfo-on" value="true" checked />
-                <label for="lfo-on">Да</label>
+                <label class="lfo-on" for="lfo-on"></label>
               </div>
               <div class="radio-element">
                 <input type="radio" name="lfo" id="lfo-off" value="false" />
-                <label for="lfo-off">Нет</label>
+                <label class="lfo-off" for="lfo-off"></label>
               </div>
             </div>
           </div>
           <div class="lfo__container">
-            <span>Тип волны:</span>
+            <span class="lfo-type"></span>
             <select name="lfo-wave" class="lfo-wave">
               <option value="sine">sine</option>
               <option value="square">square</option>
@@ -208,17 +208,17 @@
             </select>
           </div>
           <div class="lfo__container slide">
-            <span>Частота (Rate):</span>
+            <span class="lfo-rate"></span>
             <input type="number" slide="5" coefficient="1" step="0.1" name="rate" class="rate" />
           </div>
           <div class="lfo__container slide">
-            <span>Амплитуда (Depth):</span>
+            <span class="lfo-depth"></span>
             <input type="number" slide="10" coefficient="2" step="0.01" name="depth" class="depth" />
           </div>
         </div>
 
         <div class="compressor-element">
-          <span>Компрессор</span>
+          <span class="compressor-span"></span>
           <div class="compressor-element__container slide">
             <span>Threshold:</span>
             <input type="number" min="-100" max="0" slide="3" coefficient="0" step="1" name="compressor-threshold" class="compressor-threshold" />
@@ -242,21 +242,21 @@
         </div>
 
         <div class="sphere">
-          <span>Рабочая полусфера:</span>
+          <span class="semisphere"></span>
           <div class="sphere__container">
             <div class="radio-element">
               <input type="radio" name="sphere" id="sphere-right" value="right" checked />
-              <label for="sphere-right">Левша</label>
+              <label class="sphere-right" for="sphere-right"></label>
             </div>
             <div class="radio-element">
               <input type="radio" name="sphere" id="sphere-left" value="left" />
-              <label for="sphere-left">Правша</label>
+              <label class="sphere-left" for="sphere-left"></label>
             </div>
           </div>
         </div>
 
         <div class="off">
-          <span>Сброс осцилляторов:</span>
+          <span></span>
           <div class="off__container">
             <div class="radio-element">
               <input type="radio" name="off" id="off" value="true" />
@@ -265,35 +265,35 @@
         </div>
 
         <div class="lite">
-          <span>Режим экономии вычислительных ресурсов:</span>
+          <span class="lite-span"></span>
           <div class="lite__container">
             <div class="radio-element">
               <input type="radio" name="lite" id="lite-yes" value="true" />
-              <label for="lite-yes">Да</label>
+              <label class="lite-on" for="lite-yes"></label>
             </div>
             <div class="radio-element">
               <input type="radio" name="lite" id="lite-no" value="false" checked />
-              <label for="lite-no">Нет</label>
+              <label class="lite-off" for="lite-no"></label>
             </div>
           </div>
         </div>
 
         <div class="theme">
-          <span>Тема:</span>
+          <span class="theme-span"></span>
           <div class="theme__container">
             <div class="radio-element">
               <input type="radio" name="theme" id="theme-dark" value="dark" checked />
-              <label for="theme-dark">Тёмная</label>
+              <label class="theme-dark" for="theme-dark"></label>
             </div>
             <div class="radio-element">
               <input type="radio" name="theme" id="theme-light" value="light" />
-              <label for="theme-light">Светлая</label>
+              <label class="theme-light" for="theme-light"></label>
             </div>
           </div>
         </div>
 
         <div>
-          <div>Ошибки:</div>
+          <div>Errors:</div>
           <div class="errors"></div>
         </div>
       </div>
@@ -308,7 +308,7 @@
 
     <div class="qr">
       <div class="qr__container">
-        <div class="qr__text">Наведи камеру смартфона для подключения к компьютеру, либо вручную перейди по ссылке в мобильном браузере:<br><span></span></div>
+        <div class="qr__text"></div>
         <canvas class="qr__code"></canvas>
       </div>
     </div>

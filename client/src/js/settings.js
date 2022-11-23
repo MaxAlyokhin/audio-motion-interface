@@ -5,6 +5,7 @@
 
 import { updateCompressorSettings } from './audio'
 import { toFixedNumber } from './helpers'
+import { language } from './language'
 import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
 
@@ -481,13 +482,13 @@ export function settingsInit() {
 
       // Вешаем слушатели вебсокет-событий
       socket.on('connect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.textContent = language.connection.ready
         connectionsToServer.classList.remove('connections--wait', 'connections--error')
         connectionsToServer.classList.add('connections--ready')
       })
 
       socket.on('disconnect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.textContent = language.connection.failed
         connectionsToServer.classList.remove('connections--wait', 'connections--ready')
         connectionsToServer.classList.add('connections--error')
       })
@@ -692,13 +693,13 @@ export function settingsInit() {
 
       // Вешаем слушатели вебсокет-событий
       socket.on('connect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+        connectionsToServer.textContent = language.connection.ready
         connectionsToServer.classList.remove('connections--wait', 'connections--error')
         connectionsToServer.classList.add('connections--ready')
       })
 
       socket.on('disconnect', () => {
-        connectionsToServer.textContent = 'Связь с вебсокет-сервером потеряна'
+        connectionsToServer.textContent = language.connection.failed
         connectionsToServer.classList.remove('connections--wait', 'connections--ready')
         connectionsToServer.classList.add('connections--error')
       })

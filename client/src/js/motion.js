@@ -9,13 +9,14 @@
 
 import QRious from 'qrious'
 import fscreen from 'fscreen'
+import device from 'current-device'
 
 import { audio } from './audio'
 import { toFixedNumber } from './helpers'
 import { orientation, orientationInit } from './orientation'
 import { settings, settingsInit, syncSettingsFrontend } from './settings'
 import { socket, socketInit } from './websocket'
-import device from 'current-device'
+import { language } from './language'
 
 export function motionInit() {
 
@@ -50,7 +51,6 @@ export function motionInit() {
   // По первому событию движения мы можем однозначно определить
   // в смартфоне мы находимся или на десктопе (event.acceleration === null)
   // Изначально мы не знаем, где находимся
-  // let isDesktop = undefined
   let receiverRegimeIsInit = false
 
   // Fullscreen маркер
@@ -162,7 +162,7 @@ export function motionInit() {
     fetch(`/hostname`)
       .then((response) => {
         if (response.status !== 200) {
-          document.querySelector('.errors').innerHTML += `Ошибка при загрузке данных с сервера.<br>Статус: ${response.status}`
+          document.querySelector('.errors').innerHTML += `Error while loading data from server.<br>Status: ${response.status}`
           return
         }
 
@@ -181,7 +181,7 @@ export function motionInit() {
         })
       })
       .catch((error) => {
-        throw new Error('Ошибка связи с сервером. Проверьте подключение к интернету.')
+        throw new Error('Server connection error. Check the Internet connection.')
       })
 
     // Вешаем обработчик на кнопку показа попапа с QR-кодом
@@ -196,13 +196,13 @@ export function motionInit() {
 
     // Вешаем слушатели вебсокет-событий
     socket.on('connect', () => {
-      connectionsToServer.textContent = 'Связь с вебсокет-сервером установлена'
+      connectionsToServer.textContent = language.connection.ready
       connectionsToServer.classList.remove('connections--wait', 'connections--error')
       connectionsToServer.classList.add('connections--ready')
     })
 
     socket.on('disconnect', () => {
-      connectionsToServer.textContent = 'Связь с вебсокет-сервером отсутствует'
+      connectionsToServer.textContent = language.connection.failed
       connectionsToServer.classList.remove('connections--wait', 'connections--ready')
       connectionsToServer.classList.add('connections--error')
     })
@@ -210,7 +210,7 @@ export function motionInit() {
     socket.on('connection message', (clientsSize) => {
       // Если остались только мы сами
       if (clientsSize === 1) {
-        connectionsStatus.textContent = `Ожидание подключений...`
+        connectionsStatus.textContent = language.connection.waiting
         connectionsStatus.classList.remove('connections--ready')
         connectionsStatus.classList.add('connections--wait')
         motionElement.classList.add('inactive')
@@ -218,7 +218,7 @@ export function motionInit() {
       }
       if (clientsSize > 1) {
         // Минус наше устройство
-        connectionsStatus.textContent = `Подключено (${clientsSize - 1})`
+        connectionsStatus.textContent = `${language.connection.connected} (${clientsSize - 1})`
         connectionsStatus.classList.remove('connections--wait')
         connectionsStatus.classList.add('connections--ready')
         motionElement.classList.remove('inactive')

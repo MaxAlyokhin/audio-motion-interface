@@ -1,5 +1,10 @@
+import languageInit from './language'
 import { audioInit } from './audio'
 import { motionInit } from './motion'
+
+window.addEventListener('DOMContentLoaded', () => {
+  languageInit()
+})
 
 window.addEventListener('load', () => {
   // Показываем контент
