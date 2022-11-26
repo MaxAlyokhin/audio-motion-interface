@@ -121,7 +121,7 @@ For example, if you shake your hand chaotically for some time, the cutoff will b
 
 According to subjective observations, the optimal cutoff can be between 3 and 7 (the default is 1), then random movements can be eliminated.
 
-Since the frequencies are distributed over a semisphere, there is a field **Working semisphere** that allows you to switch the system for left- or right-handed people.
+Since the frequencies are distributed over a semisphere, there is a field **Used semisphere** that allows you to switch the system for left- or right-handed people.
 
 The semisphere contains 1800 divisions (180 degrees * tenths), on which the values specified in the field **Frequency range** are distributed. The values are distributed continuously and exponentially, i.e. there are more hertz for each degree at higher values, which allows to take into account the peculiarities of our hearing and make the frequency distribution across the semisphere even.
 
@@ -131,7 +131,7 @@ The **Motion by α/β/γ axes** field shows the speeds of movement by the three 
 
 The **Smartphone position on the γ axis** field shows the tilt angle in the semisphere. This tilt angle determines the frequency of the synthesized sound.
 
-The **Motion Status** field shows `true` when the cutoff is exceeded and the system is generating sounds in the current batch. In the `false` position, the system is in standby mode when the cutoff is exceeded and generates no sound.
+The **Motion status** field shows `true` when the cutoff is exceeded and the system is generating sounds in the current batch. In the `false` position, the system is in standby mode when the cutoff is exceeded and generates no sound.
 
 The field **Maximum value** shows the maximum speed of movement for the whole session (i.e. from the moment of opening the tab, to the current moment).
 
@@ -165,7 +165,7 @@ The field **Maximum value** shows the maximum speed of movement for the whole se
 
 **Compressor** — by default its influence is minimized. If you want to play a lot of oscillators at once, but do not want to descend into rough noise, you can set, for example, the **Release** field to `0.25`, and the **Threshold** field to `-50`.
 
-**Reset oscillators** - turns off and deletes all the batches that are working. It helps if the abundance of oscillators makes the sound produce artifacts, as well as if you set very high attenuation values and do not want to wait for the sound to fade out.
+**Reset oscillators** — turns off and deletes all the batches that are working. It helps if the abundance of oscillators makes the sound produce artifacts, as well as if you set very high attenuation values and do not want to wait for the sound to fade out.
 
 **Errors** — this field will be removed after the end of testing. Here will be inserted all the errors that occur during the work, which will help to debug the system.
 
