@@ -54,6 +54,9 @@ a
     display: flex
     align-items: center
 
+    span
+      cursor: pointer
+
     &__qr, &__fullscreen
       width: 12px
       position: absolute
@@ -110,7 +113,7 @@ a
   display: flex
   justify-content: center
   align-items: center
-  row-gap: 50px
+  row-gap: 25px
   background: $white
   padding: 20px
   position: fixed
@@ -118,9 +121,22 @@ a
   flex-direction: column
   transition: $transition-long
 
+  div
+    max-width: 400px
+    font-size: calc(.4em + 1vw)
+    text-align: center
+    font-size: 11px
+
   .title
-    font-size: calc(1em + 2vw)
+    font-size: 24px
     font-weight: 1000
+
+  .en, .ru
+    &:hover
+      cursor: pointer
+
+  .links
+    margin-bottom: 45px
 
 .motion, .settings
   display: flex

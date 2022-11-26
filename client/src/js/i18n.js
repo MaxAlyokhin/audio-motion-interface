@@ -56,8 +56,13 @@ export const i18n = {
     themeDark: 'Тёмная',
     themeLight: 'Светлая',
     off: 'Сброс осцилляторов',
-    qr: 'Наведи камеру смартфона для подключения к компьютеру, либо вручную перейди по ссылке в мобильном браузере:<br><span></span>'
-
+    qr: 'Наведи камеру смартфона для подключения к компьютеру, либо вручную перейди по ссылке в мобильном браузере:<br><span></span>',
+    description: 'Система синтезирует звук на основе данных с датчиков движения смартфона: скорость определяет громкость, положение определяет частоту.',
+    dfap: 'Этот проект — часть<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Цифровой фиксации аудио процессов</a>',
+    links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Исходники</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README_RU.md#user-guide" target="_blank" rel="noopener noreferrer">Инструкция</a>',
+    run: 'Запуск',
+    interface: 'Скрыть интерфейс',
+    slide: 'Перетащи кружок за черту для разблокировки интерфейса'
   },
 
   en: {
@@ -109,7 +114,7 @@ export const i18n = {
     lfoRate: 'Rate',
     lfoDepth: 'Depth',
     compressor: 'Compressor',
-    semisphere: 'Working semisphere',
+    semisphere: 'Used semisphere',
     leftHanded: 'Left-handed',
     rightHanded: 'Right-handed',
     lite: 'Performance saving mode',
@@ -117,6 +122,12 @@ export const i18n = {
     themeDark: 'Dark',
     themeLight: 'Light',
     off: 'Reset Oscillators',
-    qr: 'Point your smartphone camera to connect to computer, or manually follow the link in your mobile browser:<br><span></span>'
+    qr: 'Point your smartphone camera to connect to computer, or manually follow the link in your mobile browser:<br><span></span>',
+    description: 'The system synthesizes sound based on data from smartphone motion sensors: speed determines the volume, position determines the frequency.',
+    dfap: 'This project is part of<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Digital fixation of audio processes</a>',
+    links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Source code</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README.md#user-guide" target="_blank" rel="noopener noreferrer">User guide</a>',
+    run: 'Run',
+    interface: 'Interface off',
+    slide: 'Slide up the circle to the line for unlock interface'
   }
 }

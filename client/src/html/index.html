@@ -13,9 +13,9 @@
     <!-- endinject -->
   </head>
 
-  <body class="dark">
+  <body class="dark" style="overflow: hidden;">
     <div class="container">
-      <div class="title">AUDIO-MOTION INTERFACE <img class="title__qr desktop" src="img/qr.png" alt=""><img class="title__fullscreen mobile" src="img/fullscreen.png" alt=""></div>
+      <div class="title"><span>AUDIO-MOTION INTERFACE</span> <img class="title__qr desktop" src="img/qr.png" alt=""><img class="title__fullscreen mobile" src="img/fullscreen.png" alt=""></div>
 
       <div class="info">
         <div class="regime desktop"></div>
@@ -144,18 +144,18 @@
           <span class="freq-range-span"></span>
           <div class="frequencies-range__container slide">
             <span class="freq-from"></span>
-            <input type="number" slide="0.01" coefficient="1" step="0.1" name="frequencies-range-from" class="frequencies-range-from" />
+            <input type="number" slide="0.001" coefficient="3" step="0.001" name="frequencies-range-from" class="frequencies-range-from" />
           </div>
           <div class="frequencies-range__container slide">
             <span class="freq-to"></span>
-            <input type="number" slide="0.01" coefficient="1" step="0.1" name="frequencies-range-to" class="frequencies-range-to" />
+            <input type="number" slide="0.001" coefficient="3" step="0.001" name="frequencies-range-to" class="frequencies-range-to" />
           </div>
         </div>
 
         <div class="notes-range">
           <span class="notes-range-span"></span>
           <div class="notes-range__container slide">
-            <span class="notes-range-from"></span>
+            <span class="notes-range-from-span"></span>
             <div class="notes-range__inputs">
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-from" class="notes-range-from" />
               <span class="notes-range__from-span"></span>
@@ -163,7 +163,7 @@
 
           </div>
           <div class="notes-range__container slide">
-            <span class="notes-range-to"></span>
+            <span class="notes-range-to-span"></span>
             <div class="notes-range__inputs">
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-to" class="notes-range-to" />
               <span class="notes-range__to-span"></span>
@@ -220,23 +220,23 @@
         <div class="compressor-element">
           <span class="compressor-span"></span>
           <div class="compressor-element__container slide">
-            <span>Threshold:</span>
+            <span>Threshold</span>
             <input type="number" min="-100" max="0" slide="3" coefficient="0" step="1" name="compressor-threshold" class="compressor-threshold" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Knee:</span>
+            <span>Knee</span>
             <input type="number" min="0" max="40" slide="10" coefficient="0" step="1" name="compressor-knee" class="compressor-knee" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Ratio:</span>
+            <span>Ratio</span>
             <input type="number" min="1" max="20" slide="10" coefficient="0" step="1" name="compressor-ratio" class="compressor-ratio" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Attack:</span>
+            <span>Attack</span>
             <input type="number" min="0" max="1" slide="0.1" coefficient="3" step=".001" name="compressor-attack" class="compressor-attack" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Release:</span>
+            <span>Release</span>
             <input type="number" min="0" max="1" slide="3" coefficient="2" step="0.01" name="compressor-release" class="compressor-release" />
           </div>
         </div>
@@ -314,7 +314,14 @@
     </div>
 
     <div class="cover">
+      <div class="languages"><span><span class="en">EN</span> / <span class="ru">RU</span></span></div>
       <div class="title">AUDIO-MOTION INTERFACE</div>
+      <div class="description">The system synthesizes sound based on data from smartphone motion sensors: speed determines the volume, position determines the frequency.</div>
+      <div class="dfap">This project is part of<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Digital fixation of audio processes</a></div>
+      <div class="links">
+        <a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Source code</a>
+        <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README.md#user-guide" target="_blank" rel="noopener noreferrer">User guide</a>
+      </div>
       <button class="button run">Run</button>
     </div>
 

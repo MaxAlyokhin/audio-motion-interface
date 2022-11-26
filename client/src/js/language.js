@@ -1,12 +1,46 @@
-import { getLanguage } from './helpers'
+// Управление языком
+// Сначала инициализируем язык из настроек браузера
+// Затем передаём управление кнопкам переключения языка
+
 import { i18n } from './i18n'
 
-export let language = i18n[getLanguage()]
+export let language = null // Объект со всеми строками интерфейса
 
-export default function languageInit() {
+let languageElements = []
+
+/**
+ * Определяет язык из настроек браузера
+ * @return {String} ru если русский, en если английский
+ */
+
+const getLanguage = () => 'ru' === navigator.language.slice(0, 2) ? 'ru' : 'en'
+
+/**
+ * Устанавливает язык интерфейса
+ * @param {String} languageMarker - 'ru' или 'en'
+ * @return {undefined}
+ */
+
+function setLanguage(languageMarker) {
+  language = i18n[languageMarker]
+
+  document.querySelector('.description').textContent = language.description
+  document.querySelector('.dfap').innerHTML = language.dfap
+  document.querySelector('.links').innerHTML = language.links
+  document.querySelector('.run').textContent = language.run
+  document.querySelector('.interface-regime').textContent = language.interface
+  document.querySelector('.interface-regime-on__text').textContent = language.slide
   document.querySelector('.regime.desktop').textContent = language.desktopRegime
   document.querySelector('.regime.mobile').textContent = language.mobileRegime
-  document.querySelector('.connections__to-server').textContent = language.connection.connecting
+  if (document.querySelector('.connections__to-server').classList.contains('connections--error')) {
+    document.querySelector('.connections__to-server').textContent = language.connection.failed
+  }
+  if (document.querySelector('.connections__to-server').classList.contains('connections--wait')) {
+    document.querySelector('.connections__to-server').textContent = language.connection.waiting
+  }
+  if (document.querySelector('.connections__to-server').classList.contains('connections--ready')) {
+    document.querySelector('.connections__to-server').textContent = language.connection.ready
+  }
   document.querySelector('.connections__status').textContent = language.connection.waiting
   document.querySelector('.is-motion').textContent = language.isMotion
   document.querySelector('.motion-coords').textContent = language.motionCoords
@@ -35,8 +69,8 @@ export default function languageInit() {
   document.querySelector('.freq-from').textContent = language.from
   document.querySelector('.freq-to').textContent = language.to
   document.querySelector('.notes-range-span').textContent = language.noteRange
-  document.querySelector('.notes-range-from').textContent = language.from
-  document.querySelector('.notes-range-to').textContent = language.to
+  document.querySelector('.notes-range-from-span').textContent = language.from
+  document.querySelector('.notes-range-to-span').textContent = language.to
   document.querySelector('.filter-span').textContent = language.filter
   document.querySelector('.filter-freq').textContent = language.filterFreq
   document.querySelector('.filter-q').textContent = language.filterQ
@@ -58,4 +92,22 @@ export default function languageInit() {
   document.querySelector('.theme-dark').textContent = language.themeDark
   document.querySelector('.theme-light').textContent = language.themeLight
   document.querySelector('.qr__text').innerHTML = language.qr
+
+  languageElements.forEach((element) => { element.style.textDecoration = 'none'})
+  document.querySelector(`.${languageMarker}`).style.textDecoration = 'underline'
+}
+
+export default function languageInit() {
+  setLanguage(getLanguage())
+
+  languageElements = [
+    document.querySelector('.ru'),
+    document.querySelector('.en')
+  ]
+
+  languageElements.forEach((element) => {
+    element.addEventListener('click', () => {
+      setLanguage(element.className)
+    })
+  })
 }

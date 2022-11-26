@@ -14,17 +14,29 @@ window.addEventListener('load', () => {
   document.querySelector('.button.run').addEventListener(
     'click',
     function () {
+      document.querySelector('body').style.overflow = 'auto'
+
       audioInit()
       motionInit()
 
+    },
+    { once: true } // Сработает только один раз
+  )
+
+  document.querySelector('.button.run').addEventListener(
+    'click',
+    function () {
       document.querySelector('.cover').style.opacity = 0
       setTimeout(() => {
         document.querySelector('.cover').style.display = 'none'
       }, 1000)
-    },
-    // Сработает только один раз
-    { once: true }
+    }
   )
+
+  document.querySelector('.container .title span').addEventListener('click', () => {
+    document.querySelector('.cover').style.display = 'flex'
+    setTimeout(() => { document.querySelector('.cover').style.opacity = 1 })
+  })
 
   // Вывод ошибок на экран
   let errorElement = document.querySelector('.errors')

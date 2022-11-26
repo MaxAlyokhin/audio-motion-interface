@@ -36,10 +36,3 @@ export function getNearbyValues(number, array) {
 
   return [nearbyLess, nearbyOver]
 }
-
-/**
- * Функция определяет язык
- * @return {String} ru если русский, en если английский
- */
-
-export const getLanguage = () => 'ru' === navigator.language.slice(0, 2) ? 'ru' : 'en'
