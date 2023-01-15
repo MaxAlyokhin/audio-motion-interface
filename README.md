@@ -284,7 +284,10 @@ Stack: HTML, Sass, JS, Web Audio API, Device Motion API, Device Orientation API,
 
 AMI is essentially a small "fullstack" web application with https server on Express and websocket server on Socket.io, handing out a simple frontend in native JS using Web Audio API (WAAPI), Device Motion API (DMAPI) and Device Orientation API (DOAPI). We collect data from DMAPI/DOAPI, tidy it up, and send it directly to WAAPI in local mode and to websocket in distributed mode (and on the remote machine this data is received via websocket and sent there to WAAPI).
 
-![](https://store.stranno.su/ami/api-en.png)
+<picture align="center">
+  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/api-dark.png">
+  <img src="https://store.stranno.su/ami/api-en.png">
+</picture>
 
 index.js is the entry point into the application. Runs Express and Socket.io, distributes the frontend from /client/dist. Frontend builds Gulp in /client folder from /client/src and puts the finished thing in /client/dist. JS is built by Webpack, Sass is compiled to CSS, HTML is built from templates, and the built JS and CSS is injected into `<head>`. BrowserSync starts development server on a separate port, but it will not work backend (but it works live-reload), so it's better to open the address without port (`https://localhost`).
 
@@ -292,7 +295,10 @@ The application code is commented in many places (in russian, Google Translate h
 
 A rough scheme of data flow through the functions after initialization:
 
-![](https://store.stranno.su/ami/functions-new.png)
+<picture align="center">
+  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/api-dark.png">
+  <img src="https://store.stranno.su/ami/functions-new.png">
+</picture>
 
 The [current-device](https://github.com/matthewhudson/current-device) library is used to define the device type - mobile or desktop, which initializes the corresponding mode. On the mobile device each motion event is checked for speed (maximum of three coordinates) and compared to the cutoff, if exceeded, then we create a batch. *If after that* are below the cutoff, then we plan to remove the batch. All elements of a batch are fluffed into arrays, and then deleted from them.
 

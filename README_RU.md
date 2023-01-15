@@ -282,7 +282,10 @@ server.listen(443, '0.0.0.0', function () {
 
 AMI это по сути небольшое "fullstack" веб-приложение с https-сервером на Express и websocket-сервером на Socket.io, раздающее несложный фронтенд на нативном JS с использованием Web Audio API (WAAPI), Device Motion API (DMAPI) и Device Orientation API (DOAPI). Мы собираем данные с DMAPI/DOAPI, приводим их в порядок и отправляем сразу в WAAPI в локальном режиме и в websocket в распределённом режиме (а на удалённой машине эти данные принимаются по websocket и там уже отдаются в WAAPI).
 
-![](https://store.stranno.su/ami/api.png)
+<picture align="center">
+  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/api-dark.png">
+  <img src="https://store.stranno.su/ami/api-en.png">
+</picture>
 
 index.js — точка входа в приложение. Запускает Express и Socket.io, раздаёт фронтенд из /client/dist. Фронтенд собирает Gulp в папке /client из /client/src и готовое кладёт в /client/dist. JS собирается Webpack, Sass компилируется в CSS, HTML собирается из шаблонов, в `<head>` инжектируется собранный JS и CSS. BrowserSync запускает development-сервер на отдельном порту, но на нём не будет работать бэкенд (но зато работает live-reload), поэтому лучше открывать адрес без порта (`https://localhost`).
 
@@ -290,7 +293,10 @@ index.js — точка входа в приложение. Запускает E
 
 Грубая схема движения данных по функциям после инициализации:
 
-![](https://store.stranno.su/ami/functions-new.png)
+<picture align="center">
+  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/api-dark.png">
+  <img src="https://store.stranno.su/ami/functions-new.png">
+</picture>
 
 С помощью библиотеки [current-device](https://github.com/matthewhudson/current-device) определяется тип устройства — mobile или desktop, который инициализирует соответствующий режим. На мобильном устройстве у каждого события движения проверяется скорость движения (максимальная из трёх координат) и сравнивается с отсечкой, если превысили, то создаём связку. *Если после этого* оказались ниже отсечки, то планируем удаление связки. Все элементы связки пушатся в массивы, а затем из них удаляются.
 
