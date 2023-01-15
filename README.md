@@ -296,7 +296,7 @@ The application code is commented in many places (in russian, Google Translate h
 A rough scheme of data flow through the functions after initialization:
 
 <picture align="center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/api-dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/functions-dark.png">
   <img src="https://store.stranno.su/ami/functions-new.png">
 </picture>
 

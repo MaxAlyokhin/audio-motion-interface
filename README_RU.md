@@ -294,7 +294,7 @@ index.js — точка входа в приложение. Запускает E
 Грубая схема движения данных по функциям после инициализации:
 
 <picture align="center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/api-dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://store.stranno.su/ami/functions-dark.png">
   <img src="https://store.stranno.su/ami/functions-new.png">
 </picture>
 
