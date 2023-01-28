@@ -190,7 +190,7 @@ In distributed mode:
 
 ### Running the desktop version (run on the local computer)
 
-> **Note:** smartphone and computer must be connected to the same wifi network. Or you can run a virtual router on your laptop (using a third-party service a la Connectify) and connect your smartphone to your laptop
+> **Note:** smartphone and computer must be connected to the same wifi network. Or you can run a virtual router on your laptop (using a third-party service a la Connectify) and connect your smartphone to your laptop. The most ideally you would run the hotspot on a laptop to even out the latency of the router. **On Windows you can use the "Mobile Hotspot" function**.
 
 > **Note:** the latency with this startup option is the shortest possible
 
