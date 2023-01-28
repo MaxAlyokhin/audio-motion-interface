@@ -61,16 +61,15 @@ const options = {
 server.listen(443, '0.0.0.0', function () {
   console.log(`${getDate()} Audio-motion interface is up and running`)
   lookup(hostname, options, function (err, ips, fam) {
-    ips.forEach(ip => {
-      if (ip.address.indexOf('192.168') === 0) {
-        address = ip.address
-        console.log(`${getDate()} Opening https://${address} in default browser`)
-        open(`https://${address}`)
-        console.log(`${getDate()} Close terminal for exit from AMI`)
-      } else {
-        address = 'ami.stranno.su'
-      }
-    })
+    const serverIP = ips.find(ip => ip.address.indexOf('192.168') === 0)
+    if (serverIP) {
+      address = serverIP.address
+      console.log(`${getDate()} Opening https://${address} in default browser`)
+      open(`https://${address}`)
+      console.log(`${getDate()} Close terminal for exit from AMI`)
+    } else {
+      address = 'ami.stranno.su'
+    }
   })
 })
 
