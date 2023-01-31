@@ -70,7 +70,7 @@ A set of virtual devices [oscillator](https://en.wikipedia.org/wiki/Electronic_o
 
 ### Motion event
 
-[JS-event](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events), generated approximately every 16ms (depending on the device) by the smartphone, containing motion parameters. Events occur even when the device is motionless, in which case the motion parameters are zero.
+[JS-event](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events), generated approximately every 16ms (on Chrome and Chromium-based browsers, on the Firefox every 100ms) by the smartphone, containing motion parameters. Events occur even when the device is motionless, in which case the motion parameters are zero.
 
 ### Cutoff
 
@@ -150,6 +150,8 @@ The field **Maximum value** shows the maximum speed of movement for the whole se
 **Waiting for connections** — no device is connected apart from this computer (this field is only displayed from the desktop).
 
 **Performance saving mode** — motion events, as well as recalculation of the synthesized sound output values, trigger a very fast update of the data in the interface. This update is quite a costly operation. To save device resources, especially if you hear clicks or sound artifacts at some point, you can enable this mode, but it will turn off all data updates in the interface and you will only have to navigate by ear.
+
+**Cutoff type** — with "full" type, sound is generated from the point above the cutoff to the point below the cutoff. In the "up-to-peak" type, sound is generated up to the point of highest movement speed. Explanation: each gesture slows down at the end of its movement. This leads to, firstly, a difficult system to control, and secondly, in the "speed influences the volume" mode, the middle of the sound can be loud and the end very quiet. We can catch the slowdown and interpret it as the end of the gesture. The oscillator will then cut off at the speed peak. In practice, this allows for clearer individual controlled sounds.
 
 **Sensor timeout** — like the sensor cutoff, this setting allows you to better control your movement and get rid of accidental sounds. It sets a pause after the end of the previous gesture, leveling out the accidental excesses of the cut-off when slowing down the speed of movement.
 

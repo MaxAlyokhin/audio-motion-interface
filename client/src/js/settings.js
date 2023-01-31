@@ -17,6 +17,7 @@ let notesRangeElement = null
 let synthesisRegimeElement = null
 let frequencyRegimeElement = null
 let thresholdElement = null
+let thresholdTypeElement = null
 let waveElement = null
 let filterElement = null
 let factorElement = null
@@ -42,6 +43,7 @@ window.addEventListener('DOMContentLoaded', () => {
   synthesisRegimeElement = document.querySelector('.synthesis-regime')
   frequencyRegimeElement = document.querySelector('.frequency-regime')
   thresholdElement = document.querySelector('.threshold')
+  thresholdTypeElement = document.querySelector('.cutoff-type')
   waveElement = document.querySelector('.wave')
   filterElement = document.querySelector('.filter')
   factorElement = document.querySelector('.factor')
@@ -77,6 +79,7 @@ export let settings = {
   },
   motion: {
     threshold: 2.0,
+    thresholdType: 'full',
     timeout: 150,
     gainGeneration: false,
     semiSphere: 'left',
@@ -155,6 +158,11 @@ export const mutations = {
   motion: {
     setThreshold: (threshold) => {
       isNaN(threshold) || threshold < 0 ? (settings.motion.threshold = 0) : (settings.motion.threshold = threshold)
+      syncSettings()
+    },
+
+    setThresholdType: (thresholdType) => {
+      settings.motion.thresholdType = thresholdType
       syncSettings()
     },
 
@@ -404,6 +412,13 @@ export function syncSettingsFrontend(settings) {
     notesRangeElement.style.display = 'flex'
   }
 
+  if (settings.motion.thresholdType === 'full') {
+    thresholdTypeElement.querySelector('#cutoff-type-full').checked = true
+  }
+  if (settings.motion.thresholdType === 'up-to-peak') {
+    thresholdTypeElement.querySelector('#cutoff-type-peak').checked = true
+  }
+
   if (settings.motion.gainGeneration === true) {
     document.querySelector('#speedgain-yes').checked = true
   }
@@ -441,6 +456,7 @@ export function syncSettingsFrontend(settings) {
   notesRangeElement.querySelector('.notes-range__from-span').textContent = getNoteName(notes[settings.audio.notesRange.from])
   notesRangeElement.querySelector('.notes-range__to-span').textContent = getNoteName(notes[settings.audio.notesRange.to])
   thresholdElement.value = settings.motion.threshold
+  thresholdTypeElement.value = settings.motion.thresholdType
   waveElement.value = settings.audio.oscillatorType
   filterElement.value = settings.audio.biquadFilterFrequency
   factorElement.value = settings.audio.biquadFilterQ
@@ -503,6 +519,10 @@ export function settingsInit() {
 
   thresholdElement.addEventListener('input', function (event) {
     mutations.motion.setThreshold(parseFloat(event.value || this.value))
+  })
+
+  thresholdTypeElement.addEventListener('change', function (event) {
+    mutations.motion.setThresholdType(event.target.value)
   })
 
   timeoutElement.addEventListener('input', function (event) {

@@ -94,6 +94,9 @@ function setLanguage(languageMarker) {
   document.querySelector('.qr__text').innerHTML = language.qr
   document.querySelector('.sensor > span').textContent = language.sensor
   document.querySelector('.oscillator > span').textContent = language.oscillator
+  document.querySelector('.cutoff-type__title').textContent = language.cutoffType.title
+  document.querySelector('.cutoff-type-full').textContent = language.cutoffType.full
+  document.querySelector('.cutoff-type-peak').textContent = language.cutoffType.peak
 
   languageElements.forEach((element) => { element.style.textDecoration = 'none'})
   document.querySelector(`.${languageMarker}`).style.textDecoration = 'underline'

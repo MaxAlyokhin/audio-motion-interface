@@ -576,7 +576,20 @@ export function updateCompressorSettings({ threshold, knee, ratio, attack, relea
   compressor.release.setValueAtTime(release, audioContext.currentTime)
 }
 
-// Функция вызывается ≈ каждые 16мс
+let previousMotionMaximum = 0
+
+// Управление громкостью
+function setGain(motionMaximum) {
+  if (settings.audio.attack) {
+    envelopeArray[envelopeArray.length - 1].gain.linearRampToValueAtTime(settings.audio.gain, audioContext.currentTime + settings.audio.attack)
+  } else if (settings.motion.gainGeneration === true) {
+    envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime((motionMaximum - settings.motion.threshold + 1) * settings.audio.gain, audioContext.currentTime, 0.005)
+  } else {
+    envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
+  }
+}
+
+// Функция вызывается ≈ каждые 16мс (в Chrome, в Firefox раз в 100мс)
 export function audio(motion) {
   // Определяем частоту и ноту
   // Делаем это даже ниже отсечки, чтобы можно было попасть в нужную ноту
@@ -653,13 +666,23 @@ export function audio(motion) {
     // Динамически настраиваем граф - он обновляется по каждому событию движения
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
 
-    // Управление громкостью
-    if (settings.audio.attack) {
-      envelopeArray[envelopeArray.length - 1].gain.linearRampToValueAtTime(settings.audio.gain, audioContext.currentTime + settings.audio.attack)
-    } else if (settings.motion.gainGeneration === true) {
-      envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime(motion.maximum * settings.audio.gain, audioContext.currentTime, 0.005)
-    } else {
-      envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime(settings.audio.gain, audioContext.currentTime, 0.005)
+    setGain(motion.maximum)
+
+    // Режим отсечки не полный
+    if (settings.motion.thresholdType !== 'full') {
+      // Каждый жест в конце своего движения замедляется
+      // Это приводит к тому, что середина звука может быть громкой, а конец очень тихим
+      // Мы можем поймать замедление движения и интерпретировать как конец жеста
+      // Тогда осциллятор будет обрываться на пике скорости
+
+      // Как только движение замедлится, поднять флаги и отключить осциллятор
+      if (motion.maximum <= previousMotionMaximum) {
+        motionIsOff = false
+        audioTimeoutIsOff = false
+        previousMotionMaximum = 0
+      } else {
+        previousMotionMaximum = motion.maximum
+      }
     }
 
     settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)

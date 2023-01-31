@@ -31,6 +31,11 @@ export const i18n = {
     yes: 'Да',
     no: 'Нет',
     cutoff: 'Отсечка датчика (м/с²)',
+    cutoffType: {
+      title: 'Тип отсечки',
+      full: 'Полная',
+      peak: 'До пика',
+    },
     timeout: 'Таймаут датчика (мс)',
     oscillator: 'Осциллятор',
     waveType: 'Тип волны',
@@ -99,6 +104,11 @@ export const i18n = {
     yes: 'Yes',
     no: 'No',
     cutoff: 'Sensor cutoff (m/s²)',
+    cutoffType: {
+      title: 'Cutoff type',
+      full: 'Full',
+      peak: 'Up-to-peak',
+    },
     timeout: 'Sensor timeout (ms)',
     oscillator: 'Oscillator',
     waveType: 'Type of wave',
