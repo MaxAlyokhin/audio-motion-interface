@@ -13,47 +13,49 @@
     <!-- endinject -->
   </head>
 
-  <body class="dark" style="overflow: hidden;">
+  <body class="dark" style="overflow: hidden">
     <div class="container">
-      <div class="title"><span>AUDIO-MOTION INTERFACE</span> <img class="title__qr desktop" src="img/qr.png" alt=""><img class="title__fullscreen mobile" src="img/fullscreen.png" alt=""></div>
+      <div class="top">
+        <div class="title"><span>AUDIO-MOTION INTERFACE</span> <img class="title__qr desktop" src="img/qr.png" alt="" /><img class="title__fullscreen mobile" src="img/fullscreen.png" alt="" /></div>
 
-      <div class="info">
-        <div class="regime desktop"></div>
-        <div class="regime mobile"></div>
-        <div class="connections">
-          <div class="connections__to-server connections--wait"></div>
-          <div class="connections__status connections--wait desktop"></div>
+        <div class="info">
+          <div class="regime desktop"></div>
+          <div class="regime mobile"></div>
+          <div class="connections">
+            <div class="connections__to-server connections--wait"></div>
+            <div class="connections__status connections--wait desktop"></div>
+          </div>
         </div>
-      </div>
 
-      <div class="motion">
-        <div>
-          <span class="is-motion"></span>
-          <span class="motion__is-motion">false</span>
-        </div>
-        <div>
-          <span class="motion-coords"></span>
-          <span><span class="motion__alpha">0</span>/<span class="motion__beta">0</span>/<span class="motion__gamma">0</span></span>
-        </div>
-        <div>
-          <span class="motion-max"></span>
-          <span class="motion__maximum">0</span>
-        </div>
-        <div class="motion__count-container">
-          <span class="osc-count"></span>
-          <span class="motion__count">0</span>
-        </div>
-        <div>
-          <span class="orientation-coords"></span>
-          <span class="motion__orientation">0</span>
-        </div>
-        <div>
-          <span class="generated-frequency"></span>
-          <span class="motion__frequency">0</span>
-        </div>
-        <div class="tuner">
-          <span class="tuner__note"></span>
-          <span class="tuner__actual"></span>
+        <div class="motion">
+          <div>
+            <span class="is-motion"></span>
+            <span class="motion__is-motion">false</span>
+          </div>
+          <div>
+            <span class="motion-coords"></span>
+            <span><span class="motion__alpha">0</span>/<span class="motion__beta">0</span>/<span class="motion__gamma">0</span></span>
+          </div>
+          <div>
+            <span class="motion-max"></span>
+            <span class="motion__maximum">0</span>
+          </div>
+          <div class="motion__count-container">
+            <span class="osc-count"></span>
+            <span class="motion__count">0</span>
+          </div>
+          <div>
+            <span class="orientation-coords"></span>
+            <span class="motion__orientation">0</span>
+          </div>
+          <div>
+            <span class="generated-frequency"></span>
+            <span class="motion__frequency">0</span>
+          </div>
+          <div class="tuner">
+            <span class="tuner__note"></span>
+            <span class="tuner__actual"></span>
+          </div>
         </div>
       </div>
 
@@ -72,75 +74,106 @@
           </div>
         </div>
 
-        <div class="frequency-regime">
+        <div class="sensor module">
           <span></span>
-          <div class="frequency-regime__container">
-            <div class="radio-element">
-              <input type="radio" name="frequency" id="continuous" value="continuous" checked />
-              <label class="continuous" for="continuous"></label>
+
+          <div class="frequency-regime">
+            <span></span>
+            <div class="frequency-regime__container">
+              <div class="radio-element">
+                <input type="radio" name="frequency" id="continuous" value="continuous" checked />
+                <label class="continuous" for="continuous"></label>
+              </div>
+              <div class="radio-element">
+                <input type="radio" name="frequency" id="tempered" value="tempered" />
+                <label class="tempered" for="tempered"></label>
+              </div>
             </div>
-            <div class="radio-element">
-              <input type="radio" name="frequency" id="tempered" value="tempered" />
-              <label class="tempered" for="tempered"></label>
+          </div>
+
+          <div class="sphere">
+            <span class="semisphere"></span>
+            <div class="sphere__container">
+              <div class="radio-element">
+                <input type="radio" name="sphere" id="sphere-right" value="right" checked />
+                <label class="sphere-right" for="sphere-right"></label>
+              </div>
+              <div class="radio-element">
+                <input type="radio" name="sphere" id="sphere-left" value="left" />
+                <label class="sphere-left" for="sphere-left"></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="gain-generation">
+            <span></span>
+            <div class="gain-generation__container">
+              <div class="radio-element">
+                <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
+                <label class="speedgain-yes" for="speedgain-yes"></label>
+              </div>
+              <div class="radio-element">
+                <input type="radio" name="speedgain" id="speedgain-no" value="false" />
+                <label class="speedgain-no" for="speedgain-no"></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide">
+            <span class="cutoff"></span>
+            <input slide="7" coefficient="1" step="0.1" type="number" min="0" name="threshold" class="threshold" />
+          </div>
+
+          <div class="slide">
+            <span class="timeout-span"></span>
+            <input slide="1" coefficient="0" step="1" type="number" min="0" name="timeout" class="timeout" />
+          </div>
+        </div>
+
+        <div class="oscillator module">
+          <span></span>
+
+          <div>
+            <span class="wave-type"></span>
+            <select name="wave" class="wave">
+              <option value="sine">sine</option>
+              <option value="square">square</option>
+              <option value="sawtooth">sawtooth</option>
+              <option value="triangle">triangle</option>
+            </select>
+          </div>
+
+          <div class="slide">
+            <span class="attack-span"></span>
+            <input slide="10" coefficient="1" step="0.1" type="number" min="0" name="attack" class="attack" />
+          </div>
+
+          <div class="slide">
+            <span class="gain-span"></span>
+            <input slide="10" coefficient="2" step="0.01" type="number" min="0" name="gain" class="gain" />
+          </div>
+
+          <div class="release-container slide">
+            <span></span>
+            <input slide="3" coefficient="1" step="0.1" type="number" min="0" name="release" class="release" />
+          </div>
+
+          <div class="attenuation-container slide">
+            <span></span>
+            <input slide="0.01" coefficient="4" step="0.0001" type="number" min="0" name="attenuation" class="attenuation" />
+          </div>
+
+          <div class="off">
+            <span></span>
+            <div class="off__container">
+              <div class="radio-element">
+                <input type="radio" name="off" id="off" value="true" />
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="gain-generation">
-          <span></span>
-          <div class="gain-generation__container">
-            <div class="radio-element">
-              <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
-              <label class="speedgain-yes" for="speedgain-yes"></label>
-            </div>
-            <div class="radio-element">
-              <input type="radio" name="speedgain" id="speedgain-no" value="false" />
-              <label class="speedgain-no" for="speedgain-no"></label>
-            </div>
-          </div>
-        </div>
-
-        <div class="slide">
-          <span class="cutoff"></span>
-          <input slide="7" coefficient="1" step="0.1" type="number" min="0" name="threshold" class="threshold" />
-        </div>
-
-        <div class="slide">
-          <span class="timeout-span"></span>
-          <input slide="1" coefficient="0" step="1" type="number" min="0" name="timeout" class="timeout" />
-        </div>
-
-        <div>
-          <span class="wave-type"></span>
-          <select name="wave" class="wave">
-            <option value="sine">sine</option>
-            <option value="square">square</option>
-            <option value="sawtooth">sawtooth</option>
-            <option value="triangle">triangle</option>
-          </select>
-        </div>
-
-        <div class="slide">
-          <span class="attack-span"></span>
-          <input slide="10" coefficient="1" step="0.1" type="number" min="0" name="attack" class="attack" />
-        </div>
-
-        <div class="slide">
-          <span class="gain-span"></span>
-          <input slide="10" coefficient="2" step="0.01" type="number" min="0" name="gain" class="gain" />
-        </div>
-
-        <div class="release-container slide">
-          <span></span>
-          <input slide="3" coefficient="1" step="0.1" type="number" min="0" name="release" class="release" />
-        </div>
-
-        <div class="attenuation-container slide">
-          <span></span>
-          <input slide="0.01" coefficient="4" step="0.0001" type="number" min="0" name="attenuation" class="attenuation" />
-        </div>
-
-        <div class="frequencies-range">
+        <div class="frequencies-range module">
           <span class="freq-range-span"></span>
           <div class="frequencies-range__container slide">
             <span class="freq-from"></span>
@@ -152,7 +185,7 @@
           </div>
         </div>
 
-        <div class="notes-range">
+        <div class="notes-range module">
           <span class="notes-range-span"></span>
           <div class="notes-range__container slide">
             <span class="notes-range-from-span"></span>
@@ -160,7 +193,6 @@
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-from" class="notes-range-from" />
               <span class="notes-range__from-span"></span>
             </div>
-
           </div>
           <div class="notes-range__container slide">
             <span class="notes-range-to-span"></span>
@@ -171,7 +203,7 @@
           </div>
         </div>
 
-        <div class="filter-element">
+        <div class="filter-element module">
           <span class="filter-span"></span>
           <div class="filter-element__container slide">
             <span class="filter-freq"></span>
@@ -183,11 +215,11 @@
           </div>
         </div>
 
-        <div class="lfo">
+        <div class="lfo module">
           <span>LFO</span>
           <div class="lfo__container">
             <span class="lfo-power"></span>
-            <div class="lfo__container lfo__container--radio">
+            <div class="lfo__container lfo__container--radio radio">
               <div class="radio-element">
                 <input type="radio" name="lfo" id="lfo-on" value="true" checked />
                 <label class="lfo-on" for="lfo-on"></label>
@@ -217,7 +249,7 @@
           </div>
         </div>
 
-        <div class="compressor-element">
+        <div class="compressor-element module">
           <span class="compressor-span"></span>
           <div class="compressor-element__container slide">
             <span>Threshold</span>
@@ -240,30 +272,9 @@
             <input type="number" min="0" max="1" slide="3" coefficient="2" step="0.01" name="compressor-release" class="compressor-release" />
           </div>
         </div>
+      </div>
 
-        <div class="sphere">
-          <span class="semisphere"></span>
-          <div class="sphere__container">
-            <div class="radio-element">
-              <input type="radio" name="sphere" id="sphere-right" value="right" checked />
-              <label class="sphere-right" for="sphere-right"></label>
-            </div>
-            <div class="radio-element">
-              <input type="radio" name="sphere" id="sphere-left" value="left" />
-              <label class="sphere-left" for="sphere-left"></label>
-            </div>
-          </div>
-        </div>
-
-        <div class="off">
-          <span></span>
-          <div class="off__container">
-            <div class="radio-element">
-              <input type="radio" name="off" id="off" value="true" />
-            </div>
-          </div>
-        </div>
-
+      <div class="bottom">
         <div class="lite">
           <span class="lite-span"></span>
           <div class="lite__container">
@@ -314,10 +325,12 @@
     </div>
 
     <div class="cover">
-      <div class="languages"><span><span class="en">EN</span> / <span class="ru">RU</span></span></div>
+      <div class="languages">
+        <span><span class="en">EN</span> / <span class="ru">RU</span></span>
+      </div>
       <div class="title">AUDIO-MOTION INTERFACE</div>
       <div class="description">The system synthesizes sound based on data from smartphone motion sensors: speed determines the volume, position determines the frequency.</div>
-      <div class="dfap">This project is part of<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Digital fixation of audio processes</a></div>
+      <div class="dfap">This project is part of<br /><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Digital fixation of audio processes</a></div>
       <div class="links">
         <a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Source code</a>
         <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README.md#user-guide" target="_blank" rel="noopener noreferrer">User guide</a>

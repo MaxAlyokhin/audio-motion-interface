@@ -27,6 +27,7 @@ body
   -webkit-font-smoothing: antialiased
   text-size-adjust: 100%
   text-rendering: optimizelegibility
+  white-space: nowrap
 
 p
   margin: 0
@@ -96,6 +97,7 @@ a
   &__text
     margin-bottom: 20px
     font-size: 10px
+    white-space: break-spaces
 
     span
       color: $blue
@@ -120,6 +122,9 @@ a
   top: 0
   flex-direction: column
   transition: $transition-long
+
+  .description
+    white-space: break-spaces
 
   div
     max-width: 400px
@@ -183,7 +188,7 @@ a
 .test
   bottom: 100px
 
-.settings
+.settings, .bottom
   margin-top: 15px
   > div
     margin-top: 15px
@@ -307,13 +312,8 @@ select
 .synthesis-regime,
 .oscillator-regime,
 .frequency-regime,
-.notes-range,
-.frequencies-range,
 .gain-generation,
 .lite,
-.filter-element,
-.compressor-element,
-.lfo,
 .sphere,
 .theme
   flex-direction: column
@@ -323,15 +323,28 @@ select
     display: flex
     column-gap: 20px
 
-.notes-range, .frequencies-range, .filter-element, .compressor-element, .lfo
-  &__container
+.module
+  flex-direction: column
+  align-items: flex-start !important
+
+  > div
+    display: flex
+    column-gap: 20px
     justify-content: space-between
     width: 100%
     margin-top: 15px
 
-.frequency-regime, .oscillator-regime, .gain-generation, .lite, .sphere, .theme
+  .radio
+    display: flex
+    column-gap: 20px;
+
+.frequency-regime, .oscillator-regime, .gain-generation, .lite, .sphere, .theme, .bottom > div
   @media (min-width: 500px)
     flex-direction: row
+
+.bottom > div
+  display: flex
+  justify-content: space-between
 
 .interface-regime-container
   position: relative
@@ -377,7 +390,7 @@ select
 .release-container, .attenuation-container, .motion__count-container
   display: flex
 
-.frequencies-range, .notes-range, .filter-element, .compressor-element, .lfo
+.module
   border-left: 1px solid black
   padding-left: 10px
   transition: border 1000ms cubic-bezier(0.83, 0, 0.17, 1)
@@ -504,10 +517,53 @@ body.dark
     &__line
       border-top: 1px solid white
 
-  .frequencies-range, .notes-range, .filter-element, .compressor-element, .lfo
+  .module
     border-left: 1px solid white
 
   option
     background-color: $black-dark
     color: $white-dark
+
+@media (min-width: 1000px)
+  body .module
+    border-left: none
+    background: linear-gradient(to right, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 0 0 / 100% 1px no-repeat, linear-gradient(to right, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 0 100% / 100% 1px no-repeat, linear-gradient(to bottom, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 0 0 / 1px 100% no-repeat, linear-gradient(to bottom, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 100% 0 / 1px 100% no-repeat
+
+  body.dark .module
+    border-left: none
+
+  .container, .bottom
+    display: flex
+    flex-direction: column
+    align-items: center
+    max-width: none
+
+    > div
+      min-width: 320px
+
+  @media (min-height: 900px)
+    .container
+      height: 100%
+      justify-content: center
+
+  .bottom
+    > div
+      display: flex
+      justify-content: space-between
+
+  .settings
+    display: grid
+    grid-template-columns: repeat(3, auto)
+    grid-template-rows: repeat(2, 1fr)
+    grid-column-gap: 20px
+
+    > div
+      justify-content: center
+      padding: 20px
+
+  input, select
+    width: 115px
+
+
+
 

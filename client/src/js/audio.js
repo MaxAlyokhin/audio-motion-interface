@@ -507,7 +507,7 @@ let motionTimeoutArray = []
 // (функционально в этом нет особого смысла, но для UX это создаёт впечатление перезапуска системы)
 let interfaceIsBlocked = false
 
-// Таймаута срабатывания системы
+// Таймаут срабатывания системы
 let audioTimeoutIsOff = true
 
 window.addEventListener('DOMContentLoaded', () => {

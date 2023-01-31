@@ -76,7 +76,7 @@ export let settings = {
     theme: 'dark'
   },
   motion: {
-    threshold: 1.0,
+    threshold: 2.0,
     timeout: 150,
     gainGeneration: false,
     semiSphere: 'left',
@@ -84,7 +84,7 @@ export let settings = {
   audio: {
     attack: 0,
     release: 1.2,
-    gain: 0.08,
+    gain: 0.01,
     oscillatorType: 'sine',
     biquadFilterFrequency: 600.0,
     biquadFilterQ: 1,
@@ -107,7 +107,7 @@ export let settings = {
       release: 0,
     },
     LFO: {
-      enabled: true,
+      enabled: false,
       type: 'sine',
       rate: 1,
       depth: 1,

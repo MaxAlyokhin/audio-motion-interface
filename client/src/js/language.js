@@ -92,6 +92,8 @@ function setLanguage(languageMarker) {
   document.querySelector('.theme-dark').textContent = language.themeDark
   document.querySelector('.theme-light').textContent = language.themeLight
   document.querySelector('.qr__text').innerHTML = language.qr
+  document.querySelector('.sensor > span').textContent = language.sensor
+  document.querySelector('.oscillator > span').textContent = language.oscillator
 
   languageElements.forEach((element) => { element.style.textDecoration = 'none'})
   document.querySelector(`.${languageMarker}`).style.textDecoration = 'underline'
