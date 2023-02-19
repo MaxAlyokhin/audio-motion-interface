@@ -315,7 +315,8 @@ select
 .gain-generation,
 .lite,
 .sphere,
-.theme
+.theme,
+.shortcuts
   flex-direction: column
   align-items: flex-start !important
 
@@ -565,6 +566,100 @@ body.dark
   input, select
     width: 115px
 
+.key
+  &::after
+    display: inline-block
+    opacity: 0
+    padding: 2px 5px
+    border: solid 1px $black
+    border-bottom-color: $black
+    border-radius: 6px
+    box-shadow: inset 0px -2px 0px 1px $black
+    margin-left: 5px
+    padding-bottom: 6px
+    font-size: 8px
+    vertical-align: middle
+    min-width: 7px
+    text-align: center
+    background-color: #eeeae4
 
+  &--show
+    &::after
+      opacity: 1
 
+.mobile .key
+  &::after
+    display: none
 
+.dark .key
+  &::after
+    border: solid 1px $white-dark
+    border-bottom-color: $white-dark
+    box-shadow: inset 0px -2px 0px 1px $white-dark
+    background-color: #222d37
+
+.cutoff::after
+  content: '['
+
+.timeout-span::after
+  content: ']'
+
+.wave-type::after
+  content: 'q'
+
+.attack-span::after
+  content: 'w'
+
+.gain-span::after
+  content: 'e'
+
+.release-container .key::after
+  content: 'r'
+
+.attenuation-container .key::after
+  content: 't'
+
+.off .key::after
+  content: 'esc'
+
+.freq-from::after
+  content: ';'
+
+.freq-to::after
+  content: "'"
+
+.filter-freq::after
+  content: '.'
+
+.filter-q::after
+  content: '/'
+
+.lfo-power::after
+  content: 'a'
+
+.lfo-type::after
+  content: 's'
+
+.lfo-rate::after
+  content: 'd'
+
+.lfo-depth::after
+  content: 'f'
+
+.threshold-key::after
+  content: 'z'
+
+.knee-key::after
+  content: 'x'
+
+.ratio-key::after
+  content: 'c'
+
+.attack-key::after
+  content: 'v'
+
+.release-key::after
+  content: 'b'
+
+.mobile .shortcuts
+  display: none

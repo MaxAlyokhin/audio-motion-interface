@@ -78,7 +78,7 @@
           <span></span>
 
           <div class="frequency-regime">
-            <span></span>
+            <span class="key"></span>
             <div class="frequency-regime__container">
               <div class="radio-element">
                 <input type="radio" name="frequency" id="continuous" value="continuous" checked />
@@ -92,7 +92,7 @@
           </div>
 
           <div class="sphere">
-            <span class="semisphere"></span>
+            <span class="semisphere key"></span>
             <div class="sphere__container">
               <div class="radio-element">
                 <input type="radio" name="sphere" id="sphere-right" value="right" checked />
@@ -106,7 +106,7 @@
           </div>
 
           <div class="gain-generation">
-            <span></span>
+            <span class="key"></span>
             <div class="gain-generation__container">
               <div class="radio-element">
                 <input type="radio" name="speedgain" id="speedgain-yes" value="true" checked />
@@ -120,7 +120,7 @@
           </div>
 
           <div class="cutoff-type">
-            <span class="cutoff-type__title"></span>
+            <span class="cutoff-type__title key"></span>
             <div class="cutoff-type__container radio">
               <div class="radio-element">
                 <input type="radio" name="cutoff-type" id="cutoff-type-full" value="full" checked />
@@ -134,12 +134,12 @@
           </div>
 
           <div class="slide">
-            <span class="cutoff"></span>
+            <span class="cutoff key"></span>
             <input slide="7" coefficient="1" step="0.1" type="number" min="0" name="threshold" class="threshold" />
           </div>
 
           <div class="slide">
-            <span class="timeout-span"></span>
+            <span class="timeout-span key"></span>
             <input slide="1" coefficient="0" step="1" type="number" min="0" name="timeout" class="timeout" />
           </div>
         </div>
@@ -148,7 +148,7 @@
           <span></span>
 
           <div>
-            <span class="wave-type"></span>
+            <span class="wave-type key"></span>
             <select name="wave" class="wave">
               <option value="sine">sine</option>
               <option value="square">square</option>
@@ -158,27 +158,27 @@
           </div>
 
           <div class="slide">
-            <span class="attack-span"></span>
+            <span class="attack-span key"></span>
             <input slide="10" coefficient="1" step="0.1" type="number" min="0" name="attack" class="attack" />
           </div>
 
           <div class="slide">
-            <span class="gain-span"></span>
+            <span class="gain-span key"></span>
             <input slide="10" coefficient="2" step="0.01" type="number" min="0" name="gain" class="gain" />
           </div>
 
           <div class="release-container slide">
-            <span></span>
+            <span class="key"></span>
             <input slide="3" coefficient="1" step="0.1" type="number" min="0" name="release" class="release" />
           </div>
 
           <div class="attenuation-container slide">
-            <span></span>
+            <span class="key"></span>
             <input slide="0.01" coefficient="4" step="0.0001" type="number" min="0" name="attenuation" class="attenuation" />
           </div>
 
           <div class="off">
-            <span></span>
+            <span class="key"></span>
             <div class="off__container">
               <div class="radio-element">
                 <input type="radio" name="off" id="off" value="true" />
@@ -190,11 +190,11 @@
         <div class="frequencies-range module">
           <span class="freq-range-span"></span>
           <div class="frequencies-range__container slide">
-            <span class="freq-from"></span>
+            <span class="freq-from key"></span>
             <input type="number" slide="0.001" coefficient="3" step="0.001" name="frequencies-range-from" class="frequencies-range-from" />
           </div>
           <div class="frequencies-range__container slide">
-            <span class="freq-to"></span>
+            <span class="freq-to key"></span>
             <input type="number" slide="0.001" coefficient="3" step="0.001" name="frequencies-range-to" class="frequencies-range-to" />
           </div>
         </div>
@@ -202,14 +202,14 @@
         <div class="notes-range module">
           <span class="notes-range-span"></span>
           <div class="notes-range__container slide">
-            <span class="notes-range-from-span"></span>
+            <span class="notes-range-from-span key"></span>
             <div class="notes-range__inputs">
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-from" class="notes-range-from" />
               <span class="notes-range__from-span"></span>
             </div>
           </div>
           <div class="notes-range__container slide">
-            <span class="notes-range-to-span"></span>
+            <span class="notes-range-to-span key"></span>
             <div class="notes-range__inputs">
               <input type="number" slide="10" coefficient="0" step="1" name="notes-range-to" class="notes-range-to" />
               <span class="notes-range__to-span"></span>
@@ -220,11 +220,11 @@
         <div class="filter-element module">
           <span class="filter-span"></span>
           <div class="filter-element__container slide">
-            <span class="filter-freq"></span>
+            <span class="filter-freq key"></span>
             <input type="number" slide="0.01" coefficient="1" step="0.1" name="filter" class="filter" />
           </div>
           <div class="filter-element__container slide">
-            <span class="filter-q"></span>
+            <span class="filter-q key"></span>
             <input type="number" slide="1" coefficient="1" step="0.1" name="factor" class="factor" />
           </div>
         </div>
@@ -232,7 +232,7 @@
         <div class="lfo module">
           <span>LFO</span>
           <div class="lfo__container">
-            <span class="lfo-power"></span>
+            <span class="lfo-power key"></span>
             <div class="lfo__container lfo__container--radio radio">
               <div class="radio-element">
                 <input type="radio" name="lfo" id="lfo-on" value="true" checked />
@@ -245,7 +245,7 @@
             </div>
           </div>
           <div class="lfo__container">
-            <span class="lfo-type"></span>
+            <span class="lfo-type key"></span>
             <select name="lfo-wave" class="lfo-wave">
               <option value="sine">sine</option>
               <option value="square">square</option>
@@ -254,11 +254,11 @@
             </select>
           </div>
           <div class="lfo__container slide">
-            <span class="lfo-rate"></span>
+            <span class="lfo-rate key"></span>
             <input type="number" slide="5" coefficient="1" step="0.1" name="rate" class="rate" />
           </div>
           <div class="lfo__container slide">
-            <span class="lfo-depth"></span>
+            <span class="lfo-depth key"></span>
             <input type="number" slide="10" coefficient="2" step="0.01" name="depth" class="depth" />
           </div>
         </div>
@@ -266,29 +266,43 @@
         <div class="compressor-element module">
           <span class="compressor-span"></span>
           <div class="compressor-element__container slide">
-            <span>Threshold</span>
+            <span class="threshold-key key">Threshold</span>
             <input type="number" min="-100" max="0" slide="3" coefficient="0" step="1" name="compressor-threshold" class="compressor-threshold" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Knee</span>
+            <span class="knee-key key">Knee</span>
             <input type="number" min="0" max="40" slide="10" coefficient="0" step="1" name="compressor-knee" class="compressor-knee" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Ratio</span>
+            <span class="ratio-key key">Ratio</span>
             <input type="number" min="1" max="20" slide="10" coefficient="0" step="1" name="compressor-ratio" class="compressor-ratio" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Attack</span>
+            <span class="attack-key key">Attack</span>
             <input type="number" min="0" max="1" slide="0.1" coefficient="3" step=".001" name="compressor-attack" class="compressor-attack" />
           </div>
           <div class="compressor-element__container slide">
-            <span>Release</span>
+            <span class="release-key key">Release</span>
             <input type="number" min="0" max="1" slide="3" coefficient="2" step="0.01" name="compressor-release" class="compressor-release" />
           </div>
         </div>
       </div>
 
       <div class="bottom">
+        <div class="shortcuts">
+          <span class="shortcuts-span"></span>
+          <div class="shortcuts__container">
+            <div class="radio-element">
+              <input type="radio" name="shortcuts" id="shortcuts-yes" value="true" />
+              <label class="shortcuts-on" for="shortcuts-yes"></label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="shortcuts" id="shortcuts-no" value="false" checked />
+              <label class="shortcuts-off" for="shortcuts-no"></label>
+            </div>
+          </div>
+        </div>
+
         <div class="lite">
           <span class="lite-span"></span>
           <div class="lite__container">

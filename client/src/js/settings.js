@@ -25,6 +25,8 @@ let attackElement = null
 let gainElement = null
 let gainGenerationOptionElement = null
 let gainGenerationElement = null
+let shortcutsElement = null
+let keyElements = null
 let liteElement = null
 let sphereElement = null
 let interfaceRegimeElement = null
@@ -55,6 +57,8 @@ window.addEventListener('DOMContentLoaded', () => {
   notesRangeElement = document.querySelector('.notes-range')
   gainGenerationOptionElement = document.querySelector('.gain-generation')
   gainGenerationElement = document.querySelector('.gain-generation__container')
+  shortcutsElement = document.querySelector('.shortcuts__container')
+  keyElements = document.querySelectorAll('.key')
   liteElement = document.querySelector('.lite__container')
   sphereElement = document.querySelector('.sphere__container')
   interfaceRegimeElement = document.querySelector('.interface-regime')
@@ -73,6 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Настройки системы
 export let settings = {
   ui: {
+    shortcuts: false,
     lite: false,
     interfaceRegime: true,
     theme: 'dark'
@@ -120,6 +125,10 @@ export let settings = {
 
 // Мутации
 export const mutations = {
+  setShortcuts: (value) => {
+    value === 'true' ? (settings.ui.shortcuts = true) : (settings.ui.shortcuts = false)
+  },
+
   setLite: (value) => {
     value === 'true' ? (settings.ui.lite = true) : (settings.ui.lite = false)
     syncSettings()
@@ -582,6 +591,14 @@ export function settingsInit() {
     mutations.audio.setGain(parseFloat(event.value || this.value))
   })
 
+  shortcutsElement.addEventListener('change', function (event) {
+    mutations.setShortcuts(event.target.value)
+
+    keyElements.forEach((element) => {
+      settings.ui.shortcuts === true ? element.classList.add('key--show') : element.classList.remove('key--show')
+    })
+  })
+
   liteElement.addEventListener('change', function (event) {
     mutations.setLite(event.target.value)
   })
@@ -737,3 +754,92 @@ function syncSettings() {
 
   syncSettingsFrontend(settings)
 }
+
+// Управление горячими клавишами
+document.addEventListener('keydown', (event) => {
+  switch (event.code) {
+    // Sensor
+    case 'BracketLeft': thresholdElement.focus()
+      break
+    case 'BracketRight': timeoutElement.focus()
+      break
+
+    // Oscillator
+    case 'KeyQ':
+      // Если дошли до конца списка
+      if (waveElement.options.selectedIndex + 1 === waveElement.options.length) waveElement.options.selectedIndex = -1
+      mutations.audio.setWaveType(waveElement.options[++waveElement.options.selectedIndex].text)
+      break
+    case 'KeyW': attackElement.focus()
+      break
+    case 'KeyE': gainElement.focus()
+      break
+    case 'KeyR': releaseElement.querySelector('.release').focus()
+      break
+    case 'KeyT': attenuationElement.querySelector('.attenuation').focus()
+      break
+    case 'Escape':
+      document.querySelector('#off').dispatchEvent(new Event('change', { bubbles: true }))
+      break
+
+    // Frequency range
+    case 'Semicolon':
+      if (settings.audio.frequencyRegime === 'continuous') {
+        frequenciesRangeElement.querySelector('.frequencies-range-from').focus()
+      }
+      if (settings.audio.frequencyRegime === 'tempered') {
+        notesRangeElement.querySelector('.notes-range-from').focus()
+      }
+
+      break
+    case 'Quote':
+      if (settings.audio.frequencyRegime === 'continuous') {
+        frequenciesRangeElement.querySelector('.frequencies-range-to').focus()
+      }
+      if (settings.audio.frequencyRegime === 'tempered') {
+        notesRangeElement.querySelector('.notes-range-to').focus()
+      }
+
+      break
+
+    // Filter
+    case 'Period': filterElement.focus()
+      break
+    case 'Slash': factorElement.focus()
+      break
+
+    // LFO
+    case 'KeyA':
+      // Меняем на противоположное значение
+      if (settings.audio.LFO.enabled === true) {
+        mutations.audio.setLFOParameter('enabled', 'false')
+        LFOElement.querySelector('#lfo-on').checked = false
+      } else if (settings.audio.LFO.enabled === false) {
+        mutations.audio.setLFOParameter('enabled', 'true')
+        LFOElement.querySelector('#lfo-off').checked = true
+      }
+
+      break
+    case 'KeyS':
+      // Если дошли до конца списка
+      if (LFOElement.querySelector('.lfo-wave').options.selectedIndex + 1 === LFOElement.querySelector('.lfo-wave').options.length) LFOElement.querySelector('.lfo-wave').options.selectedIndex = -1
+      mutations.audio.setLFOParameter('type', LFOElement.querySelector('.lfo-wave').options[++LFOElement.querySelector('.lfo-wave').options.selectedIndex].text)
+      break
+    case 'KeyD': LFOElement.querySelector('.rate').focus()
+      break
+    case 'KeyF': LFOElement.querySelector('.depth').focus()
+      break
+
+    // Compressor
+    case 'KeyZ': compressorElement.querySelector('.compressor-threshold').focus()
+      break
+    case 'KeyX': compressorElement.querySelector('.compressor-knee').focus()
+      break
+    case 'KeyC': compressorElement.querySelector('.compressor-ratio').focus()
+      break
+    case 'KeyV': compressorElement.querySelector('.compressor-attack').focus()
+      break
+    case 'KeyB': compressorElement.querySelector('.compressor-release').focus()
+      break
+  }
+})

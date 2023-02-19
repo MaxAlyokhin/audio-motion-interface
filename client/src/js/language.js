@@ -97,8 +97,11 @@ function setLanguage(languageMarker) {
   document.querySelector('.cutoff-type__title').textContent = language.cutoffType.title
   document.querySelector('.cutoff-type-full').textContent = language.cutoffType.full
   document.querySelector('.cutoff-type-peak').textContent = language.cutoffType.peak
+  document.querySelector('.shortcuts-span').textContent = language.shortcuts
+  document.querySelector('.shortcuts-on').textContent = language.yes
+  document.querySelector('.shortcuts-off').textContent = language.no
 
-  languageElements.forEach((element) => { element.style.textDecoration = 'none'})
+  languageElements.forEach((element) => { element.style.textDecoration = 'none' })
   document.querySelector(`.${languageMarker}`).style.textDecoration = 'underline'
 }
 
