@@ -2,12 +2,11 @@ import languageInit from './language'
 import { audioInit } from './audio'
 import { motionInit } from './motion'
 
-window.addEventListener('DOMContentLoaded', () => {
-  languageInit()
-})
+languageInit()
 
 window.addEventListener('load', () => {
   // Показываем контент
+  document.querySelector('body').style.transition = 'all 1000ms cubic-bezier(0.83, 0, 0.17, 1)'
   document.querySelector('body').style.opacity = 1
 
   // Кнопка Run запускает алгоритм

@@ -91,7 +91,7 @@ function html() {
             addRootSlash: false, // Убираем слэш вначале
             // Убираем 'dist/', чтобы index.html всё нашёл
             transform: function (filePath) {
-              return `<script src="${filePath.replace('dist/', '')}"></script>`
+              return `<script defer src="${filePath.replace('dist/', '')}"></script>`
             },
           }
         )

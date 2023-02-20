@@ -2,16 +2,12 @@ import { div, getNearbyValues, toFixedNumber } from './helpers'
 import { settings } from './settings'
 
 export const notes = [] // Вычисленный звукоряд
-let tunerActualElement = null
+let tunerActualElement = document.querySelector('.tuner__actual')
 let percent = null
 let nearbyValues = null
 let maxNote = null
 let actualNote = null
 let previousNote = null
-
-window.addEventListener('DOMContentLoaded', () => {
-  tunerActualElement = document.querySelector('.tuner__actual')
-})
 
 /**
  * Генерирует звукоряд

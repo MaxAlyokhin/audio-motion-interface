@@ -486,11 +486,11 @@ notesInit()
 
 // Генерируемая частота звука и html-элемент, куда будем её записывать
 let frequency = null
-let frequencyElement = null
 let previousFrequency = null // Для более эффективной работы с обновлением DOM
+const frequencyElement = document.querySelector('.motion__frequency')
 
-let countElement = null // Количество осцилляторов
-let containerElement = null // body для анимирования по сбросу осцилляторов
+const countElement = document.querySelector('.motion__count') // Количество осцилляторов
+const containerElement = document.querySelector('.container') // body для анимирования по сбросу осцилляторов
 
 let oscillatorArray = [] // Массив осцилляторов
 let biquadFilterArray = [] // Массив фильтров
@@ -510,49 +510,43 @@ let interfaceIsBlocked = false
 // Таймаут срабатывания системы
 let audioTimeoutIsOff = true
 
-window.addEventListener('DOMContentLoaded', () => {
-  frequencyElement = document.querySelector('.motion__frequency')
-  countElement = document.querySelector('.motion__count')
-  containerElement = document.querySelector('.container')
+// Кнопка очистки осцилляторов
+document.querySelector('.off').addEventListener('change', function () {
+  containerElement.classList.add('inactive')
 
-  // Кнопка очистки осцилляторов
-  document.querySelector('.off').addEventListener('change', function () {
-    containerElement.classList.add('inactive')
+  motionIsOff = true // Заканчиваем последнее движение
+  interfaceIsBlocked = true // Блокируем интерфейс
 
-    motionIsOff = true // Заканчиваем последнее движение
-    interfaceIsBlocked = true // Блокируем интерфейс
-
-    // Очищаем таймауты в конце функции audio()
-    motionTimeoutArray.forEach((timeout) => {
-      clearTimeout(timeout)
-    })
-
-    // Останавливаем осцилляторы
-    oscillatorArray.forEach((oscillator) => {
-      oscillator.stop()
-    })
-
-    // Очищаем систему от всех элементов графа
-    oscillatorArray.length = 0
-    biquadFilterArray.length = 0
-    envelopeArray.length = 0
-
-    if (settings.audio.LFO.enabled) {
-      LFOArray.length = 0
-      LFOGainArray.length = 0
-      masterGainArray.length = 0
-    }
-
-    // Отображаем обнулённый счётчик осцилляторов
-    settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
-
-    // Приводим интерфейс в исходную
-    setTimeout(() => {
-      containerElement.classList.remove('inactive')
-      this.querySelector('#off').checked = false
-      interfaceIsBlocked = false
-    }, 2000)
+  // Очищаем таймауты в конце функции audio()
+  motionTimeoutArray.forEach((timeout) => {
+    clearTimeout(timeout)
   })
+
+  // Останавливаем осцилляторы
+  oscillatorArray.forEach((oscillator) => {
+    oscillator.stop()
+  })
+
+  // Очищаем систему от всех элементов графа
+  oscillatorArray.length = 0
+  biquadFilterArray.length = 0
+  envelopeArray.length = 0
+
+  if (settings.audio.LFO.enabled) {
+    LFOArray.length = 0
+    LFOGainArray.length = 0
+    masterGainArray.length = 0
+  }
+
+  // Отображаем обнулённый счётчик осцилляторов
+  settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
+
+  // Приводим интерфейс в исходную
+  setTimeout(() => {
+    containerElement.classList.remove('inactive')
+    this.querySelector('#off').checked = false
+    interfaceIsBlocked = false
+  }, 2000)
 })
 
 // Граф - это осциллятор => фильтр => громкость

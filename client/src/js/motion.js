@@ -36,17 +36,17 @@ export function motionInit() {
   let previousIsMotion = null
 
   // HTML-элементы, где будут отображаться эти значения
-  let motionElement = document.querySelector('.motion')
-  let alphaElement = document.querySelector('.motion__alpha')
-  let betaElement = document.querySelector('.motion__beta')
-  let gammaElement = document.querySelector('.motion__gamma')
-  let maximumElement = document.querySelector('.motion__maximum')
-  let isMotionElement = document.querySelector('.motion__is-motion')
-  let orientationElement = document.querySelector('.motion__orientation')
-  let connectionsToServer = document.querySelector('.connections__to-server')
-  let connectionsStatus = document.querySelector('.connections__status')
-  let qrElement = document.querySelector('.qr')
-  let rootElement = document.querySelector('html')
+  const motionElement = document.querySelector('.motion')
+  const alphaElement = document.querySelector('.motion__alpha')
+  const betaElement = document.querySelector('.motion__beta')
+  const gammaElement = document.querySelector('.motion__gamma')
+  const maximumElement = document.querySelector('.motion__maximum')
+  const isMotionElement = document.querySelector('.motion__is-motion')
+  const orientationElement = document.querySelector('.motion__orientation')
+  const connectionsToServer = document.querySelector('.connections__to-server')
+  const connectionsStatus = document.querySelector('.connections__status')
+  const qrElement = document.querySelector('.qr')
+  const rootElement = document.querySelector('html')
 
   // По первому событию движения мы можем однозначно определить
   // в смартфоне мы находимся или на десктопе (event.acceleration === null)

@@ -10,72 +10,39 @@ import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
 
 // Элементы настроек
-let releaseElement = null
-let attenuationElement = null
-let frequenciesRangeElement = null
-let notesRangeElement = null
-let synthesisRegimeElement = null
-let frequencyRegimeElement = null
-let thresholdElement = null
-let thresholdTypeElement = null
-let waveElement = null
-let filterElement = null
-let factorElement = null
-let attackElement = null
-let gainElement = null
-let gainGenerationOptionElement = null
-let gainGenerationElement = null
-let shortcutsElement = null
-let keyElements = null
-let liteElement = null
-let sphereElement = null
-let interfaceRegimeElement = null
-let containerElement = null
-let interfaceRegimeOnElement = null
-let interfaceRegimeOnButtonElement = null
-let connectionsToServer = null
-let compressorElement = null
-let LFOElement = null
-let timeoutElement = null
-let themeElement = null
-let bodyElement = null
-let slideElements = null
-
-window.addEventListener('DOMContentLoaded', () => {
-  synthesisRegimeElement = document.querySelector('.synthesis-regime')
-  frequencyRegimeElement = document.querySelector('.frequency-regime')
-  thresholdElement = document.querySelector('.threshold')
-  thresholdTypeElement = document.querySelector('.cutoff-type')
-  waveElement = document.querySelector('.wave')
-  filterElement = document.querySelector('.filter')
-  factorElement = document.querySelector('.factor')
-  attackElement = document.querySelector('.attack')
-  gainElement = document.querySelector('.gain')
-  releaseElement = document.querySelector('.release-container')
-  attenuationElement = document.querySelector('.attenuation-container')
-  frequenciesRangeElement = document.querySelector('.frequencies-range')
-  notesRangeElement = document.querySelector('.notes-range')
-  gainGenerationOptionElement = document.querySelector('.gain-generation')
-  gainGenerationElement = document.querySelector('.gain-generation__container')
-  shortcutsElement = document.querySelector('.shortcuts__container')
-  keyElements = document.querySelectorAll('.key')
-  liteElement = document.querySelector('.lite__container')
-  sphereElement = document.querySelector('.sphere__container')
-  interfaceRegimeElement = document.querySelector('.interface-regime')
-  containerElement = document.querySelector('.container')
-  interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
-  interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
-  connectionsToServer = document.querySelector('.connections__to-server')
-  compressorElement = document.querySelector('.compressor-element')
-  LFOElement = document.querySelector('.lfo')
-  timeoutElement = document.querySelector('.timeout')
-  themeElement = document.querySelector('.theme__container')
-  bodyElement = document.querySelector('body')
-  slideElements = document.querySelectorAll('.slide')
-})
+const synthesisRegimeElement = document.querySelector('.synthesis-regime')
+const frequencyRegimeElement = document.querySelector('.frequency-regime')
+const thresholdElement = document.querySelector('.threshold')
+const thresholdTypeElement = document.querySelector('.cutoff-type')
+const waveElement = document.querySelector('.wave')
+const filterElement = document.querySelector('.filter')
+const factorElement = document.querySelector('.factor')
+const attackElement = document.querySelector('.attack')
+const gainElement = document.querySelector('.gain')
+const releaseElement = document.querySelector('.release-container')
+const attenuationElement = document.querySelector('.attenuation-container')
+const frequenciesRangeElement = document.querySelector('.frequencies-range')
+const notesRangeElement = document.querySelector('.notes-range')
+const gainGenerationOptionElement = document.querySelector('.gain-generation')
+const gainGenerationElement = document.querySelector('.gain-generation__container')
+const shortcutsElement = document.querySelector('.shortcuts__container')
+const keyElements = document.querySelectorAll('.key')
+const liteElement = document.querySelector('.lite__container')
+const sphereElement = document.querySelector('.sphere__container')
+const interfaceRegimeElement = document.querySelector('.interface-regime')
+const containerElement = document.querySelector('.container')
+const interfaceRegimeOnElement = document.querySelector('.interface-regime-on')
+const interfaceRegimeOnButtonElement = document.querySelector('.interface-regime-on__button')
+const connectionsToServer = document.querySelector('.connections__to-server')
+const compressorElement = document.querySelector('.compressor-element')
+const LFOElement = document.querySelector('.lfo')
+const timeoutElement = document.querySelector('.timeout')
+const themeElement = document.querySelector('.theme__container')
+const bodyElement = document.querySelector('body')
+const slideElements = document.querySelectorAll('.slide')
 
 // Настройки системы
-export let settings = {
+export const settings = {
   ui: {
     shortcuts: false,
     lite: false,
@@ -556,6 +523,15 @@ export function syncSettingsFrontend(settings) {
   }
 }
 
+// Функция синхронизирует настройки со смартфона с десктопом
+function syncSettings() {
+  if (socketIsInit) {
+    socket.emit('settings message', settings)
+  }
+
+  syncSettingsFrontend(settings)
+}
+
 // Связываем объект настроек с интерфейсом управления
 export function settingsInit() {
   // Включение веб-сокета на смартфоне
@@ -822,15 +798,6 @@ export function settingsInit() {
 
     mutations.audio.setSynthesisRegime('remote')
   }
-}
-
-// Функция синхронизирует настройки со смартфона с десктопом
-function syncSettings() {
-  if (socketIsInit) {
-    socket.emit('settings message', settings)
-  }
-
-  syncSettingsFrontend(settings)
 }
 
 // Управление горячими клавишами
