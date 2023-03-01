@@ -7,7 +7,7 @@ let squareWave = null
 let sawtoothWave = null
 let compressor = null
 
-// Стандартные square и sawtooth осциллографы слишком резко меняют свои значения,
+// Стандартные square и sawtooth осцилляторы слишком резко меняют свои значения,
 // из-за чего возникают щелчки
 // Этот баг фиксится через кастомные формы волн
 const fourierCoefficients = {
@@ -610,6 +610,8 @@ export function audio(motion) {
   if (motion.isMotion && !interfaceIsBlocked && audioTimeoutIsOff) {
     // Собираем граф, делаем это только один раз в начале движения
     if (motionIsOff) {
+      motionIsOff = false
+
       oscillatorArray.push(audioContext.createOscillator())
       biquadFilterArray.push(audioContext.createBiquadFilter())
       envelopeArray.push(audioContext.createGain())
@@ -649,18 +651,14 @@ export function audio(motion) {
       }
 
       // Изначальная громкость минимальна
-      envelopeArray[envelopeArray.length - 1].gain.setValueAtTime(0.0001, audioContext.currentTime, 0.005)
+      envelopeArray[envelopeArray.length - 1].gain.setValueAtTime(0, audioContext.currentTime)
 
       oscillatorArray[oscillatorArray.length - 1].start()
-
-      motionIsOff = false
     }
 
     // Здесь во время движения мы управляем поведением последнего собранного графа (length - 1 это последний элемент массивов)
     // Динамически настраиваем граф - он обновляется по каждому событию движения
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
-
-    setGain(motion.maximum)
 
     // Режим отсечки не полный
     if (settings.motion.thresholdType !== 'full') {
@@ -674,9 +672,12 @@ export function audio(motion) {
         motionIsOff = false
         audioTimeoutIsOff = false
         previousMotionMaximum = 0
+        setGain(motion.maximum) // Включаем звук
       } else {
         previousMotionMaximum = motion.maximum
       }
+    } else {
+      setGain(motion.maximum) // Включаем звук
     }
 
     settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
@@ -687,17 +688,21 @@ export function audio(motion) {
   // значит мы поймали последнее событие движения (движение остановлено).
   // Тогда планируем затухание сигнала и удаление графа
   else if (!motionIsOff) {
-    const end = audioContext.currentTime + settings.audio.release + settings.audio.attack
+    motionIsOff = true // Движение закончено
+    audioTimeoutIsOff = false // Ставим таймаут от случайных движений после этого
+
+    const end = audioContext.currentTime + settings.audio.release + settings.audio.attack + 0.01
 
     // Планируем затухание громкости и остановку осциллятора
     // последних элементов в массивах на момент остановки движения
-    envelopeArray[envelopeArray.length - 1].gain.exponentialRampToValueAtTime(settings.audio.attenuation, end)
-    // Удаление возможных пиков
-    envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime(0.0001, end, 0.005)
+    // +10мс чтобы успеть setTargetAtTime в setGain()
+    setTimeout(() => {
+      envelopeArray[envelopeArray.length - 1].gain.exponentialRampToValueAtTime(settings.audio.attenuation, end)
+    }, 10)
 
     // + 0.1 это время полного погашения громкости на setTargetAtTime с запасом
-    if (settings.audio.LFO.enabled) LFOArray[LFOArray.length - 1].stop(end + 0.1)
-    oscillatorArray[oscillatorArray.length - 1].stop(end + 0.1)
+    if (settings.audio.LFO.enabled) LFOArray[LFOArray.length - 1].stop(end)
+    oscillatorArray[oscillatorArray.length - 1].stop(end)
 
     // Планируем удаление этих элементов, они будут первыми с массивах
     // на момент вызова таймаута
@@ -715,13 +720,8 @@ export function audio(motion) {
 
         settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
         if (oscillatorArray.length < 120) countElement.classList.remove('warning')
-      }, (settings.audio.release + settings.audio.attack + 0.1) * 1000)
+      }, (settings.audio.release + settings.audio.attack) * 1000)
     )
-
-    motionIsOff = true // Движение закончено
-
-    // Ставим таймаут от случайных движений после этого
-    audioTimeoutIsOff = false
 
     setTimeout(() => {
       audioTimeoutIsOff = true

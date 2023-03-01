@@ -804,9 +804,13 @@ export function settingsInit() {
 document.addEventListener('keydown', (event) => {
   switch (event.code) {
     // Sensor
-    case 'BracketLeft': thresholdElement.focus()
+    case 'BracketLeft':
+      thresholdElement.focus()
+      setTimeout(() => { thresholdElement.select() })
       break
-    case 'BracketRight': timeoutElement.focus()
+    case 'BracketRight':
+      timeoutElement.focus()
+      setTimeout(() => { timeoutElement.select() })
       break
 
     // Oscillator
@@ -815,15 +819,22 @@ document.addEventListener('keydown', (event) => {
       if (waveElement.options.selectedIndex + 1 === waveElement.options.length) waveElement.options.selectedIndex = -1
       mutations.audio.setWaveType(waveElement.options[++waveElement.options.selectedIndex].text)
       break
-    case 'KeyW': attackElement.focus()
+    case 'KeyW':
+      attackElement.focus()
+      setTimeout(() => { attackElement.select() })
       break
     case 'KeyE':
-      event.preventDefault()
+      event.preventDefault() // 'e' вводится в number поля, т.к. это математический символ
       gainElement.focus()
+      setTimeout(() => { gainElement.select() })
       break
-    case 'KeyR': releaseElement.querySelector('.release').focus()
+    case 'KeyR':
+      releaseElement.querySelector('.release').focus()
+      setTimeout(() => { releaseElement.querySelector('.release').select() })
       break
-    case 'KeyT': attenuationElement.querySelector('.attenuation').focus()
+    case 'KeyT':
+      attenuationElement.querySelector('.attenuation').focus()
+      setTimeout(() => { attenuationElement.querySelector('.attenuation').select() })
       break
     case 'Escape':
       document.querySelector('#off').dispatchEvent(new Event('change', { bubbles: true }))
@@ -833,33 +844,43 @@ document.addEventListener('keydown', (event) => {
     case 'Semicolon':
       if (settings.audio.frequencyRegime === 'continuous') {
         frequenciesRangeElement.querySelector('.frequencies-range-from').focus()
+        setTimeout(() => { frequenciesRangeElement.querySelector('.frequencies-range-from').select() })
       }
       if (settings.audio.frequencyRegime === 'tempered') {
         notesRangeElement.querySelector('.notes-range-from').focus()
+        setTimeout(() => { notesRangeElement.querySelector('.notes-range-from').select() })
       }
 
       break
     case 'Quote':
       if (settings.audio.frequencyRegime === 'continuous') {
         frequenciesRangeElement.querySelector('.frequencies-range-to').focus()
+        setTimeout(() => { frequenciesRangeElement.querySelector('.frequencies-range-to').select() })
       }
       if (settings.audio.frequencyRegime === 'tempered') {
         notesRangeElement.querySelector('.notes-range-to').focus()
+        setTimeout(() => { notesRangeElement.querySelector('.notes-range-to').select() })
       }
 
       break
 
     // Filter
-    case 'KeyM': filterElement.focus()
+    case 'KeyM':
+      filterElement.focus()
+      setTimeout(() => { filterElement.select() })
       break
     case 'Comma': {
         event.preventDefault()
         factorElement.focus()
+        setTimeout(() => { factorElement.select() })
       }
       break
 
     // LFO
     case 'KeyA':
+
+      if (event.ctrlKey) return // Не реагируем на сочетание ctrl+A
+
       // Меняем на противоположное значение
       if (settings.audio.LFO.enabled === true) {
         mutations.audio.setLFOParameter('enabled', 'false')
@@ -875,21 +896,35 @@ document.addEventListener('keydown', (event) => {
       if (LFOElement.querySelector('.lfo-wave').options.selectedIndex + 1 === LFOElement.querySelector('.lfo-wave').options.length) LFOElement.querySelector('.lfo-wave').options.selectedIndex = -1
       mutations.audio.setLFOParameter('type', LFOElement.querySelector('.lfo-wave').options[++LFOElement.querySelector('.lfo-wave').options.selectedIndex].text)
       break
-    case 'KeyD': LFOElement.querySelector('.rate').focus()
+    case 'KeyD':
+      LFOElement.querySelector('.rate').focus()
+      setTimeout(() => { LFOElement.querySelector('.rate').select() })
       break
-    case 'KeyF': LFOElement.querySelector('.depth').focus()
+    case 'KeyF':
+      LFOElement.querySelector('.depth').focus()
+      setTimeout(() => { LFOElement.querySelector('.depth').select() })
       break
 
     // Compressor
-    case 'KeyZ': compressorElement.querySelector('.compressor-threshold').focus()
+    case 'KeyZ':
+      compressorElement.querySelector('.compressor-threshold').focus()
+      setTimeout(() => { compressorElement.querySelector('.compressor-threshold').select() })
       break
-    case 'KeyX': compressorElement.querySelector('.compressor-knee').focus()
+    case 'KeyX':
+      compressorElement.querySelector('.compressor-knee').focus()
+      setTimeout(() => { compressorElement.querySelector('.compressor-knee').select() })
       break
-    case 'KeyC': compressorElement.querySelector('.compressor-ratio').focus()
+    case 'KeyC':
+      compressorElement.querySelector('.compressor-ratio').focus()
+      setTimeout(() => { compressorElement.querySelector('.compressor-ratio').select() })
       break
-    case 'KeyV': compressorElement.querySelector('.compressor-attack').focus()
+    case 'KeyV':
+      compressorElement.querySelector('.compressor-attack').focus()
+      setTimeout(() => { compressorElement.querySelector('.compressor-attack').select() })
       break
-    case 'KeyB': compressorElement.querySelector('.compressor-release').focus()
+    case 'KeyB':
+      compressorElement.querySelector('.compressor-release').focus()
+      setTimeout(() => { compressorElement.querySelector('.compressor-release').select() })
       break
   }
 })

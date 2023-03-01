@@ -34,7 +34,7 @@ export const i18n = {
     cutoffType: {
       title: 'Тип отсечки',
       full: 'Полная',
-      peak: 'До пика',
+      peak: 'Пик',
     },
     timeout: 'Таймаут датчика (мс)',
     oscillator: 'Осциллятор',
@@ -64,7 +64,7 @@ export const i18n = {
     themeDark: 'Тёмная',
     themeLight: 'Светлая',
     off: 'Сброс осцилляторов',
-    qr: 'Наведи камеру смартфона для подключения к компьютеру, либо вручную перейди по ссылке в мобильном браузере:<br><span></span>',
+    qr: 'Наведите камеру смартфона для подключения к компьютеру, либо вручную перейдите по ссылке в мобильном браузере:<br><span></span>',
     description: 'Система синтезирует звук на основе данных с датчиков движения смартфона: скорость определяет громкость, положение определяет частоту.',
     dfap: 'Этот проект — часть<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Цифровой фиксации аудио процессов</a>',
     links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Исходники</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README_RU.md#user-guide" target="_blank" rel="noopener noreferrer">Инструкция</a>',
@@ -108,7 +108,7 @@ export const i18n = {
     cutoffType: {
       title: 'Cutoff type',
       full: 'Full',
-      peak: 'Up-to-peak',
+      peak: 'Peak',
     },
     timeout: 'Sensor timeout (ms)',
     oscillator: 'Oscillator',
