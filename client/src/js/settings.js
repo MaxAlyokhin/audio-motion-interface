@@ -6,6 +6,7 @@
 import { updateCompressorSettings } from './audio'
 import { toFixedNumber } from './helpers'
 import { language } from './language'
+import { syncLocalStorage } from './localstorage'
 import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
 
@@ -94,6 +95,7 @@ export const settings = {
 export const mutations = {
   setShortcuts: (value) => {
     value === 'true' ? (settings.ui.shortcuts = true) : (settings.ui.shortcuts = false)
+    syncSettings()
   },
 
   setLite: (value) => {
@@ -475,6 +477,14 @@ export function syncSettingsFrontend(settings) {
     liteElement.querySelector('#lite-yes').checked = true
   }
 
+  if (settings.ui.shortcuts === false) {
+    shortcutsElement.querySelector('#shortcuts-no').checked = true
+  }
+  if (settings.ui.shortcuts === true) {
+    shortcutsElement.querySelector('#shortcuts-yes').checked = true
+    keyElements.forEach(element => element.classList.add('key--show'))
+  }
+
   if (settings.ui.theme === 'dark') {
     themeElement.querySelector('#theme-dark').checked = true
     bodyElement.classList.add('dark')
@@ -530,6 +540,7 @@ function syncSettings() {
   }
 
   syncSettingsFrontend(settings)
+  syncLocalStorage(settings)
 }
 
 // Связываем объект настроек с интерфейсом управления

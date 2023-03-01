@@ -1,8 +1,10 @@
 import languageInit from './language'
 import { audioInit } from './audio'
 import { motionInit } from './motion'
+import { checkLocalStorage } from './localstorage'
 
 languageInit()
+checkLocalStorage()
 
 window.addEventListener('load', () => {
   // Показываем контент
