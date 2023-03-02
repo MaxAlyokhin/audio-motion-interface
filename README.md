@@ -153,6 +153,10 @@ The field **Maximum value** shows the maximum speed of movement for the whole se
 
 **Cutoff type** — with "full" type, sound is generated from the point above the cutoff to the point below the cutoff. In the "Peak" type, sound is generated only on the point of highest movement speed. Explanation: each gesture slows down at the end of its movement. This leads to, firstly, a difficult system to control, and secondly, in the "speed influences the volume" mode, the middle of the sound can be loud and the end very quiet. We can catch the slowdown and interpret it as the end of the gesture. The oscillator will then cut off at the speed peak. In practice, this allows for clearer individual controlled sounds.
 
+<picture align="center">
+  <img src="https://store.stranno.su/ami/full-peak.jpg">
+</picture>
+
 **Sensor timeout** — like the sensor cutoff, this setting allows you to better control your movement and get rid of accidental sounds. It sets a pause after the end of the previous gesture, leveling out the accidental excesses of the cut-off when slowing down the speed of movement.
 
 **Attack** — the time of smooth growth of the volume to the value in the volume field.
