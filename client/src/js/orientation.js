@@ -30,7 +30,7 @@ export function orientationInit() {
   let absGamma = null
 
   function onOrientation(event) {
-    absBeta = Math.abs(event.beta)
+    absBeta = toFixedNumber(Math.abs(event.beta), 1)
 
     // Модифицируем гамму так, чтобы получилось от 0 до 180 (вместо -90 - 90)
     if (event.gamma < 90 && event.gamma > 0) {
@@ -46,6 +46,7 @@ export function orientationInit() {
     // Контролируем полусферу
     if (
       (absGamma >= 90 && absBeta < 90) ||
+      (absGamma === 90 && absBeta > 90) ||
       (absGamma < 90 && absBeta >= 90)
     ) {
       orientation = absGamma
