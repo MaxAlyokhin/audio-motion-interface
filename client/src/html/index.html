@@ -77,20 +77,6 @@
         <div class="sensor module">
           <span></span>
 
-          <div class="frequency-regime">
-            <span class="key"></span>
-            <div class="frequency-regime__container">
-              <div class="radio-element">
-                <input type="radio" name="frequency" id="continuous" value="continuous" checked />
-                <label class="continuous" for="continuous"></label>
-              </div>
-              <div class="radio-element">
-                <input type="radio" name="frequency" id="tempered" value="tempered" />
-                <label class="tempered" for="tempered"></label>
-              </div>
-            </div>
-          </div>
-
           <div class="sphere">
             <span class="semisphere key"></span>
             <div class="sphere__container">
@@ -144,6 +130,52 @@
           </div>
         </div>
 
+        <div class="frequencies module">
+          <span class="frequencies-span"></span>
+
+          <div class="frequency-regime">
+            <span class="key"></span>
+            <div class="frequency-regime__container">
+              <div class="radio-element">
+                <input type="radio" name="frequency" id="continuous" value="continuous" checked />
+                <label class="continuous" for="continuous"></label>
+              </div>
+              <div class="radio-element">
+                <input type="radio" name="frequency" id="tempered" value="tempered" />
+                <label class="tempered" for="tempered"></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="frequencies-range">
+            <div class="frequencies-range__container slide">
+              <span class="freq-from key"></span>
+              <input type="number" slide="7" coefficient="0" step="1" name="frequencies-range-from" class="frequencies-range-from" />
+            </div>
+            <div class="frequencies-range__container slide">
+              <span class="freq-to key"></span>
+              <input type="number" slide="7" coefficient="0" step="1" name="frequencies-range-to" class="frequencies-range-to" />
+            </div>
+          </div>
+
+          <div class="notes-range">
+            <div class="notes-range__container slide">
+              <span class="notes-range-from-span key"></span>
+              <div class="notes-range__inputs">
+                <input type="number" slide="10" coefficient="0" step="1" name="notes-range-from" class="notes-range-from" />
+                <span class="notes-range__from-span"></span>
+              </div>
+            </div>
+            <div class="notes-range__container slide">
+              <span class="notes-range-to-span key"></span>
+              <div class="notes-range__inputs">
+                <input type="number" slide="10" coefficient="0" step="1" name="notes-range-to" class="notes-range-to" />
+                <span class="notes-range__to-span"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="oscillator module">
           <span></span>
 
@@ -183,36 +215,6 @@
               <div class="radio-element">
                 <input type="radio" name="off" id="off" value="true" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="frequencies-range module">
-          <span class="freq-range-span"></span>
-          <div class="frequencies-range__container slide">
-            <span class="freq-from key"></span>
-            <input type="number" slide="7" coefficient="0" step="1" name="frequencies-range-from" class="frequencies-range-from" />
-          </div>
-          <div class="frequencies-range__container slide">
-            <span class="freq-to key"></span>
-            <input type="number" slide="7" coefficient="0" step="1" name="frequencies-range-to" class="frequencies-range-to" />
-          </div>
-        </div>
-
-        <div class="notes-range module">
-          <span class="notes-range-span"></span>
-          <div class="notes-range__container slide">
-            <span class="notes-range-from-span key"></span>
-            <div class="notes-range__inputs">
-              <input type="number" slide="10" coefficient="0" step="1" name="notes-range-from" class="notes-range-from" />
-              <span class="notes-range__from-span"></span>
-            </div>
-          </div>
-          <div class="notes-range__container slide">
-            <span class="notes-range-to-span key"></span>
-            <div class="notes-range__inputs">
-              <input type="number" slide="10" coefficient="0" step="1" name="notes-range-to" class="notes-range-to" />
-              <span class="notes-range__to-span"></span>
             </div>
           </div>
         </div>
@@ -331,7 +333,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="errors-wrapper">
           <div>Errors:</div>
           <div class="errors"></div>
         </div>

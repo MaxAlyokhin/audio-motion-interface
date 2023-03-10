@@ -42,6 +42,8 @@ const themeElement = document.querySelector('.theme__container')
 const bodyElement = document.querySelector('body')
 const slideElements = document.querySelectorAll('.slide')
 
+// Model
+
 // Настройки системы
 export const settings = {
   ui: {
@@ -91,7 +93,10 @@ export const settings = {
   },
 }
 
+// Controller aka Viewmodel
+
 // Мутации
+// Изменяют как стейт, так и обновляют представление
 export const mutations = {
   setShortcuts: (value) => {
     value === 'true' ? (settings.ui.shortcuts = true) : (settings.ui.shortcuts = false)
@@ -442,6 +447,8 @@ export const mutations = {
     },
   },
 }
+
+// View
 
 // Функция обновляет input-поля в соответствии с пришедшим объектом настроек
 export function syncSettingsFrontend(settings) {
@@ -851,7 +858,7 @@ document.addEventListener('keydown', (event) => {
       document.querySelector('#off').dispatchEvent(new Event('change', { bubbles: true }))
       break
 
-    // Frequency range
+    // Frequency
     case 'Semicolon':
       if (settings.audio.frequencyRegime === 'continuous') {
         frequenciesRangeElement.querySelector('.frequencies-range-from').focus()

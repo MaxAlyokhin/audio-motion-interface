@@ -65,10 +65,9 @@ function setLanguage(languageMarker) {
   document.querySelector('.gain-span').textContent = language.gain
   document.querySelector('.release-container span').textContent = language.release
   document.querySelector('.attenuation-container span').textContent = language.releaseValue
-  document.querySelector('.freq-range-span').textContent = language.freqRange
+  document.querySelector('.frequencies-span').textContent = language.freqRange
   document.querySelector('.freq-from').textContent = language.from
   document.querySelector('.freq-to').textContent = language.to
-  document.querySelector('.notes-range-span').textContent = language.noteRange
   document.querySelector('.notes-range-from-span').textContent = language.from
   document.querySelector('.notes-range-to-span').textContent = language.to
   document.querySelector('.filter-span').textContent = language.filter

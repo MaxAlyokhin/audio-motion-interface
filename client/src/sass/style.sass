@@ -246,12 +246,16 @@ select
   display: none
 
 .errors
-  max-width: 80%
+  max-width: 385px
   display: flex
   flex-direction: column
   row-gap: 10px
+  margin-top: 15px
   &__message
     color: $red
+
+.errors-wrapper
+  flex-direction: column
 
 .radio-element,
 .checkbox-element
@@ -409,7 +413,13 @@ select
       width: auto
       margin-top: 0
 
-.notes-range
+.frequencies
+  .notes-range, .frequencies-range
+    margin-top: 0
+
+.notes-range, .frequencies-range
+  flex-direction: column
+
   &__inputs
     position: relative
     max-width: 115px
@@ -426,6 +436,12 @@ select
 
   &__from, &__to
     color: transparent
+
+  &__container
+    justify-content: space-between
+    width: 100%
+    display: flex
+    margin-top: 15px
 
 .slide
   cursor: w-resize
@@ -526,7 +542,7 @@ body.dark
     background-color: $black-dark
     color: $white-dark
 
-@media (min-width: 1000px)
+@media (min-width: 1215px)
   body .module
     border-left: none
     background: linear-gradient(to right, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 0 0 / 100% 1px no-repeat, linear-gradient(to right, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 0 100% / 100% 1px no-repeat, linear-gradient(to bottom, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 0 0 / 1px 100% no-repeat, linear-gradient(to bottom, #777777 10px, transparent 0, transparent calc(100% - 10px), #777777 0) 100% 0 / 1px 100% no-repeat
@@ -622,10 +638,10 @@ body.dark
 .off .key::after
   content: 'esc'
 
-.freq-from::after
+.freq-from::after, .notes-range-from-span::after
   content: ';'
 
-.freq-to::after
+.freq-to::after, .notes-range-to-span::after
   content: "'"
 
 .filter-freq::after
