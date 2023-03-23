@@ -162,6 +162,9 @@ function js() {
           entry: {
             main: './src/js/main.js',
           },
+          optimization: {
+            minimize: false
+          },
           output: { filename: '[name]-[hash:8].js' },
           devtool: 'inline-source-map',
         })
