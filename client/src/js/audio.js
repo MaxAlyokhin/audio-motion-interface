@@ -654,6 +654,8 @@ export function audio(motion) {
       envelopeArray[envelopeArray.length - 1].gain.setValueAtTime(0, audioContext.currentTime)
 
       oscillatorArray[oscillatorArray.length - 1].start()
+
+      settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
     }
 
     // Здесь во время движения мы управляем поведением последнего собранного графа (length - 1 это последний элемент массивов)
@@ -671,16 +673,12 @@ export function audio(motion) {
       if (motion.maximum <= previousMotionMaximum) {
         motionIsOff = false
         audioTimeoutIsOff = false
-        previousMotionMaximum = 0
-        setGain(motion.maximum) // Включаем звук
       } else {
         previousMotionMaximum = motion.maximum
       }
     } else {
       setGain(motion.maximum) // Включаем звук
     }
-
-    settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
 
     if (oscillatorArray.length >= 120) countElement.classList.add('warning')
   }
@@ -690,6 +688,11 @@ export function audio(motion) {
   else if (!motionIsOff) {
     motionIsOff = true // Движение закончено
     audioTimeoutIsOff = false // Ставим таймаут от случайных движений после этого
+
+    if (settings.motion.thresholdType !== 'full') {
+      setGain(previousMotionMaximum) // Включаем звук
+      previousMotionMaximum = 0
+    }
 
     const end = audioContext.currentTime + settings.audio.release + settings.audio.attack + 0.01
 
