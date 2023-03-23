@@ -2,7 +2,7 @@ import { toFixedNumber } from './helpers'
 import { notes, notesInit, pitchDetection } from './notes'
 import { settings } from './settings'
 
-let audioContext = null
+export let audioContext = null
 let squareWave = null
 let sawtoothWave = null
 let compressor = null

@@ -6,6 +6,7 @@
 import { updateCompressorSettings } from './audio'
 import { toFixedNumber } from './helpers'
 import { language } from './language'
+import { latency } from './latency'
 import { syncLocalStorage } from './localstorage'
 import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
@@ -546,12 +547,12 @@ function syncSettings() {
     socket.emit('settings message', settings)
   }
 
-  syncSettingsFrontend(settings)
   syncLocalStorage(settings)
 }
 
 // Связываем объект настроек с интерфейсом управления
 export function settingsInit() {
+
   // Включение веб-сокета на смартфоне
   synthesisRegimeElement.addEventListener('change', function (event) {
     if (!socketIsInit) {
@@ -577,6 +578,9 @@ export function settingsInit() {
         connectionsToServer.classList.remove('connections--wait', 'connections--ready')
         connectionsToServer.classList.add('connections--error')
       })
+
+      // Pдесь вешается слушатель события pong от десктопа, чтобы вычислять задержку до десктопа
+      latency('mobile')
     }
 
     mutations.audio.setSynthesisRegime(event.target.value)
@@ -816,6 +820,10 @@ export function settingsInit() {
 
     mutations.audio.setSynthesisRegime('remote')
   }
+
+  // Вычисляем задержку, для смартфона она равна audioContext.outputLatency
+  // Также здесь вешается слушатель события pong от десктопа, чтобы вычислять задержку до десктопа
+  latency('mobile')
 }
 
 // Управление горячими клавишами

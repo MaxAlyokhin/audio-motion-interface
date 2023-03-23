@@ -11,7 +11,15 @@
     outline-offset: 0
 
 ::-webkit-scrollbar
-  width: 0px
+  width: 8px
+  height: 8px
+
+::-webkit-scrollbar-thumb
+  border-radius: 300px
+  background: #EAEAEA
+
+::-webkit-scrollbar-track
+  background: rgba(0,0,0,0)
 
 body
   position: relative
@@ -251,11 +259,14 @@ select
   flex-direction: column
   row-gap: 10px
   margin-top: 15px
+  padding-bottom: 15px
+  overflow: auto
+
   &__message
     color: $red
 
 .errors-wrapper
-  flex-direction: column
+  flex-direction: column !important
 
 .radio-element,
 .checkbox-element

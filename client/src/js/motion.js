@@ -15,8 +15,9 @@ import { audio } from './audio'
 import { toFixedNumber } from './helpers'
 import { orientation, orientationInit } from './orientation'
 import { settings, settingsInit, syncSettingsFrontend } from './settings'
-import { socket, socketInit } from './websocket'
+import { socket, socketInit, socketIsInit } from './websocket'
 import { language } from './language'
+import { latency } from './latency'
 
 export function motionInit() {
 
@@ -130,7 +131,9 @@ export function motionInit() {
       // Либо отдаём в вебсокет для десктопа
       if (settings.audio.synthesisRegime === 'remote') {
         audio(motion)
-        socket.emit('motion message', motion)
+        if (socketIsInit) {
+          socket.emit('motion message', motion)
+        }
       }
     } else {
       motion.isMotion = false
@@ -146,7 +149,9 @@ export function motionInit() {
       }
       if (settings.audio.synthesisRegime === 'remote') {
         audio(motion)
-        socket.emit('motion message', motion)
+        if (socketIsInit) {
+          socket.emit('motion message', motion)
+        }
       }
     }
   }
@@ -230,8 +235,11 @@ export function motionInit() {
       }
     })
 
+    latency('desktop')
+
     // По обновлению объекта движения
     socket.on('motion message', (motion) => {
+
       // Обновляем DOM только при изменении значения
       if (previousIsMotion !== motion.isMotion) {
         settings.ui.lite ? false : (isMotionElement.textContent = motion.isMotion)
@@ -263,7 +271,6 @@ export function motionInit() {
       syncSettingsFrontend(settingsData) // Обновляем input-поля
     })
 
-    // isDesktop = true
     receiverRegimeIsInit = true
 
   } else if (device.mobile()) {
