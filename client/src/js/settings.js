@@ -51,7 +51,8 @@ export const settings = {
     shortcuts: false,
     lite: false,
     interfaceRegime: true,
-    theme: 'dark'
+    theme: 'dark',
+    language: null
   },
   motion: {
     threshold: 2.0,
@@ -542,7 +543,7 @@ export function syncSettingsFrontend(settings) {
 }
 
 // Функция синхронизирует настройки со смартфона с десктопом
-function syncSettings() {
+export function syncSettings() {
   if (socketIsInit) {
     socket.emit('settings message', settings)
   }

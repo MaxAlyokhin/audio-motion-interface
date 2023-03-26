@@ -3,6 +3,8 @@
 // Затем передаём управление кнопкам переключения языка
 
 import { i18n } from './i18n'
+import { syncLocalStorage } from './localstorage'
+import { settings } from './settings'
 
 export let language = null // Объект со всеми строками интерфейса
 
@@ -13,7 +15,16 @@ let languageElements = []
  * @return {String} ru если русский, en если английский
  */
 
-const getLanguage = () => 'ru' === navigator.language.slice(0, 2) ? 'ru' : 'en'
+const getLanguage = () => {
+  if (settings.ui.language) {
+    return settings.ui.language
+  } else {
+    const languageID = 'ru' === navigator.language.slice(0, 2) ? 'ru' : 'en'
+    settings.ui.language = languageID
+    syncLocalStorage(settings)
+    return languageID
+  }
+}
 
 /**
  * Устанавливает язык интерфейса
@@ -116,6 +127,8 @@ export default function languageInit() {
   languageElements.forEach((element) => {
     element.addEventListener('click', () => {
       setLanguage(element.className)
+      settings.ui.language = element.className
+      syncLocalStorage(settings)
     })
   })
 }
