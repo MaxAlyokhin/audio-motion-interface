@@ -117,6 +117,8 @@ Accordingly, the system turns on when the cutoff is exceeded, creates a batch, a
 
 The **Oscillator amount** field displays all the batches sounding at the moment.
 
+The **Latency** field displays the latency from the motion event to the sound synthesis. On a smartphone, it is equal to the software latency (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/outputLatency">`AudioContext.outputLatency`</a>). On the desktop, it is equal to the software latency + the transfer time of the motion object from the smartphone to the desktop.
+
 For example, if you shake your hand chaotically for some time, the cutoff will be exceeded several times at random, which means that several batches will be generated, which will fade smoothly and their sound will overlap each other. It is better not to bring the number of oscillators, according to current observations, to values higher than 120 pieces, as almost certainly the computing power of the device will end there and the sound will start to stutter, or will disappear at all.
 
 According to subjective observations, the optimal cutoff can be between 3 and 7 (the default is 1), then random movements can be eliminated.
