@@ -36,3 +36,13 @@ export function getNearbyValues(number, array) {
 
   return [nearbyLess, nearbyOver]
 }
+
+/**
+ * Функция возвращает строку со временем вызова в формате число-месяц-год-час-минуты-секунды
+ * @return {String}
+ */
+
+export function getDate() {
+  let date = new Date()
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
+}

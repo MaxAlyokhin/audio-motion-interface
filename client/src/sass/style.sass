@@ -245,6 +245,19 @@ input[type="checkbox"]
   &:checked
     background-color: $black
 
+input[type="file"]
+  display: none
+
+.settings-exchange
+  column-gap: 15px
+
+.import, .export
+  border: 1px solid #ccc
+  display: inline-block
+  padding: 6px 12px
+  cursor: pointer
+  width: 100%
+
 select
   text-align: right
   appearance: none
@@ -285,6 +298,17 @@ select
     font-weight: 600
     color: $black
     transition: $transition-long
+
+    &::before
+      content: ''
+      width: 8px
+      height: 8px
+      border-radius: 50%
+      top: 0
+      left: 0
+      display: inline-block
+      margin-right: 5px
+      background-color: $green
 
   .connections
     div
@@ -529,6 +553,9 @@ body.dark
   .info
     .regime
       color: $white-dark
+
+      &::before
+        background-color: $green-dark
 
     .connections
       &--ready

@@ -177,6 +177,13 @@ The field **Maximum value** shows the maximum speed of movement for the whole se
 
 **Fullscreen-mode** — on your smartphone, opposite the text "Audio-motion interface", there will be an icon to switch to full-screen mode (Apple devices do not support it). This mode is recommended because it disables the standard browser gestures "Back" (when swiping from the left edge to the right) and "Refresh" (when swiping from the top edge down), which will give you more confidence in holding the smartphone in your hand without fear of pressing something.
 
+### Saving the state (settings) of the interface
+At the first start of the application, the default settings are set.
+
+Thereafter, any changes to the settings are immediately written to the computer (in `localStorage`), so your work is automatically restored when you restart.
+
+But you may have a situation where you need to keep multiple copies of your settings at once. Also, when you clear the browser completely, when you change browsers, or when you start the application from a different domain (e.g. a new address `192.168.X.X`), the settings will be lost. As a solution, the application provides buttons **Import / Export** to save and load settings from an external file in `.json` format.
+
 ## Run
 
 ### Running the web version
