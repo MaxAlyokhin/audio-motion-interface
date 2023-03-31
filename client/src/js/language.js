@@ -111,6 +111,7 @@ function setLanguage(languageMarker) {
   document.querySelector('.shortcuts-on').textContent = language.yes
   document.querySelector('.shortcuts-off').textContent = language.no
   document.querySelector('.latency__title').textContent = language.latency
+  document.querySelector('.is-audio').textContent = language.isAudio
 
   languageElements.forEach((element) => { element.style.textDecoration = 'none' })
   document.querySelector(`.${languageMarker}`).style.textDecoration = 'underline'

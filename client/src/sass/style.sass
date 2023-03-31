@@ -167,6 +167,12 @@ a
 .motion
   transition: filter 1000ms cubic-bezier(0.83, 0, 0.17, 1)
 
+  &__is-audio
+    color: $red
+
+    &--yes
+      color: $green
+
 .inactive
   filter: contrast(0.1)
 
@@ -579,6 +585,13 @@ body.dark
   option
     background-color: $black-dark
     color: $white-dark
+
+  .motion
+    &__is-audio
+      color: $red-dark
+
+      &--yes
+        color: $green-dark
 
 @media (min-width: 1215px)
   body .module

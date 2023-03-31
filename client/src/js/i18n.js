@@ -10,6 +10,7 @@ export const i18n = {
       connected: 'Подключено'
     },
     isMotion: 'Наличие движения',
+    isAudio: 'Генерация звука',
     latency: 'Задержка (мс)',
     motionCoords: 'Движение по осям α/β/γ (м/с²)',
     motionMax: 'Максимальное значение (м/с²)',
@@ -85,6 +86,7 @@ export const i18n = {
       connected: 'Connected'
     },
     isMotion: 'Motion status',
+    isAudio: 'Audio generation',
     latency: 'Latency (ms)',
     motionCoords: 'Motion by α/β/γ axes (m/s²)',
     motionMax: 'Maximum value (m/s²)',

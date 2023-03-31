@@ -490,6 +490,7 @@ let previousFrequency = null // Для более эффективной раб�
 const frequencyElement = document.querySelector('.motion__frequency')
 
 const countElement = document.querySelector('.motion__count') // Количество осцилляторов
+const isAudioElement = document.querySelector('.motion__is-audio')
 const containerElement = document.querySelector('.container') // body для анимирования по сбросу осцилляторов
 
 let oscillatorArray = [] // Массив осцилляторов
@@ -540,6 +541,8 @@ document.querySelector('.off').addEventListener('change', function () {
 
   // Отображаем обнулённый счётчик осцилляторов
   settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
+  isAudioElement.textContent = 'false'
+  isAudioElement.classList.remove('motion__is-audio--yes')
 
   // Приводим интерфейс в исходную
   setTimeout(() => {
@@ -612,9 +615,17 @@ export function audio(motion) {
     if (motionIsOff) {
       motionIsOff = false
 
+      if (oscillatorArray.length === 0) {
+        isAudioElement.textContent = 'true'
+        isAudioElement.classList.add('motion__is-audio--yes')
+      }
+
       oscillatorArray.push(audioContext.createOscillator())
       biquadFilterArray.push(audioContext.createBiquadFilter())
       envelopeArray.push(audioContext.createGain())
+
+      settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
+      if (oscillatorArray.length >= 120) countElement.classList.add('warning')
 
       oscillatorArray[oscillatorArray.length - 1].connect(biquadFilterArray[biquadFilterArray.length - 1])
       biquadFilterArray[biquadFilterArray.length - 1].connect(envelopeArray[envelopeArray.length - 1])
@@ -654,8 +665,6 @@ export function audio(motion) {
       envelopeArray[envelopeArray.length - 1].gain.setValueAtTime(0, audioContext.currentTime)
 
       oscillatorArray[oscillatorArray.length - 1].start()
-
-      settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
     }
 
     // Здесь во время движения мы управляем поведением последнего собранного графа (length - 1 это последний элемент массивов)
@@ -680,7 +689,6 @@ export function audio(motion) {
       setGain(motion.maximum) // Включаем звук
     }
 
-    if (oscillatorArray.length >= 120) countElement.classList.add('warning')
   }
   // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
   // значит мы поймали последнее событие движения (движение остановлено).
@@ -723,6 +731,11 @@ export function audio(motion) {
 
         settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
         if (oscillatorArray.length < 120) countElement.classList.remove('warning')
+        if (oscillatorArray.length === 0) {
+          isAudioElement.textContent = 'false'
+          isAudioElement.classList.remove('motion__is-audio--yes')
+        }
+
       }, (settings.audio.release + settings.audio.attack) * 1000)
     )
 
