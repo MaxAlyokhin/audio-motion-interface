@@ -11,7 +11,7 @@
     outline-offset: 0
 
 ::-webkit-scrollbar
-  width: 8px
+  width: 0px
   height: 8px
 
 ::-webkit-scrollbar-thumb
@@ -273,7 +273,7 @@ select
   display: none
 
 .errors
-  max-width: 385px
+  max-width: 100%
   display: flex
   flex-direction: column
   row-gap: 10px
@@ -301,7 +301,6 @@ select
   display: none
 
   .regime
-    font-weight: 600
     color: $black
     transition: $transition-long
 
@@ -601,6 +600,9 @@ body.dark
   body.dark .module
     border-left: none
 
+  .errors
+    max-width: 385px
+
   .container, .bottom
     display: flex
     flex-direction: column
@@ -622,8 +624,8 @@ body.dark
 
   .settings
     display: grid
-    grid-template-columns: repeat(3, auto)
-    grid-template-rows: repeat(2, 1fr)
+    grid-template-columns: repeat(3, 1fr)
+    grid-template-rows: repeat(2, auto)
     grid-column-gap: 20px
 
     > div

@@ -4,6 +4,7 @@
 
 import { i18n } from './i18n'
 import { syncLocalStorage } from './localstorage'
+import { clientsCount } from './motion'
 import { settings } from './settings'
 
 export let language = null // Объект со всеми строками интерфейса
@@ -52,7 +53,13 @@ function setLanguage(languageMarker) {
   if (document.querySelector('.connections__to-server').classList.contains('connections--ready')) {
     document.querySelector('.connections__to-server').textContent = language.connection.ready
   }
-  document.querySelector('.connections__status').textContent = language.connection.waiting
+
+  if (clientsCount > 1) {
+    document.querySelector('.connections__status').textContent = `${language.connection.connected} (${clientsCount - 1})`
+  } else {
+    document.querySelector('.connections__status').textContent = language.connection.waiting
+  }
+
   document.querySelector('.is-motion').textContent = language.isMotion
   document.querySelector('.motion-coords').textContent = language.motionCoords
   document.querySelector('.motion-max').textContent = language.motionMax

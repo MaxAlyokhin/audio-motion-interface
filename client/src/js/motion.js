@@ -19,6 +19,8 @@ import { socket, socketInit, socketIsInit } from './websocket'
 import { language } from './language'
 import { latency } from './latency'
 
+export let clientsCount = null // Количество подключений
+
 export function motionInit() {
 
   // Инициализируем объект движения
@@ -213,6 +215,9 @@ export function motionInit() {
     })
 
     socket.on('connection message', (clientsSize) => {
+
+      clientsCount = clientsSize
+
       // Если остались только мы сами
       if (clientsSize === 1) {
         connectionsStatus.textContent = language.connection.waiting

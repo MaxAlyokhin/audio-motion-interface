@@ -580,7 +580,7 @@ export function settingsInit() {
         connectionsToServer.classList.add('connections--error')
       })
 
-      // Pдесь вешается слушатель события pong от десктопа, чтобы вычислять задержку до десктопа
+      // Здесь вешается слушатель события pong от десктопа, чтобы вычислять задержку до десктопа
       latency('mobile')
     }
 
