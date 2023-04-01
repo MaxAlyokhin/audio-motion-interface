@@ -573,6 +573,38 @@ export function updateCompressorSettings({ threshold, knee, ratio, attack, relea
   compressor.release.setValueAtTime(release, audioContext.currentTime)
 }
 
+export function updateOscillatorWaveType(type) {
+  if (oscillatorArray[oscillatorArray.length - 1]) oscillatorArray[oscillatorArray.length - 1].type = type
+}
+
+export function updateFilterFrequency(frequency) {
+  if (biquadFilterArray[biquadFilterArray.length - 1]) biquadFilterArray[biquadFilterArray.length - 1].frequency.value = frequency
+}
+
+export function updateFilterQ(value) {
+  if (biquadFilterArray[biquadFilterArray.length - 1]) biquadFilterArray[biquadFilterArray.length - 1].Q.value = value
+}
+
+export function updateLFOType(type) {
+  if (LFOArray[LFOArray.length - 1]) {
+    if (type === 'square') {
+      LFOArray[LFOArray.length - 1].setPeriodicWave(squareWave)
+    } else if (type === 'sawtooth') {
+      LFOArray[LFOArray.length - 1].setPeriodicWave(sawtoothWave)
+    } else {
+      LFOArray[LFOArray.length - 1].type = type
+    }
+  }
+}
+
+export function updateLFORate(rate) {
+  if (LFOArray[LFOArray.length - 1]) LFOArray[LFOArray.length - 1].frequency.value = rate
+}
+
+export function updateLFODepth(depth) {
+  if (LFOArray[LFOArray.length - 1]) LFOGainArray[LFOGainArray.length - 1].gain.value = depth
+}
+
 let previousMotionMaximum = 0
 
 // Управление громкостью
