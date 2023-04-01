@@ -41,6 +41,10 @@ function checkSettings(settingsFromClient) {
   if (!(typeof settingsFromClient.audio.LFO.enabled === 'boolean')) throw new Error('AMI settings file validation error: audio.LFO.enabled invalid or missing')
   if (!(typeof settingsFromClient.audio.LFO.type === 'string' && settingsFromClient.audio.LFO.type === 'sine' || settingsFromClient.audio.LFO.type === 'square' || settingsFromClient.audio.LFO.type === 'sawtooth' || settingsFromClient.audio.LFO.type === 'triangle')) throw new Error('AMI settings file validation error: audio.LFO.type invalid or missing')
 
+  updateSettings(settingsFromClient)
+}
+
+function updateSettings(settingsFromClient) {
   settings.motion.threshold = settingsFromClient.motion.threshold
   settings.motion.thresholdType = settingsFromClient.motion.thresholdType
   settings.motion.timeout = settingsFromClient.motion.timeout
