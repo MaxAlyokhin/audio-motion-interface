@@ -1,13 +1,13 @@
 import { settings, syncSettingsFrontend } from "./settings"
 
-// Управление localStorage
+// localStorage control
 export function checkLocalStorage() {
-  // Если первый раз открыли AMI, то записываем дефолтные настройки
+  // If this is the first time opened AMI, then write down the default settings
   if (!localStorage.getItem('init')) {
     localStorage.setItem('init', 'true')
     syncLocalStorage(settings)
   } else {
-    // Иначе грузим из localStorage ранние настройки и переписываем
+    // Otherwise, loading the earlier settings from localStorage and rewriting
     Object.assign(settings, JSON.parse(localStorage.getItem('settings')))
     syncSettingsFrontend(settings)
   }

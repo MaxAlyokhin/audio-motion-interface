@@ -1,22 +1,22 @@
-// Управление языком
-// Сначала инициализируем язык из настроек браузера
-// Затем передаём управление кнопкам переключения языка
+// Language Control
+// First we initialize the language from the browser settings
+// Then we pass the control to the language switching buttons
 
 import { i18n } from './i18n'
 import { syncLocalStorage } from './localstorage'
 import { clientsCount } from './motion'
 import { settings } from './settings'
 
-export let language = null // Объект со всеми строками интерфейса
+export let language = null // Object with all interface strings
 
 let languageElements = []
 
 /**
- * Определяет язык из настроек браузера
- * @return {String} ru если русский, en если английский
+ * Defines the language from the browser settings
+ * @return {String} ru if Russian, en if English
  */
 
-const getLanguage = () => {
+function getLanguage() {
   if (settings.ui.language) {
     return settings.ui.language
   } else {
@@ -28,8 +28,8 @@ const getLanguage = () => {
 }
 
 /**
- * Устанавливает язык интерфейса
- * @param {String} languageMarker - 'ru' или 'en'
+ * Sets the interface language
+ * @param {String} languageMarker - 'ru' or 'en'
  * @return {undefined}
  */
 

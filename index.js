@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
     io.emit('settings message', settingsData)
   })
 
-  // События ping-pong нужны для вычисления задержки сигнала
+  // Ping-pong events are needed to calculate the signal latency
   socket.on('ping', (dateFromDesktop) => {
     io.emit('ping', dateFromDesktop)
   })
@@ -73,7 +73,7 @@ server.listen(443, '0.0.0.0', function () {
     if (serverIP) {
       address = serverIP.address
       console.log(`${getDate()} Opening https://${address} in default browser`)
-      // open(`https://${address}`)
+      open(`https://${address}`)
       console.log(`${getDate()} Close terminal for exit from AMI`)
     } else {
       address = 'ami.stranno.su'

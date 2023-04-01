@@ -72,7 +72,7 @@ export const i18n = {
     links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Исходники</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README_RU.md#user-guide" target="_blank" rel="noopener noreferrer">Инструкция</a>',
     run: 'Запуск',
     interface: 'Скрыть интерфейс',
-    slide: 'Перетащи кружок за черту для разблокировки интерфейса'
+    slide: 'Перетащите кружок за черту для разблокировки интерфейса'
   },
 
   en: {

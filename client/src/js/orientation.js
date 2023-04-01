@@ -4,13 +4,13 @@ import { settings } from './settings'
 export let orientation = null
 
 export function orientationInit() {
-  // Если можем запросить разрешение - значит перед нами iOS 13
-  // В iOS 13 необходимо запрашивать разрешение на доступ к датчикам
+  // If we can ask for permission, it means we are in front of iOS 13
+  // In iOS 13, you need to request permission to access sensors
   if (typeof DeviceOrientationEvent.requestPermission === 'function') {
     DeviceOrientationEvent.requestPermission()
       .then((response) => {
         if (response == 'granted') {
-          // Если разрешили, то вешаем соответствующий обработчик
+          // If allowed, hang the corresponding handler
           window.addEventListener('deviceorientation', onOrientation)
         }
       })
@@ -20,30 +20,30 @@ export function orientationInit() {
   else if ('ondeviceorientation' in window) {
     window.addEventListener('deviceorientation', onOrientation)
   }
-  // Android без гироскопа
+  // Android without a gyroscope
   else {
     document.querySelector('#orientationSupported').innerHTML = 'Gyroscope is not supported.<br>Гироскоп не поддерживается.<br>'
   }
 
-  // Абсолютные значения по осям бета и гамма
+  // Absolute values on the beta and gamma axes
   let absBeta = null
   let absGamma = null
 
   function onOrientation(event) {
     absBeta = toFixedNumber(Math.abs(event.beta), 1)
 
-    // Модифицируем гамму так, чтобы получилось от 0 до 180 (вместо -90 - 90)
+    // Modify the gamma to make it from 0 to 180 (instead of -90 to 90)
     if (event.gamma < 90 && event.gamma > 0) {
       absGamma = toFixedNumber(180 - event.gamma, 1)
     } else {
       absGamma = Math.abs(toFixedNumber(event.gamma, 1))
     }
 
-    // Режим правши
-    // Инвертируем координаты, чтобы 0 был внизу, а 180 вверху
+    // Right-handed mode
+    // Invert the coordinates so that 0 is at the bottom and 180 is at the top
     if (settings.motion.semiSphere === 'left') absGamma = toFixedNumber(180 - absGamma, 1)
 
-    // Контролируем полусферу
+    // Controlling the semisphere
     if (
       (absGamma >= 90 && absBeta < 90) ||
       (absGamma === 90 && absBeta > 90) ||

@@ -1,8 +1,8 @@
 /**
- * Функция округляет значение до 4 знаков после запятой по-умолчанию
- * @param {Number} number - число
- * @param {Number} digits - количество знаков после запятой
- * @return {Number} Отдаёт округлённое число
+ * The function rounds the value to 4 decimal places by default
+ * @param {Number} number - number
+ * @param {Number} digits - number of decimal places
+ * @return {Number} Returns a rounded number
  */
 
 let pow = null
@@ -12,19 +12,19 @@ export function toFixedNumber(number, digits = 4) {
 }
 
 /**
- * Функция выполняет целочисленное деление
- * @param {Number} value - что делить
- * @param {Number} by - на что делить
- * @return {Number} Отдаёт искомое число
+ * The function performs integer division
+ * @param {Number} value - what to divide
+ * @param {Number} by - by what
+ * @return {Number} Returns the number you are looking for
  */
 
 export const div = (value, by) => (value - (value % by)) / by
 
 /**
- * Функция ищет ближайшее меньшее и большее число к заданному
- * @param {Number} number - число, вокруг которого нужно найти ближайшие значения
- * @param {Array} array - массив чисел, из которых выбираем ближайшие значения
- * @return {Array} Отдаёт массив из двух чисел: меньшее и большее
+ * The function searches for the nearest lower and nearest higher number to a given number
+ * @param {Number} number - the number around which we need to find the nearest values
+ * @param {Array} array - an array of numbers from which we select the nearest values
+ * @return {Array} Returns an array of two numbers: a smaller and a larger one
  */
 
 let nearbyLess = null
@@ -38,7 +38,7 @@ export function getNearbyValues(number, array) {
 }
 
 /**
- * Функция возвращает строку со временем вызова в формате число-месяц-год-час-минуты-секунды
+ * The function returns a string with the time of the call in the format number-month-year-hour-minutes-seconds
  * @return {String}
  */
 

@@ -1,7 +1,7 @@
-// Здесь инициализируется объект настроек
-// Он изменяется через мутации
-// Мутации запускаются по событиям интерфейса управления
-// и синхронизируют настройки по вебсокету с удалённым десктопом
+// The settings object is initialized here
+// It changes through mutations
+// Mutations are triggered by events in the interface
+// and synchronize settings over a websocket with the remote desktop
 
 import { updateCompressorSettings, updateFilterFrequency, updateFilterQ, updateLFODepth, updateLFORate, updateLFOType, updateOscillatorWaveType } from './audio'
 import { toFixedNumber } from './helpers'
@@ -11,7 +11,7 @@ import { syncLocalStorage } from './localstorage'
 import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
 
-// Элементы настроек
+// Settings elements
 const synthesisRegimeElement = document.querySelector('.synthesis-regime')
 const frequencyRegimeElement = document.querySelector('.frequency-regime')
 const thresholdElement = document.querySelector('.threshold')
@@ -45,7 +45,7 @@ const slideElements = document.querySelectorAll('.slide')
 
 // Model
 
-// Настройки системы
+// System settings
 export const settings = {
   ui: {
     shortcuts: false,
@@ -97,8 +97,7 @@ export const settings = {
 
 // Controller
 
-// Мутации
-// Изменяют как стейт, так и обновляют представление
+// Mutations change both the state and update the view
 export const mutations = {
   setShortcuts: (value) => {
     value === 'true' ? (settings.ui.shortcuts = true) : (settings.ui.shortcuts = false)
@@ -187,7 +186,7 @@ export const mutations = {
       if (isNaN(release)) {
         return
       } else if (release <= 0) {
-        // 0.05 - минимальная длина тона, которую можно погасить без пиков
+        // 0.05 - minimum tone length that can be muted without peaks
         settings.audio.release = 0.05
       } else {
         settings.audio.release = release
@@ -461,7 +460,7 @@ export const mutations = {
 
 // View
 
-// Функция обновляет input-поля в соответствии с пришедшим объектом настроек
+// The function updates the input fields according to the settings object that came in
 export function syncSettingsFrontend(settings) {
   if (settings.audio.frequencyRegime === 'continuous') {
     document.querySelector('#continuous').checked = true
@@ -551,7 +550,7 @@ export function syncSettingsFrontend(settings) {
   }
 }
 
-// Функция синхронизирует настройки со смартфона с десктопом
+// The function synchronizes the settings from the smartphone to the desktop
 export function syncSettings() {
   if (socketIsInit) {
     socket.emit('settings message', settings)
@@ -560,24 +559,24 @@ export function syncSettings() {
   syncLocalStorage(settings)
 }
 
-// Связываем объект настроек с интерфейсом управления
+// Linking the settings object to the interface
 export function settingsInit() {
 
-  // Включение веб-сокета на смартфоне
+  // Enabling the websocket on a smartphone
   synthesisRegimeElement.addEventListener('change', function (event) {
     if (!socketIsInit) {
       socketInit()
 
       socket.connect()
 
-      // По обновлению объекта настроек
+      // On updating the settings object
       socket.on('settings message', (settingsData) => {
-        Object.assign(settings, settingsData) // Обновляем объект
-        syncSettingsFrontend(settingsData) // Обновляем input-поля
+        Object.assign(settings, settingsData) // Updating an object
+        syncSettingsFrontend(settingsData) // Updating input fields
         syncLocalStorage(settingsData)
       })
 
-      // Вешаем слушатели вебсокет-событий
+      // Hanging listeners of websocket events
       socket.on('connect', () => {
         connectionsToServer.textContent = language.connection.ready
         connectionsToServer.classList.remove('connections--wait', 'connections--error')
@@ -590,7 +589,7 @@ export function settingsInit() {
         connectionsToServer.classList.add('connections--error')
       })
 
-      // Здесь вешается слушатель события pong от десктопа, чтобы вычислять задержку до десктопа
+      // Here hangs the pong event listener from the desktop to calculate the latency to the desktop
       latency('mobile')
     }
 
@@ -699,20 +698,20 @@ export function settingsInit() {
     mutations.setSemiSphere(event.target.value)
   })
 
-  // Выключение интерфейса управления
+  // Switching off the interface
   interfaceRegimeElement.addEventListener('click', function () {
     mutations.setInterfaceRegime(false)
   })
 
-  // Перемещение кнопки включения интерфейса
+  // Moving the interface trigger
   interfaceRegimeOnButtonElement.addEventListener('touchmove', function (event) {
     interfaceRegimeOnButtonElement.style.top = `${event.touches[0].clientY - 25}px`
     interfaceRegimeOnButtonElement.style.left = `${event.touches[0].clientX - 25}px`
   })
 
-  // Включение интерфейса управления
+  // Enabling the interface
   interfaceRegimeOnButtonElement.addEventListener('touchend', function (event) {
-    // Возвращаем кружок на место
+    // Put the circle back in place
     setTimeout(() => {
       interfaceRegimeOnButtonElement.style.top = `unset`
       interfaceRegimeOnButtonElement.style.bottom = `40px`
@@ -741,21 +740,21 @@ export function settingsInit() {
     }
   })
 
-  // Обработка изменения input-значений через слайд
-  // У каждого инпута есть атрибут slide, который определяет соотношение
-  // кол-во пикселей / 1 пункт input-поля
+  // Handling input value changes via slide
+  // Each input has a slide attribute, which determines the ratio of
+  // number of pixels / 1 point input field
   slideElements.forEach(slideElement => {
-    let initialClientX = 0 // Изначальное положение курсора мыши после клика
-    let initialInputValue = 0 // Изначальное значение инпут-поля, которое будем изменять
-    let currentInputElement = null // Поле, которое изменяем
+    let initialClientX = 0 // Initial position of the mouse cursor after clicking
+    let initialInputValue = 0 // Initial value of the input field, which will be changed
+    let currentInputElement = null // The field we change
 
     function slideHandler(event) {
-      // Имитируем input-событие
+      // Simulate an input event
       let inputEvent = new Event('input', { bubbles: true })
 
-      // С кастомным полем value (то есть не нативное target.value!),
-      // в котором к исходному значению поля прибавляем вычисленное
-      // и делим на атрибут slide
+      // With a custom value field (that is, not the native target.value!),
+      // where we add the calculated value to the original value of the field
+      // and divide by the 'slide' attribute
       inputEvent.value = toFixedNumber(
         Number(initialInputValue) + (Number(((event.clientX || event.touches[0].clientX) - initialClientX) / currentInputElement.attributes.slide.value) * currentInputElement.attributes.step.value),
         currentInputElement.attributes.coefficient.value
@@ -791,13 +790,13 @@ export function settingsInit() {
     })
   })
 
-  // Заполняем интерфейс дефолтными данными
+  // Filling the interface with default data
   syncSettingsFrontend(settings)
 
-  // Настраиваем компрессор
+  // Setting up the compressor
   updateCompressorSettings(settings.audio.compressor)
 
-  // Если в URL есть ?remote, то сразу переключаем в соответствующий режим
+  // If the URL has ?remote, then immediately switch to the relevant mode
   const markerFromURL = document.location.search.slice(1)
 
   if (markerFromURL === 'remote') {
@@ -809,13 +808,11 @@ export function settingsInit() {
 
       socket.connect()
 
-      // По обновлению объекта настроек
       socket.on('settings message', (settingsData) => {
-        Object.assign(settings, settingsData) // Обновляем объект
-        syncSettingsFrontend(settingsData) // Обновляем input-поля
+        Object.assign(settings, settingsData)
+        syncSettingsFrontend(settingsData)
       })
 
-      // Вешаем слушатели вебсокет-событий
       socket.on('connect', () => {
         connectionsToServer.textContent = language.connection.ready
         connectionsToServer.classList.remove('connections--wait', 'connections--error')
@@ -832,12 +829,12 @@ export function settingsInit() {
     mutations.audio.setSynthesisRegime('remote')
   }
 
-  // Вычисляем задержку, для смартфона она равна audioContext.outputLatency
-  // Также здесь вешается слушатель события pong от десктопа, чтобы вычислять задержку до десктопа
+  // Calculate the delay, which is equal to audioContext.outputLatency for the smartphone
+  // Also here hangs the pong event listener from the desktop to calculate the latency to the desktop
   latency('mobile')
 }
 
-// Управление горячими клавишами
+// Hotkey control
 document.addEventListener('keydown', (event) => {
   switch (event.code) {
     // Sensor
@@ -852,7 +849,7 @@ document.addEventListener('keydown', (event) => {
 
     // Oscillator
     case 'KeyQ':
-      // Если дошли до конца списка
+      // If getting to the end of the list
       if (waveElement.options.selectedIndex + 1 === waveElement.options.length) waveElement.options.selectedIndex = -1
       mutations.audio.setWaveType(waveElement.options[++waveElement.options.selectedIndex].text)
       break
@@ -861,7 +858,7 @@ document.addEventListener('keydown', (event) => {
       setTimeout(() => { attackElement.select() })
       break
     case 'KeyE':
-      event.preventDefault() // 'e' вводится в number поля, т.к. это математический символ
+      event.preventDefault() // 'e' is entered in the number field, since it is a mathematical symbol
       gainElement.focus()
       setTimeout(() => { gainElement.select() })
       break
@@ -916,9 +913,9 @@ document.addEventListener('keydown', (event) => {
     // LFO
     case 'KeyA':
 
-      if (event.ctrlKey) return // Не реагируем на сочетание ctrl+A
+      if (event.ctrlKey) return // Not responding to ctrl+A
 
-      // Меняем на противоположное значение
+      // Change to the opposite value
       if (settings.audio.LFO.enabled === true) {
         mutations.audio.setLFOParameter('enabled', 'false')
         LFOElement.querySelector('#lfo-on').checked = false
@@ -929,7 +926,7 @@ document.addEventListener('keydown', (event) => {
 
       break
     case 'KeyS':
-      // Если дошли до конца списка
+      // If getting to the end of the list
       if (LFOElement.querySelector('.lfo-wave').options.selectedIndex + 1 === LFOElement.querySelector('.lfo-wave').options.length) LFOElement.querySelector('.lfo-wave').options.selectedIndex = -1
       mutations.audio.setLFOParameter('type', LFOElement.querySelector('.lfo-wave').options[++LFOElement.querySelector('.lfo-wave').options.selectedIndex].text)
       break

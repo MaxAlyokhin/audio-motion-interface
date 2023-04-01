@@ -7,9 +7,9 @@ let squareWave = null
 let sawtoothWave = null
 let compressor = null
 
-// Стандартные square и sawtooth осцилляторы слишком резко меняют свои значения,
-// из-за чего возникают щелчки
-// Этот баг фиксится через кастомные формы волн
+// The standard square and sawtooth oscillators change their values too sharply,
+// which causes a clicking sound
+// This bug is fixed via custom waveforms
 const fourierCoefficients = {
   square: {
     real: [
@@ -466,7 +466,7 @@ const fourierCoefficients = {
 }
 
 export function audioInit() {
-  // // Проверяем поддержку контекста браузером
+  // Checking context support in the browser
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)()
   } catch (error) {
@@ -476,59 +476,60 @@ export function audioInit() {
   squareWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.square.real), Float32Array.from(fourierCoefficients.square.imag))
   sawtoothWave = audioContext.createPeriodicWave(Float32Array.from(fourierCoefficients.sawtooth.real), Float32Array.from(fourierCoefficients.sawtooth.imag))
 
-  // Все осцилляторы будут подключаться к одному компрессору
+  // All oscillators will be connected to the same compressor
   compressor = audioContext.createDynamicsCompressor()
   compressor.connect(audioContext.destination)
 }
 
-// Определяем массив нот в рамках равномерной темперации
+// Determine the array of notes within a equal temperament
 notesInit()
 
-// Генерируемая частота звука и html-элемент, куда будем её записывать
+// The generated sound frequency and the html element where we will write it
 let frequency = null
-let previousFrequency = null // Для более эффективной работы с обновлением DOM
+let previousFrequency = null // To work more efficiently with DOM updates
 const frequencyElement = document.querySelector('.motion__frequency')
 
-const countElement = document.querySelector('.motion__count') // Количество осцилляторов
+const countElement = document.querySelector('.motion__count') // The number of oscillators
 const isAudioElement = document.querySelector('.motion__is-audio')
-const containerElement = document.querySelector('.container') // body для анимирования по сбросу осцилляторов
+const containerElement = document.querySelector('.container') // For animation by resetting oscillators
 
-let oscillatorArray = [] // Массив осцилляторов
-let biquadFilterArray = [] // Массив фильтров
-let LFOArray = [] // Массив осцилляторов
-let LFOGainArray = [] // Массив фильтров
-let envelopeArray = [] // Массив ручек громкости, реализующих огибающую (envelope)
-let masterGainArray = [] // Ручка громкости, управляемая LFO
-let motionIsOff = true // Маркер последнего события движения
+// All elements of batches are grouped into separate arrays
+let oscillatorArray = []
+let biquadFilterArray = []
+let LFOArray = []
+let LFOGainArray = []
+let envelopeArray = [] // Array of volume knobs that implement the envelope
+let masterGainArray = [] // Volume knob controlled by LFO
+let motionIsOff = true // Marker for the last motion event
 
-// Для кнопки очистки осцилляторов
-// Массив таймаутов в конце функции audio(), по которым очищаются массивы
+// For the oscillator reset button
+// Array of timeouts at the end of the audio() function, by which the arrays are cleared
 let motionTimeoutArray = []
-// Для 2ух-секундной блокировки интерфеса
-// (функционально в этом нет особого смысла, но для UX это создаёт впечатление перезапуска системы)
+// For a 2-second interfacing lock
+// (functionally it does not make much sense, but for UX it gives the impression of restarting the system)
 let interfaceIsBlocked = false
 
-// Таймаут срабатывания системы
+// System timeout
 let audioTimeoutIsOff = true
 
-// Кнопка очистки осцилляторов
+// Oscillator reset button
 document.querySelector('.off').addEventListener('change', function () {
   containerElement.classList.add('inactive')
 
-  motionIsOff = true // Заканчиваем последнее движение
-  interfaceIsBlocked = true // Блокируем интерфейс
+  motionIsOff = true // Finishing the last movement
+  interfaceIsBlocked = true // Locking the interface
 
-  // Очищаем таймауты в конце функции audio()
+  // Clear the timeouts at the end of the audio() function
   motionTimeoutArray.forEach((timeout) => {
     clearTimeout(timeout)
   })
 
-  // Останавливаем осцилляторы
+  // Stopping the oscillators
   oscillatorArray.forEach((oscillator) => {
     oscillator.stop()
   })
 
-  // Очищаем систему от всех элементов графа
+  // Clear the system from all elements of the graph
   oscillatorArray.length = 0
   biquadFilterArray.length = 0
   envelopeArray.length = 0
@@ -539,12 +540,12 @@ document.querySelector('.off').addEventListener('change', function () {
     masterGainArray.length = 0
   }
 
-  // Отображаем обнулённый счётчик осцилляторов
+  // Display the zeroed oscillator counter
   settings.ui.lite ? false : (countElement.textContent = oscillatorArray.length)
   isAudioElement.textContent = 'false'
   isAudioElement.classList.remove('motion__is-audio--yes')
 
-  // Приводим интерфейс в исходную
+  // Bringing the interface back to its original state
   setTimeout(() => {
     containerElement.classList.remove('inactive')
     this.querySelector('#off').checked = false
@@ -552,19 +553,6 @@ document.querySelector('.off').addEventListener('change', function () {
   }, 2000)
 })
 
-// Граф - это осциллятор => фильтр => громкость
-// Событие движения - js-событие, генерируемое каждые 16мс смартфоном, содержащее параметры движения
-// События возникают даже в состоянии покоя - в этом случае параметры движения нулевые
-// Отсечка - минимальная скорость движения, при которой заводится система
-// Жест - набор событий движения от превышения отсечки до значения ниже отсечки
-// Каждому жесту соответствует свой осциллятор
-
-// У нас есть массив осцилляторов (вернее массивы элементов-узлов графа)
-// При превышении отсечки мы можем сказать, что движение началось
-// При скорости ниже отсечки мы можем сказать, что движение закончилось,
-// отследив что это последнее событие движения в череде событий с помощью маркера motionIsOff.
-
-// Функция обновляет параметры компрессора
 export function updateCompressorSettings({ threshold, knee, ratio, attack, release }) {
   compressor.threshold.setValueAtTime(threshold, audioContext.currentTime)
   compressor.knee.setValueAtTime(knee, audioContext.currentTime)
@@ -573,6 +561,7 @@ export function updateCompressorSettings({ threshold, knee, ratio, attack, relea
   compressor.release.setValueAtTime(release, audioContext.currentTime)
 }
 
+// The functions update the corresponding system parameters. They are needed to change settings on the fly when cutoff === 0
 export function updateOscillatorWaveType(type) {
   if (oscillatorArray[oscillatorArray.length - 1]) oscillatorArray[oscillatorArray.length - 1].type = type
 }
@@ -605,9 +594,7 @@ export function updateLFODepth(depth) {
   if (LFOArray[LFOArray.length - 1]) LFOGainArray[LFOGainArray.length - 1].gain.value = depth
 }
 
-let previousMotionMaximum = 0
-
-// Управление громкостью
+// Volume control
 function setGain(motionMaximum) {
   if (settings.audio.attack) {
     envelopeArray[envelopeArray.length - 1].gain.linearRampToValueAtTime(settings.audio.gain, audioContext.currentTime + settings.audio.attack)
@@ -618,32 +605,38 @@ function setGain(motionMaximum) {
   }
 }
 
-// Функция вызывается ≈ каждые 16мс (в Chrome, в Firefox раз в 100мс)
+// We have an array of oscillators (or rather arrays of graph node elements)
+// When the cutoff is exceeded, we can say that the movement has begun
+// At speeds below the cutoff, we can say that the movement is over,
+// by checking that it is the last motion event in the sequence of events using the motionIsOff token.
+
+let previousMotionMaximum = 0
+
+// The function is called ≈ every 16ms (in Chrome, in Firefox every 100ms)
 export function audio(motion) {
-  // Определяем частоту и ноту
-  // Делаем это даже ниже отсечки, чтобы можно было попасть в нужную ноту
-  // до начала синтеза звука
+  // Define the frequency and the note
+  // Do it even below the cutoff, so we can hit the right note before sound synthesis begins
   if (settings.audio.frequencyRegime === 'continuous') {
-    // Экспоненциально - градусы положения в степени log диапазона (разницы значений) по основанию 180 (максимальное значение гироскопа) + минимальное значение
+    // Exponential — degrees of position in degree log range (value difference) on the basis of 180 (maximum gyroscope value) + minimum value
     frequency = toFixedNumber(Math.pow(motion.orientation, Math.log(settings.audio.frequenciesRange.to - settings.audio.frequenciesRange.from) / Math.log(180)) + settings.audio.frequenciesRange.from, 4)
   }
   if (settings.audio.frequencyRegime === 'tempered') {
-    // Начиная с from в звукоряде наверх (to - from) нот по 180 градусам распределяем
+    // Starting from 'from' in the chord upwards (to — from) notes by 180 degrees
     frequency = notes[settings.audio.notesRange.from + Math.floor(motion.orientation * ((settings.audio.notesRange.to - settings.audio.notesRange.from) / 180))]
   }
 
-  // Обновляем DOM только при изменении значения
+  // Update the DOM only when the value changes
   if (previousFrequency !== frequency) {
     settings.ui.lite ? false : (frequencyElement.textContent = frequency)
     previousFrequency = frequency
   }
 
-  // Переводим частоту в ноту
+  // Translate frequency into a note
   pitchDetection(frequency)
 
-  // Отсечка превышена - движение началось
+  // Cutoff is exceeded — the movement has begun
   if (motion.isMotion && !interfaceIsBlocked && audioTimeoutIsOff) {
-    // Собираем граф, делаем это только один раз в начале движения
+    // Build the graph, do it only once at the beginning of the movement
     if (motionIsOff) {
       motionIsOff = false
 
@@ -685,32 +678,32 @@ export function audio(motion) {
           LFOArray[LFOArray.length - 1].type = settings.audio.LFO.type
         }
 
-        LFOArray[LFOArray.length - 1].frequency.value = settings.audio.LFO.rate // Сколько раз в секунду изменяется значение
-        LFOGainArray[LFOGainArray.length - 1].gain.value = settings.audio.LFO.depth // Регулятор силы изменения от 0 до 1
+        LFOArray[LFOArray.length - 1].frequency.value = settings.audio.LFO.rate // How many times per second does the value change
+        LFOGainArray[LFOGainArray.length - 1].gain.value = settings.audio.LFO.depth // Force controller from 0 to 1
 
         LFOArray[LFOArray.length - 1].start()
       } else {
         envelopeArray[envelopeArray.length - 1].connect(compressor)
       }
 
-      // Изначальная громкость минимальна
+      // Initial volume is minimal
       envelopeArray[envelopeArray.length - 1].gain.setValueAtTime(0, audioContext.currentTime)
 
       oscillatorArray[oscillatorArray.length - 1].start()
     }
 
-    // Здесь во время движения мы управляем поведением последнего собранного графа (length - 1 это последний элемент массивов)
-    // Динамически настраиваем граф - он обновляется по каждому событию движения
+    // While moving here, we control the behavior of the last builded graph (length - 1 is the last element of the arrays)
+    // Dynamically configure the graph — it is updated for each motion event
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
 
-    // Режим отсечки не полный
+    // Cutoff mode is not full
     if (settings.motion.thresholdType !== 'full') {
-      // Каждый жест в конце своего движения замедляется
-      // Это приводит к тому, что середина звука может быть громкой, а конец очень тихим
-      // Мы можем поймать замедление движения и интерпретировать как конец жеста
-      // Тогда осциллятор будет обрываться на пике скорости
+      // Each gesture at the end of its movement slows down
+      // This causes the middle of the sound to be loud and the end to be very quiet
+      // We can catch the slowing motion and interpret it as the end of the gesture
+      // Then the oscillator will stop at the velocity peak
 
-      // Как только движение замедлится, поднять флаги и отключить осциллятор
+      // As soon as the movement slows down, raise the flags and turn off the oscillator
       if (motion.maximum <= previousMotionMaximum) {
         motionIsOff = false
         audioTimeoutIsOff = false
@@ -718,37 +711,36 @@ export function audio(motion) {
         previousMotionMaximum = motion.maximum
       }
     } else {
-      setGain(motion.maximum) // Включаем звук
+      setGain(motion.maximum)
     }
 
   }
-  // Если оказались ниже отсечки, а до этого были выше (motionIsOff === false),
-  // значит мы поймали последнее событие движения (движение остановлено).
-  // Тогда планируем затухание сигнала и удаление графа
+  // If it is below the cutoff and was above (motionIsOff === false),
+  // it means that we catch the last motion event (motion stopped).
+  // Then schedule sound attenuation and graph removal
   else if (!motionIsOff) {
-    motionIsOff = true // Движение закончено
-    audioTimeoutIsOff = false // Ставим таймаут от случайных движений после этого
+    motionIsOff = true // The movement is over
+    audioTimeoutIsOff = false // Put a timeout against accidental movements after that
 
     if (settings.motion.thresholdType !== 'full') {
-      setGain(previousMotionMaximum) // Включаем звук
+      setGain(previousMotionMaximum)
       previousMotionMaximum = 0
     }
 
+    // +10ms to have time to setTargetAtTime in setGain()
     const end = audioContext.currentTime + settings.audio.release + settings.audio.attack + 0.01
 
-    // Планируем затухание громкости и остановку осциллятора
-    // последних элементов в массивах на момент остановки движения
-    // +10мс чтобы успеть setTargetAtTime в setGain()
+    // Schedule the volume decay and oscillator stop and for
+    // the last elements in the arrays at the moment of stopping the movement
     setTimeout(() => {
       envelopeArray[envelopeArray.length - 1].gain.exponentialRampToValueAtTime(settings.audio.attenuation, end)
     }, 10)
 
-    // + 0.1 это время полного погашения громкости на setTargetAtTime с запасом
     if (settings.audio.LFO.enabled) LFOArray[LFOArray.length - 1].stop(end)
     oscillatorArray[oscillatorArray.length - 1].stop(end)
 
-    // Планируем удаление этих элементов, они будут первыми с массивах
-    // на момент вызова таймаута
+    // Schedule the removal of these elements, they will be the first in the arrays
+    // at the time of the timeout call
     motionTimeoutArray.push(
       setTimeout(() => {
         oscillatorArray.shift()

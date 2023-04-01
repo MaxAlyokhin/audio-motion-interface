@@ -6,7 +6,7 @@ const exportElement = document.querySelector('.export')
 
 const reader = new FileReader()
 
-// Функция полностью валидирует пришедший объект от клиента
+// The function fully validates the incoming object from the client
 function checkSettings(settingsFromClient) {
   if (!settingsFromClient.motion) throw new Error('AMI settings file validation error: motion object invalid or missing')
   if (!(typeof settingsFromClient.motion.threshold === 'number' && settingsFromClient.motion.threshold >= 0)) throw new Error('AMI settings file validation error: motion.threshold invalid or missing')
@@ -110,7 +110,7 @@ function exportJSON(settings) {
 
 export function settingsExchangeInit() {
   importElement.addEventListener('change', (event) => {
-    if (event.target.files.length === 0) return // Проверка, что файл вообще загрузили
+    if (event.target.files.length === 0) return // Checking that the file has been uploaded
     importJSON(event.target.files[0])
   })
 

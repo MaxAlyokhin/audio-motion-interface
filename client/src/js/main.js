@@ -9,11 +9,11 @@ languageInit()
 settingsExchangeInit()
 
 window.addEventListener('load', () => {
-  // Показываем контент
+  // Showing content
   document.querySelector('body').style.transition = 'all 1000ms cubic-bezier(0.83, 0, 0.17, 1)'
   document.querySelector('body').style.opacity = 1
 
-  // Кнопка Run запускает алгоритм
+  // The Run button starts the system
   document.querySelector('.button.run').addEventListener(
     'click',
     function () {
@@ -23,7 +23,7 @@ window.addEventListener('load', () => {
       motionInit()
 
     },
-    { once: true } // Сработает только один раз
+    { once: true } // Only works once
   )
 
   document.querySelector('.button.run').addEventListener(
@@ -41,7 +41,7 @@ window.addEventListener('load', () => {
     setTimeout(() => { document.querySelector('.cover').style.opacity = 1 })
   })
 
-  // Вывод ошибок на экран
+  // Displaying errors on the screen
   let errorElement = document.querySelector('.errors')
   window.addEventListener('error', (event) => {
     errorElement.innerHTML += `

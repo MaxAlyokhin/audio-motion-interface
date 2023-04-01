@@ -1,7 +1,7 @@
 import { div, getNearbyValues, toFixedNumber } from './helpers'
 import { settings } from './settings'
 
-export const notes = [] // Вычисленный звукоряд
+export const notes = [] // Calculated scale
 let tunerActualElement = document.querySelector('.tuner__actual')
 let percent = null
 let nearbyValues = null
@@ -10,56 +10,56 @@ let actualNote = null
 let previousNote = null
 
 /**
- * Генерирует звукоряд
- * @param {Number} root - базовая частота, самая низкая частота
- * @param {Number} octaveAmount - количество октав
- * @param {Number} tonesInOctaveAmount - количество тонов (нот) в октаве
- * @return {Array} tonesArray - массив тонов (звукоряд)
+ * Generates a scale
+ * @param {Number} root - base frequency, lowest frequency
+ * @param {Number} octaveAmount - octave number
+ * @param {Number} tonesInOctaveAmount - number of tones (notes) in an octave
+ * @return {Array} tonesArray - tones array (scale)
  */
 
 export function notesInit(root = 8.1757, octaveAmount = 11, tonesInOctaveAmount = 12) {
-  let tonesAmount = octaveAmount * tonesInOctaveAmount // Количество тонов
+  let tonesAmount = octaveAmount * tonesInOctaveAmount // Number of tones
 
   for (let i = 0; i < tonesAmount; i++) {
-    notes[i] = toFixedNumber(root * 2 ** (i / tonesInOctaveAmount)) // Формируем равномерно темперированный звукоряд
+    notes[i] = toFixedNumber(root * 2 ** (i / tonesInOctaveAmount)) // Forming an equal tempered scale
   }
 }
 
 /**
- * Определяет имя ноты через частоту
- * @param {Number} frequency - частота
- * @return {String} noteName - имя ноты
+ * Defines the name of the note through the frequency
+ * @param {Number} frequency - frequency
+ * @return {String} noteName - note name
  */
 
 const notesNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 export function getNoteName(frequency) {
-  // Находим индекс в массиве нот
+  // Find the index in the array of notes
   const notesIndex = notes.indexOf(frequency)
 
-  // Если такого значения в массиве нет, значит мы звучим за диапазоном нот
+  // If there is no such value in the array, then we are sounding beyond the range of notes
   if (notesIndex < 0) {
     return
   }
 
-  // Номер октавы
+  // Octave No.
   const octave = div(notesIndex, 12) - 1
-  // Порядковый номер ноты в рамках октавы
-  // Например, D === 3 (C - C# - D)
+  // The order number of the note within an octave
+  // For example, D === 3 (C - C# - D)
   const noteNumberOnOctave = notesIndex + 1 - 12 * (octave + 1)
-  // Собираем название ноты вместе с номером октавы
+  // Assemble the name of the note together with the octave No.
   const noteName = notesNames[noteNumberOnOctave - 1] + String(octave)
 
   return noteName
 }
 
-// Функция приводит звучащий звук к ближайшей ноте
+// The function brings the sound to the nearest note
 export function pitchDetection(frequency) {
   nearbyValues = getNearbyValues(frequency, notes)
 
-  // В темперированном режиме сразу выводим имя ноты
-  // В непрерывном находим вышестоящую ноту и считаем проценты от нашего положения
-  // на отрезке между соседними нотами
-  // Обновляем DOM только при изменении значения
+  // In tempered mode, immediately display the name of the note
+  // In the continuous mode we find the higher note and count the percentage of our position
+  // on the segment between neighboring notes
+  // Update the DOM only when the value changes
   if (settings.audio.frequencyRegime === 'tempered') {
     actualNote = getNoteName(frequency)
 

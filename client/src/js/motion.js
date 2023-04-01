@@ -1,11 +1,11 @@
-// Модуль:
-// - определяет наличие датчиков
-// - инициализирует объект движения
-// - вешает обработчик onMotion() на события движения
+// This module:
+// - detects the availability of sensors
+// - initializes the motion object
+// - hangs the onMotion() handler on motion events
 
 // onMotion():
-// - генерирует объект движения по каждому событию движения
-// - определяет, отдавать ли объект движения в вебсокет или отдавать его в обработчик аудио
+// - generates a motion object for each motion event
+// - determines whether to give the motion object to the websocket or to give it to the audio handler
 
 import QRious from 'qrious'
 import fscreen from 'fscreen'
@@ -19,18 +19,18 @@ import { socket, socketInit, socketIsInit } from './websocket'
 import { language } from './language'
 import { latency } from './latency'
 
-export let clientsCount = null // Количество подключений
+export let clientsCount = null // Number of connections
 
 export function motionInit() {
 
-  // Инициализируем объект движения
+  // Initializing a motion object
   let motion = {
     alpha: 0,
     beta: 0,
     gamma: 0,
-    maximum: 0, // Максимальное значение акселерометра по трём осям
+    maximum: 0, // Maximum value of accelerometer on three axes
     maximumOnSession: 0,
-    isMotion: false, // Маркер того, сработал ли датчик выше отсечки threshold
+    isMotion: false, // A flag of whether the sensor is triggered above the cutoff
     orientation: 0,
   }
 
@@ -38,7 +38,7 @@ export function motionInit() {
   let previousOrientation = null
   let previousIsMotion = null
 
-  // HTML-элементы, где будут отображаться эти значения
+  // HTML elements where these values will be displayed
   const motionElement = document.querySelector('.motion')
   const alphaElement = document.querySelector('.motion__alpha')
   const betaElement = document.querySelector('.motion__beta')
@@ -51,18 +51,18 @@ export function motionInit() {
   const qrElement = document.querySelector('.qr')
   const rootElement = document.querySelector('html')
 
-  // По первому событию движения мы можем однозначно определить
-  // в смартфоне мы находимся или на десктопе (event.acceleration === null)
-  // Изначально мы не знаем, где находимся
+  // From the first motion event we can unambiguously determine
+  // in the smartphone or on the desktop we are (event.acceleration === null)
+  // Initially, we don't know where we are
   let receiverRegimeIsInit = false
 
-  // Fullscreen маркер
+  // Fullscreen flag
   let fullscreenIsOn = false
 
-  // Функция вызывается по каждому событию движения
+  // The function is called for each motion event
   function onMotion(event) {
     if (receiverRegimeIsInit === false) {
-      // Включаем фронтэнд для смартфона
+      // Switching on the frontend for the smartphone
       document.querySelectorAll('.desktop').forEach((element) => {
         element.style.display = 'none'
       })
@@ -79,11 +79,11 @@ export function motionInit() {
           }
         })
       } else {
-        // Если фуллскрин не поддерживается, то убираем кнопку
+        // If fullscreen is not supported, remove the button
         document.querySelector('.title__fullscreen').style.display = 'none'
       }
 
-      // Включаем гироскоп
+      // Turning on the gyroscope
       orientationInit()
 
       receiverRegimeIsInit = true
@@ -93,22 +93,22 @@ export function motionInit() {
     motion.beta = Math.abs(toFixedNumber(event.acceleration.y, 1))
     motion.gamma = Math.abs(toFixedNumber(event.acceleration.z, 1))
 
-    // Здесь у нас сводятся все движения к наибыстрейшему
-    // Также отсекаем отрицательные значения, т.к. нас интересует сам факт движения
+    // Here we have all the movements reduced to the fastest
+    // We also discard negative values, since we are interested in the fact of movement
     motion.maximum = Math.max(motion.alpha, motion.beta, motion.gamma)
 
     motion.orientation = orientation
-    // Обновляем DOM только при изменении значения
+    // Update the DOM only when the value changes
     if (previousOrientation !== motion.orientation && motion.orientation !== false) {
       settings.ui.lite ? false : (orientationElement.textContent = motion.orientation)
       previousOrientation = motion.orientation
     }
 
-    // Здесь отсекаем часть событий ниже порога threshold
+    // Here we discard the part of events below the threshold
     if (motion.maximum >= settings.motion.threshold && motion.orientation !== false) {
       motion.isMotion = true
 
-      // Сравниваем с предыдущим значением и находим наибольшее
+      // We compare with the previous value and find the largest
       previousMaximumMotion = motion.maximum > previousMaximumMotion ? motion.maximum : previousMaximumMotion
 
       motion.maximumOnSession = previousMaximumMotion
@@ -126,11 +126,11 @@ export function motionInit() {
         isMotionElement.classList.add('motion--yes')
       }
 
-      // Генерируем звук на смартфоне
+      // Generating sound on a smartphone
       if (settings.audio.synthesisRegime === 'local') {
         audio(motion)
       }
-      // Либо отдаём в вебсокет для десктопа
+      // Or we give it to a websocket for the desktop
       if (settings.audio.synthesisRegime === 'remote') {
         audio(motion)
         if (socketIsInit) {
@@ -145,7 +145,7 @@ export function motionInit() {
       }
       isMotionElement.classList.remove('motion--yes')
 
-      // Здесь тоже вызываем с isMotion = false, чтобы закончить работу осциллятора
+      // Here, too, we call with isMotion = false to end the oscillator
       if (settings.audio.synthesisRegime === 'local') {
         audio(motion)
       }
@@ -159,13 +159,13 @@ export function motionInit() {
   }
 
   if (device.desktop()) {
-    // Фронтэнд для десктопа
+    // Frontend for the desktop
     document.querySelectorAll('.mobile').forEach((element) => {
       element.style.display = 'none'
     })
     document.querySelector('.info').style.display = 'block'
 
-    // Генерируем QR-код для попапа
+    // Generating a QR-code for a popup
     fetch(`/hostname`)
       .then((response) => {
         if (response.status !== 200) {
@@ -173,7 +173,7 @@ export function motionInit() {
           return
         }
 
-        // Если всё в порядке, то парсим ответ
+        // If all is well, we parse the response
         response.text().then((data) => {
           new QRious({
             element: document.querySelector('.qr__code'),
@@ -191,17 +191,17 @@ export function motionInit() {
         throw new Error('Server connection error. Check the Internet connection.')
       })
 
-    // Вешаем обработчик на кнопку показа попапа с QR-кодом
+    // Hang the handler on the button of QR-code popup
     document.querySelector('.title__qr').addEventListener('click', () => {
       qrElement.classList.toggle('qr--show')
     })
 
-    // Включаем сокет, чтобы слушать внешние события движения
+    // Enabling the socket to listen to external motion events
     socketInit()
 
     socket.connect()
 
-    // Вешаем слушатели вебсокет-событий
+    // Hanging listeners of websocket events
     socket.on('connect', () => {
       connectionsToServer.textContent = language.connection.ready
       connectionsToServer.classList.remove('connections--wait', 'connections--error')
@@ -218,7 +218,7 @@ export function motionInit() {
 
       clientsCount = clientsSize
 
-      // Если остались только мы сами
+      // If we are the only ones left
       if (clientsSize === 1) {
         connectionsStatus.textContent = language.connection.waiting
         connectionsStatus.classList.remove('connections--ready')
@@ -227,14 +227,14 @@ export function motionInit() {
         qrElement.classList.add('qr--show')
       }
       if (clientsSize > 1) {
-        // Минус наше устройство
+        // Minus our device
         connectionsStatus.textContent = `${language.connection.connected} (${clientsSize - 1})`
         connectionsStatus.classList.remove('connections--wait')
         connectionsStatus.classList.add('connections--ready')
         motionElement.classList.remove('inactive')
         qrElement.classList.remove('qr--show')
 
-        // При подключении смартфона к десктопу настройки десктопа переписывают настройки смартфона
+        // When connecting a smartphone to the desktop, the desktop settings overwrite the smartphone settings
         settings.audio.synthesisRegime = 'remote'
         socket.emit('settings message', settings)
       }
@@ -242,10 +242,10 @@ export function motionInit() {
 
     latency('desktop')
 
-    // По обновлению объекта движения
+    // On motion object update
     socket.on('motion message', (motion) => {
 
-      // Обновляем DOM только при изменении значения
+      // Update the DOM only when the value changes
       if (previousIsMotion !== motion.isMotion) {
         settings.ui.lite ? false : (isMotionElement.textContent = motion.isMotion)
         previousIsMotion = motion.isMotion
@@ -270,32 +270,32 @@ export function motionInit() {
 
       audio(motion)
     })
-    // По обновлению объекта настроек
+    // To update the settings object
     socket.on('settings message', (settingsData) => {
-      Object.assign(settings, settingsData) // Обновляем объект
-      syncSettingsFrontend(settingsData) // Обновляем input-поля
+      Object.assign(settings, settingsData) // Updating an object
+      syncSettingsFrontend(settingsData) // Updating input fields
     })
 
     receiverRegimeIsInit = true
 
   } else if (device.mobile()) {
-    // Проверяем наличие акселерометра на устройстве
+    // Checking the accelerometer on the device
     // iOS 13
     if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
       DeviceMotionEvent.requestPermission()
         .then((response) => {
           if (response == 'granted') {
-            // Если разрешили, то вешаем соответствующий обработчик
+            // If allowed, hang the corresponding handler
             window.addEventListener('devicemotion', onMotion)
           }
         })
         .catch(console.error)
     }
-    // iOS 12 и Android
+    // iOS 12 and Android
     else if ('ondevicemotion' in window) {
       window.addEventListener('devicemotion', onMotion)
     }
-    // Нет акселерометра
+    // No accelerometer
     else {
       document.querySelector('#motionSupported').innerHTML = 'Error: accelerometer is not supported.<br>Ошибка: акселерометр не поддерживается.<br>'
     }

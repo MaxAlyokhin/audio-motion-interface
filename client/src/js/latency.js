@@ -3,11 +3,11 @@ import { toFixedNumber } from './helpers'
 import { socket, socketIsInit } from './websocket'
 
 /**
- * Вычисляет задержку звука
- * На смартфоне она равна audioContext.outputLatency
- * На десктопе она равна audioContext.outputLatency + время передачи данных от смартфона
- * @param {String} device - тип устройства (смартфон или десктоп)
- * @return {Number} latency - задержка
+ * Calculates the sound latency
+ * On the smartphone it is equal to audioContext.outputLatency
+ * On the desktop it is equal to audioContext.outputLatency + the data transmission time from the smartphone
+ * @param {String} device - device type (smartphone or desktop)
+ * @return {Number} latency
  */
 
 const latencyElement = document.querySelector('.latency__amount')
@@ -18,12 +18,12 @@ let intervalIsInit = false
 export function latency(device) {
   if (device === 'desktop') {
 
-    // Периодически отправляем ping с временем десктопа
+    // Periodically send a ping with the desktop time
     setInterval(() => {
       socket.emit('ping', Date.now())
     }, updateFrequency)
 
-    // Со смартфона возвращается pong с тем же временем десктопа
+    // From the smartphone returns pong with the same desktop time
     socket.on('pong', (dateOfPing) => {
       latencyElement.textContent = (Date.now() - dateOfPing) / 2 + toFixedNumber(audioContext.outputLatency, 3) * 1000
     })
@@ -31,8 +31,8 @@ export function latency(device) {
 
   if (device === 'mobile') {
     if (socketIsInit) {
-      // Пришёл пинг с декстопа с таймстемпом
-      // Возвращаем его обратно десктопу
+      // A ping came from the desktop with timestamp
+      // Bringing it back to the desktop
       socket.on('ping', (dateFromDesktop) => {
         socket.emit('pong', dateFromDesktop)
       })
@@ -40,7 +40,7 @@ export function latency(device) {
 
     if (!intervalIsInit) {
       intervalIsInit = true
-      // Пишем задержку в DOM
+      // Writing a latency in the DOM
       setInterval(() => {
         latencyElement.textContent = toFixedNumber(audioContext.outputLatency, 3) * 1000
       }, updateFrequency)
