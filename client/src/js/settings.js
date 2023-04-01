@@ -95,7 +95,7 @@ export const settings = {
   },
 }
 
-// Controller aka Viewmodel
+// Controller
 
 // Мутации
 // Изменяют как стейт, так и обновляют представление
@@ -120,8 +120,8 @@ export const mutations = {
     syncSettings()
   },
 
-  setInterfaceRegime: () => {
-    settings.ui.interfaceRegime = !settings.ui.interfaceRegime
+  setInterfaceRegime: (flag) => {
+    settings.ui.interfaceRegime = flag
 
     if (settings.ui.interfaceRegime) {
       interfaceRegimeOnElement.style.opacity = 0
@@ -565,6 +565,7 @@ export function settingsInit() {
       socket.on('settings message', (settingsData) => {
         Object.assign(settings, settingsData) // Обновляем объект
         syncSettingsFrontend(settingsData) // Обновляем input-поля
+        syncLocalStorage(settingsData)
       })
 
       // Вешаем слушатели вебсокет-событий
@@ -691,7 +692,7 @@ export function settingsInit() {
 
   // Выключение интерфейса управления
   interfaceRegimeElement.addEventListener('click', function () {
-    mutations.setInterfaceRegime()
+    mutations.setInterfaceRegime(false)
   })
 
   // Перемещение кнопки включения интерфейса
@@ -710,7 +711,7 @@ export function settingsInit() {
     }, 200)
 
     if (event.changedTouches[0].clientY < 75) {
-      mutations.setInterfaceRegime()
+      mutations.setInterfaceRegime(true)
     }
   })
 
