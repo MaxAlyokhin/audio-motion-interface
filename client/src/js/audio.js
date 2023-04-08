@@ -561,39 +561,6 @@ export function updateCompressorSettings({ threshold, knee, ratio, attack, relea
   compressor.release.setValueAtTime(release, audioContext.currentTime)
 }
 
-// The functions update the corresponding system parameters. They are needed to change settings on the fly when cutoff === 0
-export function updateOscillatorWaveType(type) {
-  if (oscillatorArray[oscillatorArray.length - 1]) oscillatorArray[oscillatorArray.length - 1].type = type
-}
-
-export function updateFilterFrequency(frequency) {
-  if (biquadFilterArray[biquadFilterArray.length - 1]) biquadFilterArray[biquadFilterArray.length - 1].frequency.value = frequency
-}
-
-export function updateFilterQ(value) {
-  if (biquadFilterArray[biquadFilterArray.length - 1]) biquadFilterArray[biquadFilterArray.length - 1].Q.value = value
-}
-
-export function updateLFOType(type) {
-  if (LFOArray[LFOArray.length - 1]) {
-    if (type === 'square') {
-      LFOArray[LFOArray.length - 1].setPeriodicWave(squareWave)
-    } else if (type === 'sawtooth') {
-      LFOArray[LFOArray.length - 1].setPeriodicWave(sawtoothWave)
-    } else {
-      LFOArray[LFOArray.length - 1].type = type
-    }
-  }
-}
-
-export function updateLFORate(rate) {
-  if (LFOArray[LFOArray.length - 1]) LFOArray[LFOArray.length - 1].frequency.value = rate
-}
-
-export function updateLFODepth(depth) {
-  if (LFOArray[LFOArray.length - 1]) LFOGainArray[LFOGainArray.length - 1].gain.value = depth
-}
-
 // Volume control
 function setGain(motionMaximum) {
   if (settings.audio.attack) {
@@ -695,6 +662,22 @@ export function audio(motion) {
     // While moving here, we control the behavior of the last builded graph (length - 1 is the last element of the arrays)
     // Dynamically configure the graph — it is updated for each motion event
     oscillatorArray[oscillatorArray.length - 1].frequency.value = frequency
+    oscillatorArray[oscillatorArray.length - 1].type = settings.audio.oscillatorType
+    biquadFilterArray[biquadFilterArray.length - 1].frequency.value = settings.audio.biquadFilterFrequency
+    biquadFilterArray[biquadFilterArray.length - 1].Q.value = settings.audio.biquadFilterQ
+
+    if (LFOArray[LFOArray.length - 1]) {
+      if (settings.audio.LFO.type === 'square') {
+        LFOArray[LFOArray.length - 1].setPeriodicWave(squareWave)
+      } else if (settings.audio.LFO.type === 'sawtooth') {
+        LFOArray[LFOArray.length - 1].setPeriodicWave(sawtoothWave)
+      } else {
+        LFOArray[LFOArray.length - 1].type = settings.audio.LFO.type
+      }
+
+      LFOArray[LFOArray.length - 1].frequency.value = settings.audio.LFO.rate
+      LFOGainArray[LFOGainArray.length - 1].gain.value = settings.audio.LFO.depth
+    }
 
     // Cutoff mode is not full
     if (settings.motion.thresholdType !== 'full') {
