@@ -3,7 +3,7 @@
 // Mutations are triggered by events in the interface
 // and synchronize settings over a websocket with the remote desktop
 
-import { updateCompressorSettings, updateFilterFrequency, updateFilterQ, updateLFODepth, updateLFORate, updateLFOType, updateOscillatorWaveType } from './audio'
+import { updateCompressorSettings } from './audio'
 import { toFixedNumber } from './helpers'
 import { language } from './language'
 import { latency } from './latency'
@@ -178,7 +178,6 @@ export const mutations = {
   audio: {
     setWaveType: (waveType) => {
       settings.audio.oscillatorType = String(waveType)
-      updateOscillatorWaveType(String(waveType))
       syncSettings()
     },
 
@@ -206,7 +205,6 @@ export const mutations = {
         settings.audio.biquadFilterFrequency = biquadFilterFrequency
       }
 
-      updateFilterFrequency(settings.audio.biquadFilterFrequency)
       syncSettings()
     },
 
@@ -221,7 +219,6 @@ export const mutations = {
         settings.audio.biquadFilterQ = biquadFilterQ
       }
 
-      updateFilterQ(settings.audio.biquadFilterQ)
       syncSettings()
     },
 
@@ -425,7 +422,6 @@ export const mutations = {
             settings.audio.LFO.rate = value
           }
 
-          updateLFORate(settings.audio.LFO.rate)
           break
 
         case 'depth':
@@ -439,7 +435,6 @@ export const mutations = {
             settings.audio.LFO.depth = value
           }
 
-          updateLFODepth(settings.audio.LFO.depth)
           break
 
         case 'enabled':
@@ -448,8 +443,6 @@ export const mutations = {
 
         case 'type':
           settings.audio.LFO.type = value
-
-          updateLFOType(value)
           break
       }
 
