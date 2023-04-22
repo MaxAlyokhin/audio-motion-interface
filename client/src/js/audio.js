@@ -468,7 +468,7 @@ const fourierCoefficients = {
 export function audioInit() {
   // Checking context support in the browser
   try {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
   } catch (error) {
     window.alert(`Браузер не поддерживается / Browser is not support`)
   }

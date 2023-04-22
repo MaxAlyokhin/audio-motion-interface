@@ -25,7 +25,7 @@ export function latency(device) {
 
     // From the smartphone returns pong with the same desktop time
     socket.on('pong', (dateOfPing) => {
-      latencyElement.textContent = (Date.now() - dateOfPing) / 2 + toFixedNumber(audioContext.outputLatency, 3) * 1000
+      latencyElement.textContent = `${(Date.now() - dateOfPing) / 2} + ${toFixedNumber(audioContext.outputLatency || audioContext.baseLatency, 3) * 1000}`
     })
   }
 
@@ -42,7 +42,7 @@ export function latency(device) {
       intervalIsInit = true
       // Writing a latency in the DOM
       setInterval(() => {
-        latencyElement.textContent = toFixedNumber(audioContext.outputLatency, 3) * 1000
+        latencyElement.textContent = toFixedNumber(audioContext.outputLatency || audioContext.baseLatency, 3) * 1000
       }, updateFrequency)
     }
   }

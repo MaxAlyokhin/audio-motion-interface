@@ -3,6 +3,8 @@
 // Mutations are triggered by events in the interface
 // and synchronize settings over a websocket with the remote desktop
 
+import device from 'current-device'
+
 import { updateCompressorSettings } from './audio'
 import { toFixedNumber } from './helpers'
 import { language } from './language'
@@ -549,45 +551,12 @@ export function syncSettings() {
     socket.emit('settings message', settings)
   }
 
+  updateCompressorSettings(settings.audio.compressor)
   syncLocalStorage(settings)
 }
 
 // Linking the settings object to the interface
 export function settingsInit() {
-
-  // Enabling the websocket on a smartphone
-  synthesisRegimeElement.addEventListener('change', function (event) {
-    if (!socketIsInit) {
-      socketInit()
-
-      socket.connect()
-
-      // On updating the settings object
-      socket.on('settings message', (settingsData) => {
-        Object.assign(settings, settingsData) // Updating an object
-        syncSettingsFrontend(settingsData) // Updating input fields
-        syncLocalStorage(settingsData)
-      })
-
-      // Hanging listeners of websocket events
-      socket.on('connect', () => {
-        connectionsToServer.textContent = language.connection.ready
-        connectionsToServer.classList.remove('connections--wait', 'connections--error')
-        connectionsToServer.classList.add('connections--ready')
-      })
-
-      socket.on('disconnect', () => {
-        connectionsToServer.textContent = language.connection.failed
-        connectionsToServer.classList.remove('connections--wait', 'connections--ready')
-        connectionsToServer.classList.add('connections--error')
-      })
-
-      // Here hangs the pong event listener from the desktop to calculate the latency to the desktop
-      latency('mobile')
-    }
-
-    mutations.audio.setSynthesisRegime(event.target.value)
-  })
 
   frequencyRegimeElement.addEventListener('change', function (event) {
     mutations.audio.setFrequencyRegime(event.target.value)
@@ -789,42 +758,78 @@ export function settingsInit() {
   // Setting up the compressor
   updateCompressorSettings(settings.audio.compressor)
 
-  // If the URL has ?remote, then immediately switch to the relevant mode
-  const markerFromURL = document.location.search.slice(1)
+  if (device.mobile()) {
+    // Enabling the websocket on a smartphone
+    synthesisRegimeElement.addEventListener('change', function (event) {
+      if (!socketIsInit) {
+        socketInit()
 
-  if (markerFromURL === 'remote') {
-    settings.audio.synthesisRegime = 'remote'
-    document.querySelector('#remote').checked = true
+        socket.connect()
 
-    if (!socketIsInit) {
-      socketInit()
+        // On updating the settings object
+        socket.on('settings message', (settingsData) => {
+          Object.assign(settings, settingsData) // Updating an object
+          syncSettingsFrontend(settingsData) // Updating input fields
+          syncLocalStorage(settingsData)
+        })
 
-      socket.connect()
+        // Hanging listeners of websocket events
+        socket.on('connect', () => {
+          connectionsToServer.textContent = language.connection.ready
+          connectionsToServer.classList.remove('connections--wait', 'connections--error')
+          connectionsToServer.classList.add('connections--ready')
+        })
 
-      socket.on('settings message', (settingsData) => {
-        Object.assign(settings, settingsData)
-        syncSettingsFrontend(settingsData)
-      })
+        socket.on('disconnect', () => {
+          connectionsToServer.textContent = language.connection.failed
+          connectionsToServer.classList.remove('connections--wait', 'connections--ready')
+          connectionsToServer.classList.add('connections--error')
+        })
 
-      socket.on('connect', () => {
-        connectionsToServer.textContent = language.connection.ready
-        connectionsToServer.classList.remove('connections--wait', 'connections--error')
-        connectionsToServer.classList.add('connections--ready')
-      })
+        // Here hangs the pong event listener from the desktop to calculate the latency to the desktop
+        latency('mobile')
+      }
 
-      socket.on('disconnect', () => {
-        connectionsToServer.textContent = language.connection.failed
-        connectionsToServer.classList.remove('connections--wait', 'connections--ready')
-        connectionsToServer.classList.add('connections--error')
-      })
+      mutations.audio.setSynthesisRegime(event.target.value)
+    })
+
+    // If the URL has ?remote, then immediately switch to the relevant mode
+    const markerFromURL = document.location.search.slice(1)
+
+    if (markerFromURL === 'remote') {
+      settings.audio.synthesisRegime = 'remote'
+      document.querySelector('#remote').checked = true
+
+      if (!socketIsInit) {
+        socketInit()
+
+        socket.connect()
+
+        socket.on('settings message', (settingsData) => {
+          Object.assign(settings, settingsData)
+          syncSettingsFrontend(settingsData)
+        })
+
+        socket.on('connect', () => {
+          connectionsToServer.textContent = language.connection.ready
+          connectionsToServer.classList.remove('connections--wait', 'connections--error')
+          connectionsToServer.classList.add('connections--ready')
+        })
+
+        socket.on('disconnect', () => {
+          connectionsToServer.textContent = language.connection.failed
+          connectionsToServer.classList.remove('connections--wait', 'connections--ready')
+          connectionsToServer.classList.add('connections--error')
+        })
+      }
+
+      mutations.audio.setSynthesisRegime('remote')
     }
 
-    mutations.audio.setSynthesisRegime('remote')
+    // Calculate the delay, which is equal to audioContext.outputLatency for the smartphone
+    // Also here hangs the pong event listener from the desktop to calculate the latency to the desktop
+    latency('mobile')
   }
-
-  // Calculate the delay, which is equal to audioContext.outputLatency for the smartphone
-  // Also here hangs the pong event listener from the desktop to calculate the latency to the desktop
-  latency('mobile')
 }
 
 // Hotkey control
