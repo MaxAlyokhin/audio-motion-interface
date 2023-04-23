@@ -69,7 +69,7 @@ export const i18n = {
     qr: 'Наведите камеру смартфона для подключения к компьютеру, либо вручную перейдите по ссылке в мобильном браузере:<br><span></span>',
     description: 'Система синтезирует звук на основе данных с датчиков движения смартфона: скорость определяет громкость, положение определяет частоту.',
     dfap: 'Этот проект — часть<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Цифровой фиксации аудио процессов</a>',
-    links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Исходники</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README_RU.md#user-guide" target="_blank" rel="noopener noreferrer">Инструкция</a>',
+    links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Исходники</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README_RU.md#user" target="_blank" rel="noopener noreferrer">Инструкция</a>',
     run: 'Запуск',
     interface: 'Скрыть интерфейс',
     slide: 'Перетащите кружок за черту для разблокировки интерфейса'
@@ -145,7 +145,7 @@ export const i18n = {
     qr: 'Point your smartphone camera to connect to computer, or manually follow the link in your mobile browser:<br><span></span>',
     description: 'The system synthesizes sound based on data from smartphone motion sensors: speed determines the volume, position determines the frequency.',
     dfap: 'This project is part of<br><a href="https://dfap.stranno.su" target="_blank" rel="noopener noreferrer">Digital fixation of audio processes</a>',
-    links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Source code</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README.md#user-guide" target="_blank" rel="noopener noreferrer">User guide</a>',
+    links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Source code</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README.md#user" target="_blank" rel="noopener noreferrer">User guide</a>',
     run: 'Run',
     interface: 'Interface off',
     slide: 'Slide up the circle to the line for unlock interface'
