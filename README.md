@@ -6,6 +6,8 @@
 
 **Demo**: https://ami.stranno.su
 
+**Video**: https://youtu.be/H1ryDYgeoOs
+
 > **Note**: [Bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1435625) in Firefox — on default settings there are problems with sound. It is recommended to put the attack value at least 0.1 to fix. Also, Firefox is not recommended because of the slower refresh rate of motion parameters.
 
 ![](https://store.stranno.su/ami/design-en.webp)
@@ -41,6 +43,11 @@ Some possible schemes of work:
 - smartphone → bluetooth-speaker
 - smartphone → padals/effects → speakers/combo
 - smartphone → computer → DAW on computer → padals/effects → speakers/combo
+
+You can also load presets into the system (you need to download as a file and use the Import button in the system):
+- [electronica.json](https://store.stranno.su/ami/electronica.json)
+- [ambient.json](https://store.stranno.su/ami/ambient.json)
+- [noise.json](https://store.stranno.su/ami/noise.json)
 
 > **Note**: Using https://ami.stranno.su is demo. Its main disadvantage is the synchronization between all users; your sound and your settings can be interrupted by random users. Plus, since the traffic information goes over the internet (at least to Frankfurt, where the server is located, and back), there can be a delay (about 20-100ms, depending on the quality of the connection). To solve all these disadvantages it is recommended to deploy the system locally (see section **[Recommended use (running on a local computer)](#recommended)**).
 
@@ -334,13 +341,15 @@ Accordingly, the system turns on when the cutoff is exceeded, creates a batch, a
 
 The **Oscillator amount** field displays all the batches sounding at the moment.
 
-<a name="latency"></a>
-
-The **Latency** field displays the latency from the motion event to the sound synthesis. On a smartphone, it is equal to the software latency (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/outputLatency">`AudioContext.outputLatency`</a>). On the desktop, it is equal to the software latency + the transfer time of the motion object from the smartphone to the desktop.
-
 For example, if you shake your hand chaotically for some time, the cutoff will be exceeded several times at random, which means that several batches will be generated, which will fade smoothly and their sound will overlap each other. It is better not to bring the number of oscillators, according to current observations, to values higher than 120 pieces, as almost certainly the computing power of the device will end there and the sound will start to stutter, or will disappear at all.
 
 According to subjective observations, the optimal cutoff can be between 3 and 7 (the default is 1), then random movements can be eliminated.
+
+<a name="latency"></a>
+
+The **Latency** field displays the latency from the motion event to the sound synthesis. On a smartphone, it is equal to the software latency (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/outputLatency">`AudioContext.outputLatency`</a>). On the desktop, it is equal to the software latency + the transfer time of the motion object from the smartphone to the desktop. In the interface is displayed in the format `device latency + network latency`.
+
+According to current observations, the lowest latency is observed on Apple devices (this applies to both IPhone and desktop devices, about 20-30ms). For example, on the smartphone Huawei Honor 10 device latency is 80ms, on the laptop Huawei Matebook device latency is 40ms; at the same time when starting the system locally via wi-fi router the network latency comes out 4-5ms. So, specifically for these devices, total smartphone latency = 80ms, total laptop latency 40 + 5 = 45ms. That is, comes out a paradoxical situation that on the laptop sound occurs earlier than on the smartphone.
 
 <a name="semisphere-guide"></a>
 
