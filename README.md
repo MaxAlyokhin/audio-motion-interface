@@ -349,7 +349,9 @@ According to subjective observations, the optimal cutoff can be between 3 and 7 
 
 The **Latency** field displays the latency from the motion event to the sound synthesis. On a smartphone, it is equal to the software latency (<a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/outputLatency">`AudioContext.outputLatency`</a>). On the desktop, it is equal to the software latency + the transfer time of the motion object from the smartphone to the desktop. In the interface is displayed in the format `device latency + network latency`.
 
-According to current observations, the lowest latency is observed on Apple devices (this applies to both IPhone and desktop devices, about 20-30ms). For example, on the smartphone Huawei Honor 10 device latency is 80ms, on the laptop Huawei Matebook device latency is 40ms; at the same time when starting the system locally via wi-fi router the network latency comes out 4-5ms. So, specifically for these devices, total smartphone latency = 80ms, total laptop latency 40 + 5 = 45ms. That is, comes out a paradoxical situation that on the laptop sound occurs earlier than on the smartphone.
+According to current observations, the lowest latency is observed on Apple devices (this applies to both IPhone and desktop devices, about 8ms). For example, on the smartphone Huawei Honor 10 device latency is 80ms, on the laptop Huawei Matebook device latency is 40ms; at the same time when starting the system locally via wi-fi router the network latency comes out 4-5ms. So, specifically for these devices, total smartphone latency = 80ms, total laptop latency 40 + 5 = 45ms. That is, comes out a paradoxical situation that on the laptop sound occurs earlier than on the smartphone.
+
+The most efficient option is to use an Apple laptop and install the system locally, then the latency will be about 5 + 8 = 13ms.
 
 <a name="semisphere-guide"></a>
 
