@@ -101,7 +101,7 @@ export const settings = {
     },
   },
   midi: {
-    on: true,
+    on: false,
     pitch: 8192,
     modulation: 50,
     noMIDIPortsFound: true,
