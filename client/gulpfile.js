@@ -59,7 +59,7 @@ const config = {
   host: 'localhost',
   port: 8001,
   logPrefix: 'DevServer',
-  open: true, // Браузер автоматом открываем
+  open: false, // Браузер автоматом открываем
   https: true,
 }
 
