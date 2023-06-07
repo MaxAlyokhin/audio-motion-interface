@@ -296,9 +296,71 @@
             <input type="number" min="0" max="1" slide="3" coefficient="2" step="0.01" name="compressor-release" class="compressor-release" />
           </div>
         </div>
+
+        <div class="midi module desktop">
+          <span class="midi-span">MIDI</span>
+          <div class="midi__container">
+            <span class="key">Port</span>
+            <select name="midi-port" class="midi__select-port">
+            </select>
+          </div>
+          <div class="midi__container">
+            <span class="key">Channel</span>
+            <select name="midi-channel" class="midi__select-channel">
+              <option value="0">1</option>
+              <option value="1">2</option>
+              <option value="2">3</option>
+              <option value="3">4</option>
+              <option value="4">5</option>
+              <option value="5">6</option>
+              <option value="6">7</option>
+              <option value="7">8</option>
+              <option value="8">9</option>
+              <option value="9">10</option>
+              <option value="10">11</option>
+              <option value="11">12</option>
+              <option value="12">13</option>
+              <option value="13">14</option>
+              <option value="14">15</option>
+              <option value="15">16</option>
+            </select>
+          </div>
+          <div class="midi__container slide">
+            <span class="key">Velocity</span>
+            <input type="number" min="0" max="127" slide="3" coefficient="0" step="1" name="midi-velocity" class="midi-velocity" />
+          </div>
+          <div class="midi__container slide">
+            <span class="key">Modulation</span>
+            <input type="number" min="0" max="127" slide="3" coefficient="0" step="1" name="midi-modulation" class="midi-modulation" />
+          </div>
+          <div class="midi__container slide">
+            <span class="midi-duration-key key"></span>
+            <input type="number" slide="3" coefficient="1" step="0.1" name="midi-duration" class="midi-duration" />
+          </div>
+          <div class="midi__container">
+            <span class="midi-reset-key key"></span>
+            <div class="radio-element">
+              <input type="radio" name="midi-reset" id="midi-reset" value="true" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="bottom">
+        <div class="midi-regime desktop">
+          <span class="midi-regime-span"></span>
+          <div class="midi__container">
+            <div class="radio-element">
+              <input type="radio" name="midi" id="midi-yes" value="true" />
+              <label class="midi-on" for="midi-yes"></label>
+            </div>
+            <div class="radio-element">
+              <input type="radio" name="midi" id="midi-no" value="false" checked />
+              <label class="midi-off" for="midi-no"></label>
+            </div>
+          </div>
+        </div>
+
         <div class="shortcuts">
           <span class="shortcuts-span"></span>
           <div class="shortcuts__container">

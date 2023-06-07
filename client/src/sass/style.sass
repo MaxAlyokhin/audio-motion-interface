@@ -359,7 +359,8 @@ select
 .lite,
 .sphere,
 .theme,
-.shortcuts
+.shortcuts,
+.midi
   flex-direction: column
   align-items: flex-start !important
 
@@ -592,6 +593,20 @@ body.dark
       &--yes
         color: $green-dark
 
+.midi-regime-active
+  .oscillator,
+  .filter-element,
+  .lfo,
+  .compressor-element,
+  .settings-exchange,
+    display: none
+
+.settings > .midi
+  display: none
+
+.midi-regime-active .settings > .midi
+  display: flex
+
 @media (min-width: 1215px)
   body .module
     border-left: none
@@ -732,3 +747,12 @@ body.dark
 
 .mobile .shortcuts
   display: none
+
+.mobile .midi-regime-active
+  .motion__count-container,
+  .is-audio,
+  .motion__is-audio,
+  .generated-frequency,
+  .motion__frequency,
+  .tuner
+    display: none

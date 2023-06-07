@@ -12,6 +12,7 @@ import { latency } from './latency'
 import { syncLocalStorage } from './localstorage'
 import { getNoteName, notes } from './notes'
 import { socketInit, socketIsInit, socket } from './websocket'
+import { modulation } from './midi'
 
 // Settings elements
 const synthesisRegimeElement = document.querySelector('.synthesis-regime')
@@ -44,6 +45,10 @@ const timeoutElement = document.querySelector('.timeout')
 const themeElement = document.querySelector('.theme__container')
 const bodyElement = document.querySelector('body')
 const slideElements = document.querySelectorAll('.slide')
+const midiVelocityElement = document.querySelector('.midi-velocity')
+const midiModulationElement = document.querySelector('.midi-modulation')
+const midiDurationElement = document.querySelector('.midi-duration')
+const midiRegimeElement = document.querySelector('.midi-regime')
 
 // Model
 
@@ -54,7 +59,7 @@ export const settings = {
     lite: false,
     interfaceRegime: true,
     theme: 'dark',
-    language: null
+    language: null,
   },
   motion: {
     threshold: 2.0,
@@ -94,6 +99,14 @@ export const settings = {
       rate: 1,
       depth: 1,
     },
+  },
+  midi: {
+    on: true,
+    pitch: 8192,
+    modulation: 50,
+    noMIDIPortsFound: true,
+    duration: 4,
+    velocity: 20,
   },
 }
 
@@ -174,7 +187,7 @@ export const mutations = {
       }
 
       syncSettings()
-    }
+    },
   },
 
   audio: {
@@ -294,7 +307,7 @@ export const mutations = {
           return
         } else if (frequency <= 0) {
           settings.audio.frequenciesRange.from = 0
-        } else if (frequency > 24000 || frequency >= settings.audio.frequenciesRange.to) {
+        } else if (frequency > (settings.midi.on ? 12543 : 24000) || frequency >= settings.audio.frequenciesRange.to) {
           settings.audio.frequenciesRange.from = settings.audio.frequenciesRange.to - 1
         } else {
           settings.audio.frequenciesRange.from = frequency
@@ -305,8 +318,8 @@ export const mutations = {
           return
         } else if (frequency <= 0) {
           settings.audio.frequenciesRange.to = 0
-        } else if (frequency > 24000) {
-          settings.audio.frequenciesRange.to = 24000
+        } else if (frequency > (settings.midi.on ? 12543 : 24000)) {
+          settings.audio.frequenciesRange.to = settings.midi.on ? 12543 : 24000
         } else if (frequency <= settings.audio.frequenciesRange.from) {
           settings.audio.frequenciesRange.to = settings.audio.frequenciesRange.from + 1
         } else {
@@ -323,7 +336,7 @@ export const mutations = {
           return
         } else if (note <= 0) {
           settings.audio.notesRange.from = 0
-        } else if (note > 131 || note >= settings.audio.notesRange.to) {
+        } else if (note > (settings.midi.on ? 127 : 131) || note >= settings.audio.notesRange.to) {
           settings.audio.notesRange.from = settings.audio.notesRange.to - 1
         } else {
           settings.audio.notesRange.from = note
@@ -334,8 +347,8 @@ export const mutations = {
           return
         } else if (note <= 0) {
           settings.audio.notesRange.to = 0
-        } else if (note >= 131) {
-          settings.audio.notesRange.to = 131
+        } else if (note >= (settings.midi.on ? 127 : 131)) {
+          settings.audio.notesRange.to = settings.midi.on ? 127 : 131
         } else if (note <= settings.audio.notesRange.from) {
           settings.audio.notesRange.to = settings.audio.notesRange.from + 1
         } else {
@@ -387,7 +400,7 @@ export const mutations = {
         case 'attack':
           if (isNaN(value)) {
             return
-          } else if ( value < 0) {
+          } else if (value < 0) {
             settings.audio.compressor[parameter] = 0
           } else if (value > 1) {
             settings.audio.compressor[parameter] = 1
@@ -451,6 +464,57 @@ export const mutations = {
       syncSettings()
     },
   },
+
+  midi: {
+    setVelocity: (velocity) => {
+      if (isNaN(velocity)) {
+        return
+      } else if (velocity <= 0) {
+        settings.midi.velocity = 0
+      } else if (velocity >= 127) {
+        settings.midi.velocity = 127
+      } else {
+        settings.midi.velocity = velocity
+      }
+
+      syncSettings()
+    },
+
+    setModulation: (modulation) => {
+      if (isNaN(modulation)) {
+        return
+      } else if (modulation <= 0) {
+        settings.midi.modulation = 0
+      } else if (modulation >= 127) {
+        settings.midi.modulation = 127
+      } else {
+        settings.midi.modulation = modulation
+      }
+
+      syncSettings()
+    },
+
+    setDuration: (duration) => {
+      if (isNaN(duration)) {
+        return
+      } else if (duration <= 0) {
+        settings.midi.duration = 0.001
+      } else {
+        settings.midi.duration = duration
+      }
+
+      syncSettings()
+    },
+
+    setMIDIRegime: (value) => {
+      if (!settings.midi.noMIDIPortsFound) {
+        value === 'true' ? (settings.midi.on = true) : (settings.midi.on = false)
+        syncSettings()
+      } else {
+        throw new Error(language.noMIDIPortsFound)
+      }
+    },
+  }
 }
 
 // View
@@ -494,7 +558,7 @@ export function syncSettingsFrontend(settings) {
   }
   if (settings.ui.shortcuts === true) {
     shortcutsElement.querySelector('#shortcuts-yes').checked = true
-    keyElements.forEach(element => element.classList.add('key--show'))
+    keyElements.forEach((element) => element.classList.add('key--show'))
   }
 
   if (settings.ui.theme === 'dark') {
@@ -543,6 +607,28 @@ export function syncSettingsFrontend(settings) {
   if (settings.audio.LFO.enabled === false) {
     LFOElement.querySelector('#lfo-off').checked = true
   }
+
+  if (settings.midi.on) {
+    bodyElement.classList.add('midi-regime-active')
+    document.querySelector('.osc-count').textContent = language.notesCount
+    document.querySelector('.latency__title').textContent = language.netLatency
+  } else {
+    bodyElement.classList.remove('midi-regime-active')
+    document.querySelector('.osc-count').textContent = language.oscCount
+    document.querySelector('.latency__title').textContent = language.latency
+  }
+
+  midiVelocityElement.value = settings.midi.velocity
+  midiModulationElement.value = settings.midi.modulation
+  midiDurationElement.value = settings.midi.duration
+
+  if (settings.midi.on === true) {
+    midiRegimeElement.querySelector('#midi-yes').checked = true
+  }
+  if (settings.midi.on === false) {
+    midiRegimeElement.querySelector('#midi-no').checked = true
+  }
+
 }
 
 // The function synchronizes the settings from the smartphone to the desktop
@@ -557,7 +643,6 @@ export function syncSettings() {
 
 // Linking the settings object to the interface
 export function settingsInit() {
-
   frequencyRegimeElement.addEventListener('change', function (event) {
     mutations.audio.setFrequencyRegime(event.target.value)
   })
@@ -702,10 +787,30 @@ export function settingsInit() {
     }
   })
 
+  midiVelocityElement.addEventListener('input', function (event) {
+    if (isNaN(parseFloat(event.value || this.value))) this.value = settings.midi.velocity
+    mutations.midi.setVelocity(parseFloat(event.value || this.value))
+  })
+
+  midiModulationElement.addEventListener('input', function (event) {
+    if (isNaN(parseFloat(event.value || this.value))) this.value = settings.midi.modulation
+    mutations.midi.setModulation(parseFloat(event.value || this.value))
+    modulation(settings.midi.modulation)
+  })
+
+  midiDurationElement.addEventListener('input', function (event) {
+    if (isNaN(parseFloat(event.value || this.value))) this.value = settings.midi.duration
+    mutations.midi.setDuration(parseFloat(event.value || this.value))
+  })
+
+  midiRegimeElement.addEventListener('change', function (event) {
+    mutations.midi.setMIDIRegime(event.value || event.target.value)
+  })
+
   // Handling input value changes via slide
   // Each input has a slide attribute, which determines the ratio of
   // number of pixels / 1 point input field
-  slideElements.forEach(slideElement => {
+  slideElements.forEach((slideElement) => {
     let initialClientX = 0 // Initial position of the mouse cursor after clicking
     let initialInputValue = 0 // Initial value of the input field, which will be changed
     let currentInputElement = null // The field we change
@@ -718,7 +823,7 @@ export function settingsInit() {
       // where we add the calculated value to the original value of the field
       // and divide by the 'slide' attribute
       inputEvent.value = toFixedNumber(
-        Number(initialInputValue) + (Number(((event.clientX || event.touches[0].clientX) - initialClientX) / currentInputElement.attributes.slide.value) * currentInputElement.attributes.step.value),
+        Number(initialInputValue) + Number(((event.clientX || event.touches[0].clientX) - initialClientX) / currentInputElement.attributes.slide.value) * currentInputElement.attributes.step.value,
         currentInputElement.attributes.coefficient.value
       )
 
@@ -838,11 +943,15 @@ document.addEventListener('keydown', (event) => {
     // Sensor
     case 'BracketLeft':
       thresholdElement.focus()
-      setTimeout(() => { thresholdElement.select() })
+      setTimeout(() => {
+        thresholdElement.select()
+      })
       break
     case 'BracketRight':
       timeoutElement.focus()
-      setTimeout(() => { timeoutElement.select() })
+      setTimeout(() => {
+        timeoutElement.select()
+      })
       break
 
     // Oscillator
@@ -853,20 +962,28 @@ document.addEventListener('keydown', (event) => {
       break
     case 'KeyW':
       attackElement.focus()
-      setTimeout(() => { attackElement.select() })
+      setTimeout(() => {
+        attackElement.select()
+      })
       break
     case 'KeyE':
       event.preventDefault() // 'e' is entered in the number field, since it is a mathematical symbol
       gainElement.focus()
-      setTimeout(() => { gainElement.select() })
+      setTimeout(() => {
+        gainElement.select()
+      })
       break
     case 'KeyR':
       releaseElement.querySelector('.release').focus()
-      setTimeout(() => { releaseElement.querySelector('.release').select() })
+      setTimeout(() => {
+        releaseElement.querySelector('.release').select()
+      })
       break
     case 'KeyT':
       attenuationElement.querySelector('.attenuation').focus()
-      setTimeout(() => { attenuationElement.querySelector('.attenuation').select() })
+      setTimeout(() => {
+        attenuationElement.querySelector('.attenuation').select()
+      })
       break
     case 'Escape':
       document.querySelector('#off').dispatchEvent(new Event('change', { bubbles: true }))
@@ -876,22 +993,30 @@ document.addEventListener('keydown', (event) => {
     case 'Semicolon':
       if (settings.audio.frequencyRegime === 'continuous') {
         frequenciesRangeElement.querySelector('.frequencies-range-from').focus()
-        setTimeout(() => { frequenciesRangeElement.querySelector('.frequencies-range-from').select() })
+        setTimeout(() => {
+          frequenciesRangeElement.querySelector('.frequencies-range-from').select()
+        })
       }
       if (settings.audio.frequencyRegime === 'tempered') {
         notesRangeElement.querySelector('.notes-range-from').focus()
-        setTimeout(() => { notesRangeElement.querySelector('.notes-range-from').select() })
+        setTimeout(() => {
+          notesRangeElement.querySelector('.notes-range-from').select()
+        })
       }
 
       break
     case 'Quote':
       if (settings.audio.frequencyRegime === 'continuous') {
         frequenciesRangeElement.querySelector('.frequencies-range-to').focus()
-        setTimeout(() => { frequenciesRangeElement.querySelector('.frequencies-range-to').select() })
+        setTimeout(() => {
+          frequenciesRangeElement.querySelector('.frequencies-range-to').select()
+        })
       }
       if (settings.audio.frequencyRegime === 'tempered') {
         notesRangeElement.querySelector('.notes-range-to').focus()
-        setTimeout(() => { notesRangeElement.querySelector('.notes-range-to').select() })
+        setTimeout(() => {
+          notesRangeElement.querySelector('.notes-range-to').select()
+        })
       }
 
       break
@@ -899,18 +1024,22 @@ document.addEventListener('keydown', (event) => {
     // Filter
     case 'KeyM':
       filterElement.focus()
-      setTimeout(() => { filterElement.select() })
+      setTimeout(() => {
+        filterElement.select()
+      })
       break
-    case 'Comma': {
+    case 'Comma':
+      {
         event.preventDefault()
         factorElement.focus()
-        setTimeout(() => { factorElement.select() })
+        setTimeout(() => {
+          factorElement.select()
+        })
       }
       break
 
     // LFO
     case 'KeyA':
-
       if (event.ctrlKey) return // Not responding to ctrl+A
 
       // Change to the opposite value
@@ -930,33 +1059,47 @@ document.addEventListener('keydown', (event) => {
       break
     case 'KeyD':
       LFOElement.querySelector('.rate').focus()
-      setTimeout(() => { LFOElement.querySelector('.rate').select() })
+      setTimeout(() => {
+        LFOElement.querySelector('.rate').select()
+      })
       break
     case 'KeyF':
       LFOElement.querySelector('.depth').focus()
-      setTimeout(() => { LFOElement.querySelector('.depth').select() })
+      setTimeout(() => {
+        LFOElement.querySelector('.depth').select()
+      })
       break
 
     // Compressor
     case 'KeyZ':
       compressorElement.querySelector('.compressor-threshold').focus()
-      setTimeout(() => { compressorElement.querySelector('.compressor-threshold').select() })
+      setTimeout(() => {
+        compressorElement.querySelector('.compressor-threshold').select()
+      })
       break
     case 'KeyX':
       compressorElement.querySelector('.compressor-knee').focus()
-      setTimeout(() => { compressorElement.querySelector('.compressor-knee').select() })
+      setTimeout(() => {
+        compressorElement.querySelector('.compressor-knee').select()
+      })
       break
     case 'KeyC':
       compressorElement.querySelector('.compressor-ratio').focus()
-      setTimeout(() => { compressorElement.querySelector('.compressor-ratio').select() })
+      setTimeout(() => {
+        compressorElement.querySelector('.compressor-ratio').select()
+      })
       break
     case 'KeyV':
       compressorElement.querySelector('.compressor-attack').focus()
-      setTimeout(() => { compressorElement.querySelector('.compressor-attack').select() })
+      setTimeout(() => {
+        compressorElement.querySelector('.compressor-attack').select()
+      })
       break
     case 'KeyB':
       compressorElement.querySelector('.compressor-release').focus()
-      setTimeout(() => { compressorElement.querySelector('.compressor-release').select() })
+      setTimeout(() => {
+        compressorElement.querySelector('.compressor-release').select()
+      })
       break
   }
 })

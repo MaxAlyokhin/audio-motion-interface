@@ -72,7 +72,13 @@ export const i18n = {
     links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Исходники</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README_RU.md#user" target="_blank" rel="noopener noreferrer">Инструкция</a>',
     run: 'Запуск',
     interface: 'Скрыть интерфейс',
-    slide: 'Перетащите кружок за черту для разблокировки интерфейса'
+    slide: 'Перетащите кружок за черту для разблокировки интерфейса',
+    noMIDIPortsFound: 'Не найдено ни одного MIDI-порта. Проверьте настройки MIDI. После подключения MIDI необходимо будет полностью перезагрузить браузер и попробовать снова.',
+    notesCount: 'Количество нот',
+    netLatency: 'Задержка связи (мс)',
+    duration: 'Длительность (с)',
+    midiReset: 'Сброс MIDI',
+    midiRegime: 'MIDI-режим'
   },
 
   en: {
@@ -148,6 +154,12 @@ export const i18n = {
     links: '<a href="https://github.com/MaxAlyokhin/audio-motion-interface" target="_blank" rel="noopener noreferrer">Source code</a> <a href="https://github.com/MaxAlyokhin/audio-motion-interface/blob/master/README.md#user" target="_blank" rel="noopener noreferrer">User guide</a>',
     run: 'Run',
     interface: 'Interface off',
-    slide: 'Slide up the circle to the line for unlock interface'
+    slide: 'Slide up the circle to the line for unlock interface',
+    noMIDIPortsFound: 'No MIDI ports found. Check the MIDI settings. After After connecting MIDI, you will need to completely reboot the browser and try again.',
+    notesCount: 'Notes amount',
+    netLatency: 'Network latency (ms)',
+    duration: 'Duration (s)',
+    midiReset: 'Reset MIDI',
+    midiRegime: 'MIDI-regime'
   }
 }

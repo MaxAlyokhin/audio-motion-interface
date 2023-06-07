@@ -1,4 +1,4 @@
-import { settings, syncSettingsFrontend } from "./settings"
+import { settings } from "./settings"
 
 // localStorage control
 export function checkLocalStorage() {
@@ -9,7 +9,6 @@ export function checkLocalStorage() {
   } else {
     // Otherwise, loading the earlier settings from localStorage and rewriting
     Object.assign(settings, JSON.parse(localStorage.getItem('settings')))
-    syncSettingsFrontend(settings)
   }
 }
 

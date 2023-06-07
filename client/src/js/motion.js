@@ -18,6 +18,7 @@ import { settings, settingsInit, syncSettingsFrontend } from './settings'
 import { socket, socketInit, socketIsInit } from './websocket'
 import { language } from './language'
 import { latency } from './latency'
+import { fireMIDI } from './midi'
 
 export let clientsCount = null // Number of connections
 
@@ -60,6 +61,10 @@ export function motionInit() {
   let fullscreenIsOn = false
 
   // The function is called for each motion event
+  // These events only occur on mobile devices
+  // In local mode, for each motion event we call audio()
+  // In remote mode, we call audio() on each motion event only when MIDI is disabled
+  // When on, the smartphone disables sound generation and simply transmits motion data
   function onMotion(event) {
     if (receiverRegimeIsInit === false) {
       // Switching on the frontend for the smartphone
@@ -132,7 +137,8 @@ export function motionInit() {
       }
       // Or we give it to a websocket for the desktop
       if (settings.audio.synthesisRegime === 'remote') {
-        audio(motion)
+        if (!settings.midi.on) { audio(motion) }
+
         if (socketIsInit) {
           socket.emit('motion message', motion)
         }
@@ -150,7 +156,8 @@ export function motionInit() {
         audio(motion)
       }
       if (settings.audio.synthesisRegime === 'remote') {
-        audio(motion)
+        if (!settings.midi.on) { audio(motion) }
+
         if (socketIsInit) {
           socket.emit('motion message', motion)
         }
@@ -268,7 +275,7 @@ export function motionInit() {
         isMotionElement.classList.remove('motion--yes')
       }
 
-      audio(motion)
+      settings.midi.on ? fireMIDI(motion) : audio(motion)
     })
     // To update the settings object
     socket.on('settings message', (settingsData) => {

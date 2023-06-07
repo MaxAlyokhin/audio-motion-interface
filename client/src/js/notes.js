@@ -52,6 +52,12 @@ export function getNoteName(frequency) {
   return noteName
 }
 
+/**
+ * In continuous mode, returns the translation of the frequency into the [nearest top note, how much percent hit the note] array
+ * @param {Number} frequency - frequency
+ * @return {Array} [maxNote, percent]
+ */
+
 // The function brings the sound to the nearest note
 export function pitchDetection(frequency) {
   nearbyValues = getNearbyValues(frequency, notes)
@@ -74,5 +80,11 @@ export function pitchDetection(frequency) {
       settings.ui.lite ? false : (tunerActualElement.textContent = `${maxNote} (${percent}%)`)
       previousNote = `${maxNote} (${percent}%)`
     }
+    if (notes.indexOf(nearbyValues[0]) < 0) {
+      return [0, percent]
+    } else {
+      return [notes.indexOf(nearbyValues[0]), percent]
+    }
+
   }
 }

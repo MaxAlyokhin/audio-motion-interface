@@ -110,6 +110,7 @@ You can also load presets into the system (you need to download as a file and us
     - [Errors](#errors)
     - [Fullscreen-mode](#fullscreen)
     - [Audio generation](#audio-generate)
+  - [MIDI](#midi)
   - [Storing the interface state (settings) (Import / Export)](#state-storing)
 - [Tech guide](#tech)
 - [Secure context](#secure)
@@ -466,6 +467,19 @@ The field **Maximum value** shows the maximum speed of movement for the whole se
 <a name="audio-generate"></a>
 
 **Audio generation** — indicator showing whether sound is currently being generated.
+
+### MIDI <a name="midi"></a>
+
+AMI allows you to generate MIDI messages. To enable MIDI, the MIDI regime must be enabled. Automatically selects the first available port and its first channel. When the cutoff is exceeded, a noteOn signal is sent, then in Peak mode the noteOff signal is sent after the time specified in the Duration field; in Full mode, noteOff is sent only when the movement is over + after the time in the Duration field; during the movement, the pressure on the channel changes when speed affects the volume (that is, speed during the movement is equal to the change in the force of the key press). In Peak mode, speed increases Velocity. The MIDI Reset button sends an allSoundOff signal.
+
+MIDI messages can be sent:
+- to neighboring tabs and browser windows if they listen to MIDI (e.g., Web analog [DX7](http://mmontag.github.io/dx7-synth-js))
+- to DAWs and other applications that have virtual synthesizers (that is, AMI can control, for example, a synthesizer in Ableton)
+- to external MIDI-enabled devices connected to your computer
+
+> **Note**: After any manipulations with MIDI ports (connecting/disconnecting/ reconnecting) you must restart the browser completely, closing all browser windows if there are several
+
+> **Note**: MIDI messages are generated only on the desktop. The smartphone in this mode only sends movement and orientation data
 
 ### Saving the state (settings) of the interface <a name="state-storing"></a>
 

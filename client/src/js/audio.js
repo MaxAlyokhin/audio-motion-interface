@@ -1,5 +1,5 @@
-import { toFixedNumber } from './helpers'
-import { notes, notesInit, pitchDetection } from './notes'
+import { orientationToFrequency } from './helpers'
+import { notesInit, pitchDetection } from './notes'
 import { settings } from './settings'
 
 export let audioContext = null
@@ -489,8 +489,8 @@ let frequency = null
 let previousFrequency = null // To work more efficiently with DOM updates
 const frequencyElement = document.querySelector('.motion__frequency')
 
-const countElement = document.querySelector('.motion__count') // The number of oscillators
-const isAudioElement = document.querySelector('.motion__is-audio')
+export const countElement = document.querySelector('.motion__count') // The number of oscillators
+export const isAudioElement = document.querySelector('.motion__is-audio')
 const containerElement = document.querySelector('.container') // For animation by resetting oscillators
 
 // All elements of batches are grouped into separate arrays
@@ -581,16 +581,7 @@ let previousMotionMaximum = 0
 
 // The function is called ≈ every 16ms (in Chrome, in Firefox every 100ms)
 export function audio(motion) {
-  // Define the frequency and the note
-  // Do it even below the cutoff, so we can hit the right note before sound synthesis begins
-  if (settings.audio.frequencyRegime === 'continuous') {
-    // Exponential — degrees of position in degree log range (value difference) on the basis of 180 (maximum gyroscope value) + minimum value
-    frequency = toFixedNumber(Math.pow(motion.orientation, Math.log(settings.audio.frequenciesRange.to - settings.audio.frequenciesRange.from) / Math.log(180)) + settings.audio.frequenciesRange.from, 4)
-  }
-  if (settings.audio.frequencyRegime === 'tempered') {
-    // Starting from 'from' in the chord upwards (to — from) notes by 180 degrees
-    frequency = notes[settings.audio.notesRange.from + Math.floor(motion.orientation * ((settings.audio.notesRange.to - settings.audio.notesRange.from) / 180))]
-  }
+  frequency = orientationToFrequency(motion.orientation)
 
   // Update the DOM only when the value changes
   if (previousFrequency !== frequency) {

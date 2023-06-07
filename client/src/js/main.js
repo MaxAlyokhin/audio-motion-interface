@@ -1,6 +1,9 @@
+import device from 'current-device'
+
 import languageInit from './language'
 import { audioInit } from './audio'
 import { motionInit } from './motion'
+import { midiInit } from './midi'
 import { checkLocalStorage } from './localstorage'
 import { settingsExchangeInit } from './settingsExchange'
 
@@ -19,26 +22,25 @@ window.addEventListener('load', () => {
     function () {
       document.querySelector('body').style.overflow = 'auto'
 
+      if (device.desktop()) midiInit()
       audioInit()
       motionInit()
-
     },
     { once: true } // Only works once
   )
 
-  document.querySelector('.button.run').addEventListener(
-    'click',
-    function () {
-      document.querySelector('.cover').style.opacity = 0
-      setTimeout(() => {
-        document.querySelector('.cover').style.display = 'none'
-      }, 1000)
-    }
-  )
+  document.querySelector('.button.run').addEventListener('click', function () {
+    document.querySelector('.cover').style.opacity = 0
+    setTimeout(() => {
+      document.querySelector('.cover').style.display = 'none'
+    }, 1000)
+  })
 
   document.querySelector('.container .title span').addEventListener('click', () => {
     document.querySelector('.cover').style.display = 'flex'
-    setTimeout(() => { document.querySelector('.cover').style.opacity = 1 })
+    setTimeout(() => {
+      document.querySelector('.cover').style.opacity = 1
+    })
   })
 
   // Displaying errors on the screen

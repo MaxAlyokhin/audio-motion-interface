@@ -119,6 +119,11 @@ function setLanguage(languageMarker) {
   document.querySelector('.shortcuts-off').textContent = language.no
   document.querySelector('.latency__title').textContent = language.latency
   document.querySelector('.is-audio').textContent = language.isAudio
+  document.querySelector('.midi-duration-key').textContent = language.duration
+  document.querySelector('.midi-reset-key').textContent = language.midiReset
+  document.querySelector('.midi-regime-span').textContent = language.midiRegime
+  document.querySelector('.midi-on').textContent = language.yes
+  document.querySelector('.midi-off').textContent = language.no
 
   languageElements.forEach((element) => { element.style.textDecoration = 'none' })
   document.querySelector(`.${languageMarker}`).style.textDecoration = 'underline'
