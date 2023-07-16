@@ -701,17 +701,22 @@ export function audio(motion) {
       previousMotionMaximum = 0
     }
 
-    // +10ms to have time to setTargetAtTime in setGain()
-    const end = audioContext.currentTime + settings.audio.release + settings.audio.attack + 0.01
+    const end = audioContext.currentTime + settings.audio.release + settings.audio.attack
 
+    // +10ms to have time to setTargetAtTime in setGain()
     // Schedule the volume decay and oscillator stop and for
     // the last elements in the arrays at the moment of stopping the movement
     setTimeout(() => {
-      envelopeArray[envelopeArray.length - 1].gain.exponentialRampToValueAtTime(settings.audio.attenuation, end)
+      if (settings.audio.gain === settings.audio.attenuation) {
+        envelopeArray[envelopeArray.length - 1].gain.setTargetAtTime(0.0001, end, .005)
+      } else {
+        envelopeArray[envelopeArray.length - 1].gain.exponentialRampToValueAtTime(settings.audio.attenuation, end)
+      }
     }, 10)
 
-    if (settings.audio.LFO.enabled) LFOArray[LFOArray.length - 1].stop(end)
-    oscillatorArray[oscillatorArray.length - 1].stop(end)
+    // +10ms for end setTargetAtTime()
+    if (settings.audio.LFO.enabled) LFOArray[LFOArray.length - 1].stop(end + .02)
+    oscillatorArray[oscillatorArray.length - 1].stop(end + .02)
 
     // Schedule the removal of these elements, they will be the first in the arrays
     // at the time of the timeout call
@@ -734,7 +739,7 @@ export function audio(motion) {
           isAudioElement.classList.remove('motion__is-audio--yes')
         }
 
-      }, (settings.audio.release + settings.audio.attack) * 1000)
+      }, (settings.audio.release + settings.audio.attack + .02) * 1000)
     )
 
     setTimeout(() => {
