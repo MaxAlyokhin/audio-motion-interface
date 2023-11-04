@@ -535,6 +535,8 @@ MIDI messages can be sent:
 - to DAWs and other applications that have virtual synthesizers (that is, AMI can control, for example, a synthesizer in Ableton)
 - to external MIDI-enabled devices connected to your computer
 
+To send MIDI messages to a DAW on Windows devices, you can use [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html).
+
 > **Note**: After any manipulations with MIDI ports (connecting/disconnecting/ reconnecting) you must restart the browser completely, closing all browser windows if there are several
 
 > **Note**: MIDI messages are generated only on the desktop. The smartphone in this mode only sends movement and orientation data
